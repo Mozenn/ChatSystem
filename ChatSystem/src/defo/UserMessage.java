@@ -1,4 +1,4 @@
-package main;
+package defo;
 
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -33,10 +33,17 @@ public class UserMessage extends Message{
 		super();
 		content = Files.readAllBytes(f.toPath());
 		try {
-			buildHeader((byte)1,UserMessageType.FL.name(), content.length);
+			buildHeader((byte)0,UserMessageType.FL.name(), content.length);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
+	}
+	
+	public UserMessage(byte[] tab) 
+	{
+		super();
+		content = Message.extractContent(tab);
+		this.header = Message.extractHeader(tab);	
 	}
 }

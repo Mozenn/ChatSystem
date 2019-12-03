@@ -1,6 +1,10 @@
-package main;
+package session;
 
 import java.util.ArrayList;
+
+import defo.Message;
+import defo.User;
+import defo.UserMessage;
 
 public abstract class Session {
 
@@ -29,6 +33,10 @@ public abstract class Session {
 	}
 	
 	public abstract void sendMessage(UserMessage m);
+	
+	public abstract void startSession();
+	
+	public abstract void closeSession();
 	
 	
 	

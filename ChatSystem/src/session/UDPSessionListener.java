@@ -1,19 +1,25 @@
-package main;
+package session;
 
 import java.net.DatagramSocket;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import defo.Message;
+import defo.UserMessage;
+
 public class UDPSessionListener extends Thread{
 	
 	private LocalSession session;
+	private DatagramSocket socket;
 	private AtomicBoolean run;
 	
-	public UDPSessionListener(LocalSession s) 
+	public UDPSessionListener(LocalSession s, DatagramSocket socket) 
 	{
 		session = s;
+		this.socket = socket;
 		run.set(true);
+		start();
 	}
 	
 	public void stopRun() 
@@ -21,21 +27,20 @@ public class UDPSessionListener extends Thread{
 		run.set(false);
 	}
 	
-	public void Run() 
+	public void run() 
 	{
-		byte[] buffer = new byte[Message.MAX_SIZE];
 		while(run.get()) 
 		{
+			byte[] buffer = new byte[Message.MAX_SIZE];
 			DatagramPacket packet = new DatagramPacket(buffer, 0);
 			try {
-				session.socket.receive(packet);
+				socket.receive(packet);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
-			
+			UserMessage msg = new UserMessage(buffer);
+			session.addMessage(msg);			
 		}
 	}
 	
