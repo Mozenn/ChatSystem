@@ -1,0 +1,3 @@
+- Search java swing best practices & design ( mvp ? other )
+- use static factory ||factory pattern if needed 
+- find design for thread & listener & event 
