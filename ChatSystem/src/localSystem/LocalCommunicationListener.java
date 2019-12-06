@@ -40,7 +40,15 @@ public class LocalCommunicationListener extends Thread {
 			switch(type)
 			{
 				case SS: 
-					thread.getLocalSystem(). // TODO ON EST LA
+				try {
+					thread.getLocalSystem().createSession(packet);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				case CO:
+					
 			}
 		}
 	}

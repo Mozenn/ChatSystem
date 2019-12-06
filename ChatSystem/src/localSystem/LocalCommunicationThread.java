@@ -7,6 +7,8 @@ public class LocalCommunicationThread extends Thread{
 	private DatagramSocket socket;
 	private LocalSystem system;
 	
+	public static final int PORT = 8888; 
+	
 	public LocalCommunicationThread() 
 	{
 		

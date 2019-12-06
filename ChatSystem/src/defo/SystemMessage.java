@@ -6,12 +6,11 @@ public class SystemMessage extends Message{
 	
 	public enum SystemMessageType
 	{
-		CO,
-		SM,
-		GU,
-		CV,
-		GH,
-		SS
+		CO, // connection
+		CR, // connectionResponse
+		GU, // getDistantUsers
+		CV, // checkUsernameValidity
+		SS  // startSession	
 	}
 	
 	public SystemMessage(SystemMessageType s, byte[] c) 

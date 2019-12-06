@@ -1,5 +1,7 @@
 package session;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import defo.Message;
@@ -18,11 +20,19 @@ public abstract class Session {
 		
 	}
 	
-	public Session(byte[] id, User e, User r) 
+	/*public Session(User u) 
 	{
-		this.id = id;
+		emitter = u;
+	}*/
+	
+	public Session(User e, User r) throws IOException 
+	{
 		emitter = e;
 		receiver = r;
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		stream.write(e.getID());
+		stream.write(r.getID());
+		id = stream.toByteArray();
 		messages = new ArrayList<Message>();
 	}
 	

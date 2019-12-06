@@ -1,21 +1,28 @@
 package localSystem;
 
 import java.net.InetAddress;
-import java.net.DatagramSocket;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.util.ArrayList;
 
+import defo.Message;
 import defo.User;
+import session.LocalSession;
 
 public class LocalSystem {
 	
-	User[] localUsers;
-	User[] distantUsers;
+	ArrayList<User> localUsers;
+	ArrayList<User> distantUsers;
 	User user;
 	InetAddress ip;
 	int centralPort;
+	ArrayList<LocalSession> sessions;
 	
 	public LocalSystem() 
 	{
-		// TODO : create localCommunication Thread and distant communication Thread
+		localUsers = new ArrayList<User>();
+		distantUsers = new ArrayList<User>();
+		sessions = new ArrayList<LocalSession>();	
 	}
 	
 	public void LoadUser() 
@@ -28,10 +35,12 @@ public class LocalSystem {
 		// TODO : request name change
 	}
 	
-	public void createSession(DatagramSocket socket) 
+	public void createSession(DatagramPacket packet) throws IOException 
 	{
-		
+		byte[] c = Message.extractContent(packet.getData());
+		sessions.add(new LocalSession(user, new User(c)));
 	}
+
 	
 	
 	

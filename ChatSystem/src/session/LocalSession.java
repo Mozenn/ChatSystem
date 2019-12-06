@@ -2,24 +2,35 @@ package session;
 
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.concurrent.ThreadLocalRandom;
+import java.net.InetAddress;
 
+import defo.SystemMessage;
 import defo.User;
 import defo.UserMessage;
+
+import localSystem.LocalCommunicationThread;
 
 public class LocalSession extends Session{
 	
 	private DatagramSocket socket;
+	private int port;
 	private UDPSessionListener listener;
 
-	public LocalSession(byte[] id, User e, User r) 
+	public LocalSession(User e, User r) throws IOException 
 	{
-		super(id,e,r);
+		super(e,r);
 		startSession();
 	}
 	
+	/*
+	{
+		super(u);
+		startSession();
+	}*/
 	
 	
 	@Override
@@ -42,9 +53,25 @@ public class LocalSession extends Session{
 			}
 		}
 		listener = new UDPSessionListener(this, socket);
-		// TODO : notify general listener of session start request
 	}
-
+	
+	public void notifySS() throws IOException 
+	{
+		String n = "";
+		for (int i = 0; i < User.MAX_NAME_SIZE - emitter.getUsername().length(); i++) 
+		{
+			n += " ";
+		}
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		stream.write(emitter.getID());
+		stream.write(emitter.getIpAddress());
+		stream.write(emitter.getUsername().getBytes());
+		stream.write(n.getBytes());
+		SystemMessage msg = new SystemMessage(SystemMessage.SystemMessageType.SS, stream.toByteArray());
+		InetAddress addr = InetAddress.getByAddress(receiver.getIpAddress());
+		socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalCommunicationThread.PORT));
+	}
+	
 
 
 	@Override
@@ -64,6 +91,7 @@ public class LocalSession extends Session{
 		try {
 			buffer = m.toByteArray();
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
