@@ -1,3 +1,26 @@
+# Research 
 - Search java swing best practices & design ( mvp ? other )
 - use static factory ||factory pattern if needed 
 - find design for thread & listener & event 
+- How to use Servlet 
+
+# Implementation 
+- Make IDatabase interaction interface (local sys & central sys) 
+- 
+
+-Pattern 
+	- Builder || Abstract factory  => message 
+	- Session => Abstract Factory
+		- local session 
+		- distant session 
+		- Make ISession interface 
+	- Observer 
+		- Systems subscribe to session  
+		- System subscribe to threads 
+
+- UI
+	- Only the presentation layer need to change for mobile 
+
+
+# Polish 
+	- Produce javadoc with comments (see resources)
