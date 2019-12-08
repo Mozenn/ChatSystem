@@ -1,12 +1,13 @@
-package defo;
+package message;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.sql.Timestamp;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
-public abstract class Message {
+public abstract class Message implements Serializable{
 	
 	public static final int MAX_SIZE = 1310720;
 	public static final int HEADER_SIZE = 29;

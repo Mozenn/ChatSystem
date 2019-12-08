@@ -1,8 +1,9 @@
 package defo;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class User {
+public class User implements Serializable {
 	
 	 private byte[] id;
 	 private byte[] ipAddress;

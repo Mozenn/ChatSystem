@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import defo.Message;
-import defo.UserMessage;
+import message.Message;
+import message.UserMessage;
 
 public class UDPSessionListener extends Thread{
 	

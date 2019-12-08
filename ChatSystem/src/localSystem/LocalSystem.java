@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 
-import defo.Message;
 import defo.User;
+import message.Message;
 import session.LocalSession;
 
 public class LocalSystem {

@@ -4,9 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import defo.Message;
 import defo.User;
-import defo.UserMessage;
+import message.Message;
+import message.UserMessage;
 
 public abstract class Session {
 

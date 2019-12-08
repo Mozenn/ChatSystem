@@ -5,9 +5,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import defo.Message;
-import defo.SystemMessage;
-import defo.UserMessage;
+import message.Message;
+import message.SystemMessage;
+import message.UserMessage;
 
 public class LocalCommunicationListener extends Thread {
 	

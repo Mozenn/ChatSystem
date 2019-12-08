@@ -8,11 +8,10 @@ import java.net.DatagramPacket;
 import java.util.concurrent.ThreadLocalRandom;
 import java.net.InetAddress;
 
-import defo.SystemMessage;
 import defo.User;
-import defo.UserMessage;
-
 import localSystem.LocalCommunicationThread;
+import message.SystemMessage;
+import message.UserMessage;
 
 public class LocalSession extends Session{
 	

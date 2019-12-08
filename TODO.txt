@@ -2,14 +2,16 @@
 - Search java swing best practices & design ( mvp ? other )
 - use static factory ||factory pattern if needed 
 - find design for thread & listener & event 
+	- test on dummy example for thread execution 
 - How to use Servlet 
 
 # Implementation 
 - Make IDatabase interaction interface (local sys & central sys) 
-- 
+- Clean current code 
 
 -Pattern 
 	- Builder || Abstract factory  => message 
+	- Static factory method 
 	- Session => Abstract Factory
 		- local session 
 		- distant session 
