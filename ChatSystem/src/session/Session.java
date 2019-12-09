@@ -20,11 +20,6 @@ public abstract class Session {
 		
 	}
 	
-	/*public Session(User u) 
-	{
-		emitter = u;
-	}*/
-	
 	public Session(User e, User r) throws IOException 
 	{
 		emitter = e;

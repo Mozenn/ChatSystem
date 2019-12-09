@@ -22,6 +22,7 @@ public class LocalCommunicationListener extends Thread {
 	{
 		this.thread = thread;
 		this.socket = socket;
+		run = new AtomicBoolean() ; 
 		run.set(true);
 		start();
 	}
@@ -39,16 +40,29 @@ public class LocalCommunicationListener extends Thread {
 				e.printStackTrace();
 			}
 			String subtype = new String(Message.extractSubtype(buffer));
-			SystemMessage.SystemMessageType type = SystemMessage.SystemMessageType.valueOf(subtype);
+			System.out.println(packet.getAddress().toString());
+			
+			SystemMessage.SystemMessageType type ; 
+			
+			try
+			{
+				type = SystemMessage.SystemMessageType.valueOf(subtype);
+			}
+			catch(Exception e)
+			{
+				continue;
+			}
+
 			switch(type)
 			{
 				case SS: 
 				try {
-					thread.getLocalSystem().createSession(packet);
+					thread.getLocalSystem().createSessionResponse(packet);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				break ;
 				
 				case CO:
 				ObjectInputStream iStream;
@@ -65,6 +79,7 @@ public class LocalCommunicationListener extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				break ;
 				
 				case CR:
 				try {
@@ -79,12 +94,10 @@ public class LocalCommunicationListener extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				break ;
 				
-				
-					
-					
-					
-					
+				default : 
+					break ; 
 			}
 		}
 	}

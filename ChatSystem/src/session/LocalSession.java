@@ -27,12 +27,6 @@ public class LocalSession extends Session{
 		startSession();
 	}
 	
-	/*
-	{
-		super(u);
-		startSession();
-	}*/
-	
 	
 	@Override
 	public void startSession() {

@@ -2,6 +2,8 @@ package defo;
 
 import java.util.Date;
 
+import localSystem.LocalSystem;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,41 +11,23 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.sql.Timestamp;
 
 public class Main {
 
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		
-		String truc = "babozo";
-		//System.out.println(truc.getBytes().length);
+		InetAddress ip = InetAddress.getLocalHost();
+		System.out.println("Current IP address : " + ip.getHostAddress());
 		
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+			
+		byte[] mac = network.getHardwareAddress();
 		
-		stream.write(4);
+		User u = new User(mac,ip.getAddress(),"name") ; 
 		
-		System.out.println(InetAddress.getLocalHost()); 
-		
-		
-		User t = new User(stream.toByteArray(),InetAddress.getLocalHost().getAddress(),"hey");
-
-		
-		// Serialize to a byte array
-		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-		ObjectOutput oo = new ObjectOutputStream(bStream); 
-		oo.writeObject(t);
-		oo.close();
-
-		byte[] serializedMessage = bStream.toByteArray();
-		
-		
-		ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(serializedMessage));
-		User t2 = (User) iStream.readObject();
-		iStream.close();
-		
-		InetAddress i = InetAddress.getByAddress(t2.getIpAddress()); 
-		
-		System.out.println(t2.getUsername() + " " + i + " " + t2.getID()); 
+		LocalSystem locSys = new LocalSystem(u); 
 	}
 
 }

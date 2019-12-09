@@ -6,11 +6,21 @@ public class SystemMessage extends Message{
 	
 	public enum SystemMessageType
 	{
-		CO, // connection
-		CR, // connectionResponse
-		GU, // getDistantUsers
-		CV, // checkUsernameValidity
-		SS  // startSession	
+		CO("CO"), // connection
+		CR("CR"), // connectionResponse
+		GU("GU"), // getDistantUsers
+		CV("CV"), // checkUsernameValidity
+		SS("SS");  // startSession	
+		
+	    private String type;
+
+		SystemMessageType(String type) {
+	        this.type = type;
+	    }
+
+	    String getType() {
+	        return type;
+	    }
 	}
 	
 	public SystemMessage(SystemMessageType s, byte[] c) throws IOException 
