@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 public abstract class Message implements Serializable{
 	
+	// TODO : move all helper to specific MessageUtility class 
 	public static final int MAX_SIZE = 1310720;
 	public static final int HEADER_SIZE = 29;
 	

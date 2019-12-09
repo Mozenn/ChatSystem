@@ -11,18 +11,22 @@ import session.LocalSession;
 
 public class LocalSystem {
 	
-	ArrayList<User> localUsers;
-	ArrayList<User> distantUsers;
-	User user;
-	InetAddress ip;
-	int centralPort;
+	private ArrayList<User> localUsers;
+	private ArrayList<User> distantUsers;
+	private User user;
+	private InetAddress centralSysIp;
+	private int centralSysPort;
 	ArrayList<LocalSession> sessions;
+	
+	LocalCommunicationThread localCom ; 
 	
 	public LocalSystem() 
 	{
 		localUsers = new ArrayList<User>();
 		distantUsers = new ArrayList<User>();
 		sessions = new ArrayList<LocalSession>();	
+		
+		localCom = new LocalCommunicationThread(this) ; 
 	}
 	
 	public void LoadUser() 

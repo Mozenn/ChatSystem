@@ -13,15 +13,11 @@ public class SystemMessage extends Message{
 		SS  // startSession	
 	}
 	
-	public SystemMessage(SystemMessageType s, byte[] c) 
+	public SystemMessage(SystemMessageType s, byte[] c) throws IOException 
 	{
 		super();
 		content = c;
-		try {
-			buildHeader((byte)1, s.name(), content.length);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+		buildHeader((byte)1, s.name(), content.length);
+	
 	}
 }

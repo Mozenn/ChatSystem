@@ -9,9 +9,9 @@ public class LocalCommunicationThread extends Thread{
 	
 	public static final int PORT = 8888; 
 	
-	public LocalCommunicationThread() 
+	public LocalCommunicationThread(LocalSystem system) 
 	{
-		
+		this.system = system ; 
 	}
 	
 	public void notifyLocalUsers() 

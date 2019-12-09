@@ -36,6 +36,7 @@ public abstract class Session {
 		messages = new ArrayList<Message>();
 	}
 	
+	// TODO : make synchronized method 
 	public void addMessage(Message m) 
 	{
 		messages.add(m);

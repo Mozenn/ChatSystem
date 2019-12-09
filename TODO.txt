@@ -8,6 +8,7 @@
 # Implementation 
 - Make IDatabase interaction interface (local sys & central sys) 
 - Clean current code 
+	- close socket 
 
 -Pattern 
 	- Builder || Abstract factory  => message 
