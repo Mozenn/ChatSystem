@@ -20,13 +20,18 @@ public class LocalSystem {
 	
 	LocalCommunicationThread localCom ; 
 	
-	public LocalSystem() 
+	public LocalSystem() throws IOException 
 	{
 		localUsers = new ArrayList<User>();
 		distantUsers = new ArrayList<User>();
 		sessions = new ArrayList<LocalSession>();	
 		
 		localCom = new LocalCommunicationThread(this) ; 
+	}
+	
+	public User getUser() 
+	{
+		return user;
 	}
 	
 	public void LoadUser() 
@@ -43,6 +48,11 @@ public class LocalSystem {
 	{
 		byte[] c = Message.extractContent(packet.getData());
 		sessions.add(new LocalSession(user, new User(c)));
+	}
+	
+	public void addLocalUser(User u) 
+	{
+		localUsers.add(u);
 	}
 
 	

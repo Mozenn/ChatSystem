@@ -4,6 +4,8 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.concurrent.ThreadLocalRandom;
 import java.net.InetAddress;
@@ -61,15 +63,18 @@ public class LocalSession extends Session{
 		{
 			n += " ";
 		}
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		stream.write(emitter.getID());
-		stream.write(emitter.getIpAddress());
-		stream.write(emitter.getUsername().getBytes());
-		stream.write(n.getBytes());
-		SystemMessage msg = new SystemMessage(SystemMessage.SystemMessageType.SS, stream.toByteArray());
+		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+		ObjectOutput oo = new ObjectOutputStream(bStream); 
+		oo.writeObject(emitter);
+		oo.close();
+
+		byte[] serializedUser = bStream.toByteArray();
+		SystemMessage msg = new SystemMessage(SystemMessage.SystemMessageType.SS, serializedUser);
 		InetAddress addr = InetAddress.getByAddress(receiver.getIpAddress());
 		socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalCommunicationThread.PORT));
 	}
+	
+	
 	
 
 
