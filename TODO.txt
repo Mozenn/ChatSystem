@@ -9,6 +9,7 @@
 - Make IDatabase interaction interface (local sys & central sys) 
 - Clean current code 
 	- close socket 
+	Override ToString
 
 -Pattern 
 	- Builder || Abstract factory  => message 
@@ -23,6 +24,7 @@
 
 - UI
 	- Only the presentation layer need to change for mobile 
+	- Do mockup on paper 
 
 
 # Polish 

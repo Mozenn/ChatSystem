@@ -21,17 +21,12 @@ public class LocalCommunicationThread extends Thread implements AutoCloseable{
 	private LocalCommunicationListener listener ; 
 	private static final String multicastAddress = "228.228.228.228";
 	
-	public static final int PORT = 8888; 
+	
 	
 	public LocalCommunicationThread(LocalSystem system) throws IOException 
 	{
 		this.system = system ;
-		socket = new MulticastSocket(PORT);
-		socket.joinGroup(InetAddress.getByName(multicastAddress));
-		
-		listener = new LocalCommunicationListener(this,socket);
-		
-		notifyLocalUsers(); 
+
 	}
 	
 	public void notifyLocalUsers() throws IOException 

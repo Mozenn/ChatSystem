@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.MulticastSocket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import defo.User;
@@ -14,13 +15,13 @@ import message.UserMessage;
 
 public class LocalCommunicationListener extends Thread {
 	
-	private LocalCommunicationThread thread;
-	private DatagramSocket socket;
+	LocalSystem system ; 
+	private MulticastSocket socket;
 	private AtomicBoolean run;
 	
-	public LocalCommunicationListener(LocalCommunicationThread thread, DatagramSocket socket) 
+	public LocalCommunicationListener(LocalSystem system, MulticastSocket socket) 
 	{
-		this.thread = thread;
+		this.system = system;
 		this.socket = socket;
 		run = new AtomicBoolean() ; 
 		run.set(true);

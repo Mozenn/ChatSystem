@@ -30,21 +30,20 @@ public class LocalSession extends Session{
 	
 	@Override
 	public void startSession() {
-		// TODO Auto-generated method stub
+		// TODO use networkUtility 
 		
 		boolean b = false;
-		int num;
+		int port;
 		while(!b) 
 		{
-			num = ThreadLocalRandom.current().nextInt(1024,65535);
+			port = ThreadLocalRandom.current().nextInt(1024,65535);
 			try 
 			{
-				socket = new DatagramSocket(num);
+				socket = new DatagramSocket(port);
 				b = true;
 			}
 			catch(SocketException e) 
 			{
-				e.printStackTrace();
 			}
 		}
 		listener = new UDPSessionListener(this, socket);
