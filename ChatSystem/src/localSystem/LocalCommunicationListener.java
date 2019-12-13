@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import defo.User;
@@ -19,11 +21,12 @@ public class LocalCommunicationListener extends Thread {
 	private MulticastSocket socket;
 	private AtomicBoolean run;
 	
-	public LocalCommunicationListener(LocalSystem system, MulticastSocket socket) 
+	public LocalCommunicationListener(LocalSystem system) throws IOException 
 	{
 		this.system = system;
-		this.socket = socket;
-		run = new AtomicBoolean() ; 
+		this.socket = new MulticastSocket(LocalSystem.LISTENING_PORT);
+		socket.joinGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
+		run = new AtomicBoolean(); 
 		run.set(true);
 		start();
 	}
@@ -35,14 +38,15 @@ public class LocalCommunicationListener extends Thread {
 			byte[] buffer = new byte[Message.MAX_SIZE];
 			DatagramPacket packet = new DatagramPacket(buffer, 0);
 			try {
+				System.out.println("1");
 				socket.receive(packet);
+				System.out.println("2");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			String subtype = new String(Message.extractSubtype(buffer));
 			System.out.println(packet.getAddress().toString());
-			
 			SystemMessage.SystemMessageType type ; 
 			
 			try
@@ -58,7 +62,7 @@ public class LocalCommunicationListener extends Thread {
 			{
 				case SS: 
 				try {
-					thread.getLocalSystem().createSessionResponse(packet);
+					system.createSessionResponse(packet);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -71,8 +75,8 @@ public class LocalCommunicationListener extends Thread {
 					iStream = new ObjectInputStream(new ByteArrayInputStream(Message.extractContent(packet.getData())));
 					User u = (User) iStream.readObject();
 					iStream.close();
-					thread.getLocalSystem().addLocalUser(u);
-					thread.notifyConnectionResponse(packet);
+					system.addLocalUser(u);
+					system.notifyConnectionResponse(packet);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -87,7 +91,7 @@ public class LocalCommunicationListener extends Thread {
 					iStream = new ObjectInputStream(new ByteArrayInputStream(Message.extractContent(packet.getData())));
 					User u = (User) iStream.readObject();
 					iStream.close();
-					thread.getLocalSystem().addLocalUser(u);
+					system.addLocalUser(u);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -97,15 +101,18 @@ public class LocalCommunicationListener extends Thread {
 				}
 				break ;
 				
+				
 				default : 
 					break ; 
 			}
 		}
 	}
 	
-	public void stopRun() 
+	public void stopRun() throws UnknownHostException, IOException 
 	{
 		run.set(false);
+		socket.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
+		socket.close();
 	}
 
 	

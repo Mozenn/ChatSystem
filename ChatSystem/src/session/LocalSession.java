@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.net.InetAddress;
 
 import defo.User;
-import localSystem.LocalCommunicationThread;
+import localSystem.LocalSystem;
 import message.SystemMessage;
 import message.UserMessage;
 import utility.NetworkUtility;
@@ -53,7 +53,7 @@ public class LocalSession extends Session{
 		byte[] serializedUser = bStream.toByteArray();
 		SystemMessage msg = new SystemMessage(SystemMessage.SystemMessageType.SS, serializedUser);
 		InetAddress addr = InetAddress.getByAddress(receiver.getIpAddress());
-		socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalCommunicationThread.PORT));
+		socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalSystem.LISTENING_PORT));
 	}
 	
 	

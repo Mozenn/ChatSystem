@@ -36,11 +36,9 @@ public class LocalSystem implements AutoCloseable{
 		localUsers = new ArrayList<User>();
 		distantUsers = new ArrayList<User>();
 		sessions = new ArrayList<LocalSession>();	
+	
 		
-		multicastSocket = new MulticastSocket(LISTENING_PORT);
-		multicastSocket.joinGroup(InetAddress.getByName(MULTICAST_ADDR));
-		
-		listener = new LocalCommunicationListener(this,MULTICAST_ADDR);
+		listener = new LocalCommunicationListener(this);
 		
 		notifyLocalUsers(); 
 		
@@ -54,38 +52,26 @@ public class LocalSystem implements AutoCloseable{
 		
 		user = u ; 
 		
-		// TODO start listener 
+		listener = new LocalCommunicationListener(this);
+		
+		notifyLocalUsers();
 		
 	}
 	
 	public void notifyLocalUsers() throws IOException 
 	{
-		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-		ObjectOutput oo = new ObjectOutputStream(bStream); 
-		oo.writeObject(system.getUser());
-		oo.close();
-
-		byte[] serializedUser = bStream.toByteArray();
-		
-		SystemMessage msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
-		InetAddress addr = InetAddress.getByName(multicastAddress);
-		socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalCommunicationThread.PORT));
+		new NotifyLocalUsersTask(this);
 	}
 	
-	public void notifyConnectionResponse(DatagramPacket packet) throws IOException 
+	public void notifyConnectionResponse(DatagramPacket packet) throws IOException, ClassNotFoundException 
 	{
-		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-		ObjectOutput oo = new ObjectOutputStream(bStream); 
-		oo.writeObject(system.getUser());
-		oo.close();
-
-		byte[] serializedUser = bStream.toByteArray();
-		
-		SystemMessage msg = new SystemMessage(SystemMessage.SystemMessageType.CR, serializedUser);
-		InetAddress addr = packet.getAddress();
-		socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalCommunicationThread.PORT));
+		new NotifyConnectionResponseTask(this,packet);
 	}
 	
+	public boolean getValidity(String name) 
+	{
+		return true;
+	}
 
 	
 	public User getUser() 
@@ -123,9 +109,7 @@ public class LocalSystem implements AutoCloseable{
 
 	public void close() throws UnknownHostException, IOException
 	{
-		listener.stopRun();
-		multicastSocket.leaveGroup(InetAddress.getByName(multicastAddress));
-		multicastSocket.close();	
+		listener.stopRun();	
 	}
 	
 	

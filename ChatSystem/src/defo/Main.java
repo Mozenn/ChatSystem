@@ -27,6 +27,8 @@ public class Main {
 		
 		User u = new User(mac,ip.getAddress(),"name") ; 
 		
+		
+		
 		LocalSystem locSys = new LocalSystem(u); 
 	}
 
