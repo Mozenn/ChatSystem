@@ -14,6 +14,7 @@ import defo.User;
 import localSystem.LocalCommunicationThread;
 import message.SystemMessage;
 import message.UserMessage;
+import utility.NetworkUtility;
 
 public class LocalSession extends Session{
 	
@@ -30,25 +31,13 @@ public class LocalSession extends Session{
 	
 	@Override
 	public void startSession() {
-		// TODO use networkUtility 
+
+		socket = NetworkUtility.getUDPSocketWithRandomPort() ; 
 		
-		boolean b = false;
-		int port;
-		while(!b) 
-		{
-			port = ThreadLocalRandom.current().nextInt(1024,65535);
-			try 
-			{
-				socket = new DatagramSocket(port);
-				b = true;
-			}
-			catch(SocketException e) 
-			{
-			}
-		}
 		listener = new UDPSessionListener(this, socket);
 	}
 	
+	// TODO : make runnable class for this 
 	public void notifySS() throws IOException 
 	{
 		String n = "";
@@ -79,7 +68,7 @@ public class LocalSession extends Session{
 	}
 
 
-
+	// TODO : make runnable class for this ? 
 	@Override
 	public void sendMessage(UserMessage m){
 		// TODO Auto-generated method stub
