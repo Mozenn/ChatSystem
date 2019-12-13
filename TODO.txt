@@ -6,10 +6,20 @@
 - How to use Servlet 
 
 # Implementation 
-- Make IDatabase interaction interface (local sys & central sys) 
+-Database 
+	- Make IDatabase interaction interface (local sys & central sys)
+	- Voir moodle  
 - Clean current code 
 	- close socket 
-	Override ToString
+	- Override ToString
+- Fixe address filter 
+
+# Deploy
+- See database config 
+- Local DB
+	- Maven
+- Distributed DB
+	- MySQL 
 
 -Pattern 
 	- Builder || Abstract factory  => message 
