@@ -68,12 +68,6 @@ public class LocalSystem implements AutoCloseable{
 		new NotifyConnectionResponseTask(this,packet);
 	}
 	
-	public boolean getValidity(String name) 
-	{
-		return true;
-	}
-
-	
 	public User getUser() 
 	{
 		return user;
