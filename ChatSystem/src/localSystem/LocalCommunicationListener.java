@@ -36,7 +36,7 @@ public class LocalCommunicationListener extends Thread {
 		while(run.get()) 
 		{
 			byte[] buffer = new byte[Message.MAX_SIZE];
-			DatagramPacket packet = new DatagramPacket(buffer, 0);
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			try {
 				System.out.println("1");
 				socket.receive(packet);
@@ -45,7 +45,8 @@ public class LocalCommunicationListener extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String subtype = new String(Message.extractSubtype(buffer));
+			String subtype = new String(Message.extractSubtype(packet.getData()));
+			System.out.println(subtype);
 			System.out.println(packet.getAddress().toString());
 			SystemMessage.SystemMessageType type ; 
 			
@@ -55,9 +56,10 @@ public class LocalCommunicationListener extends Thread {
 			}
 			catch(Exception e)
 			{
+				System.out.println("ça dégage");
 				continue;
 			}
-
+			System.out.println("blob");
 			switch(type)
 			{
 				case SS: 
@@ -72,9 +74,10 @@ public class LocalCommunicationListener extends Thread {
 				case CO:
 				ObjectInputStream iStream;
 				try {
-					iStream = new ObjectInputStream(new ByteArrayInputStream(Message.extractContent(packet.getData())));
-					User u = (User) iStream.readObject();
-					iStream.close();
+					
+					/*iStream = new ObjectInputStream(new ByteArrayInputStream(Message.extractContent(packet.getData())));*/
+					User u = new User(Message.extractContent(packet.getData()));/*(User) iStream.readObject();
+					iStream.close();*/
 					system.addLocalUser(u);
 					system.notifyConnectionResponse(packet);
 				} catch (IOException e) {

@@ -3,6 +3,8 @@ package defo;
 import java.util.Date;
 
 import localSystem.LocalSystem;
+import message.Message;
+import message.SystemMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,9 +29,13 @@ public class Main {
 		
 		User u = new User(mac,ip.getAddress(),"name") ; 
 		
-		
-		
 		LocalSystem locSys = new LocalSystem(u); 
+		/*byte[] content = new String("poisqdfisiducfhckduifhskdicfh").getBytes();
+		byte[] msg = new SystemMessage(SystemMessage.SystemMessageType.CO, content).toByteArray();
+		System.out.println(new String(Message.extractSubtype(msg)));
+		System.out.println(Message.extractSize(msg)[0]);
+		System.out.println(new String(Message.extractTime(msg)));
+		System.out.println(new String(Message.extractContent(msg)));*/
 	}
 
 }

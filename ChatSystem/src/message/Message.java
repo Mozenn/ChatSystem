@@ -20,8 +20,8 @@ public abstract class Message implements Serializable{
 	public static final int START_SIZE = 3;
 	public static final int END_SIZE = 4;
 	public static final int START_TIME = 4;
-	public static final int END_TIME = 30;
-	public static final int START_CONTENT = 30;
+	public static final int END_TIME = 27;
+	public static final int START_CONTENT = 27;
 	
 	protected byte[] content;
 	protected byte[] header;

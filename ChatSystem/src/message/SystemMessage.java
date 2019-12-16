@@ -27,7 +27,7 @@ public class SystemMessage extends Message{
 	{
 		super();
 		content = c;
-		buildHeader((byte)1, s.name(), content.length);
+		buildHeader((byte)1, s.toString(), c.length);
 	
 	}
 }
