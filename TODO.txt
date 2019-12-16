@@ -1,9 +1,13 @@
 # Research 
-- Search java swing best practices & design ( mvp ? other )
-- use static factory ||factory pattern if needed 
-- find design for thread & listener & event 
-	- test on dummy example for thread execution 
-- How to use Servlet 
+- Swing 
+	- Search java swing best practices & design ( mvp ? other )
+	- FireManagement 
+- Servlet 
+	- How to use 
+	- REST 
+- DB
+	- Search Javabean 
+- Maven 
 
 # Implementation 
 -Database 
@@ -12,14 +16,7 @@
 - Clean current code 
 	- close socket 
 	- Override ToString
-- Fixe address filter 
-
-# Deploy
-- See database config 
-- Local DB
-	- Maven
-- Distributed DB
-	- MySQL 
+	- use static factory ||factory pattern if needed 
 
 -Pattern 
 	- Builder || Abstract factory  => message 
@@ -33,9 +30,19 @@
 		- System subscribe to threads 
 
 - UI
-	- Only the presentation layer need to change for mobile 
-	- Do mockup on paper 
+- Only the presentation layer need to change for mobile 
+- Do mockup on paper 
 
+# Deploy
+- See database config 
+- See MAven 
+- Local DB
+	- Maven
+- Distributed DB
+	- MySQL 
 
 # Polish 
 	- Produce javadoc with comments (see resources)
+	- Review effective Java items 
+	- Add documentation 
+		- readMe
