@@ -44,17 +44,17 @@ public class NotifyLocalUsersTask implements Runnable
 			e2.printStackTrace();
 		}
 		
-
-		byte[] serializedUser = bStream.toByteArray();
-		
 		SystemMessage msg = null;
+
+		byte[] serializedUser;
 		try {
+			serializedUser = localSystem.getUser().getSerialized();
 			msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
-		} catch (IOException e1) {
+		} catch (IOException e2) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e2.printStackTrace();
 		}
-		
+			
 		InetAddress addr = null;
 		
 		try {

@@ -59,7 +59,6 @@ public class LocalCommunicationListener extends Thread {
 				System.out.println("ça dégage");
 				continue;
 			}
-			System.out.println("blob");
 			switch(type)
 			{
 				case SS: 
@@ -90,18 +89,8 @@ public class LocalCommunicationListener extends Thread {
 				break ;
 				
 				case CR:
-				try {
-					iStream = new ObjectInputStream(new ByteArrayInputStream(Message.extractContent(packet.getData())));
-					User u = (User) iStream.readObject();
-					iStream.close();
+					User u = new User(Message.extractContent(packet.getData()));
 					system.addLocalUser(u);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				break ;
 				
 				

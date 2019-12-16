@@ -24,11 +24,8 @@ public class NotifyConnectionResponseTask implements Runnable {
 	public NotifyConnectionResponseTask(LocalSystem localSystem,DatagramPacket packet) throws IOException, ClassNotFoundException
 	{
 		this.localSystem = localSystem ; 
-		
-		ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(Message.extractContent(packet.getData())));
-		User u = (User) iStream.readObject();
-		iStream.close();
-		
+		User u = new User(Message.extractContent(packet.getData()));
+		System.out.println("on est la :" + new String(u.getIpAddress()));
 		addr = InetAddress.getByAddress(u.getIpAddress());
 		thread = new Thread(this,"NotifyLocalUsers") ; 
 		thread.start();
@@ -46,7 +43,8 @@ public class NotifyConnectionResponseTask implements Runnable {
 			
 			byte[] serializedUser = bStream.toByteArray();
 			SystemMessage msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
-			DatagramSocket socket = NetworkUtility.getUDPSocketWithRandomPort() ; 		
+			DatagramSocket socket = NetworkUtility.getUDPSocketWithRandomPort() ; 	
+			System.out.println("nice");
 			socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalSystem.LISTENING_PORT));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -65,6 +65,7 @@ public class LocalSystem implements AutoCloseable{
 	
 	public void notifyConnectionResponse(DatagramPacket packet) throws IOException, ClassNotFoundException 
 	{
+		System.out.println("RAAAAAAAAAAAAA");
 		new NotifyConnectionResponseTask(this,packet);
 	}
 	

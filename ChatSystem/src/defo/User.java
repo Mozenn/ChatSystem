@@ -1,9 +1,10 @@
 package defo;
 
-import java.io.Serializable;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
-public class User implements Serializable {
+public class User{
 	
 	 private byte[] id;
 	 private byte[] ipAddress;
@@ -17,6 +18,7 @@ public class User implements Serializable {
 		 ipAddress = ip;
 		 username = uname;
 	 }
+	 
 	 
 	 public User(byte[] content) 
 	 {
@@ -36,6 +38,15 @@ public class User implements Serializable {
 
 	 public String getUsername() {
 		return username;
+	 }
+	 
+	 public byte[] getSerialized() throws IOException 
+	 {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		stream.write(id);
+		stream.write(ipAddress);
+		stream.write(username.getBytes());
+		return stream.toByteArray();
 	 }
 	 
 	 private byte[] extractID(byte[] content) 
