@@ -25,23 +25,18 @@ public class NotifyConnectionResponseTask implements Runnable {
 	{
 		this.localSystem = localSystem ; 
 		User u = new User(Message.extractContent(packet.getData()));
-		System.out.println("on est la :" + new String(u.getIpAddress()));
+		System.out.println("longueur : "+u.getID().length);
+		System.out.println("longueur : "+u.getIpAddress().length);
+		System.out.println("longueur : "+u.getUsername().length());
 		addr = InetAddress.getByAddress(u.getIpAddress());
-		thread = new Thread(this,"NotifyLocalUsers") ; 
+		thread = new Thread(this,"NotifyConnectionResponse") ; 
 		thread.start();
 	}
 	
 	@Override
 	public void run() {
-		
-		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-		ObjectOutput oo;
-		try {
-			oo = new ObjectOutputStream(bStream);		
-			oo.writeObject(localSystem.getUser());
-			oo.close();
-			
-			byte[] serializedUser = bStream.toByteArray();
+		try {			
+			byte[] serializedUser = localSystem.getUser().getSerialized();
 			SystemMessage msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
 			DatagramSocket socket = NetworkUtility.getUDPSocketWithRandomPort() ; 	
 			System.out.println("nice");

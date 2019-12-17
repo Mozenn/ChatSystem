@@ -56,7 +56,6 @@ public class LocalCommunicationListener extends Thread {
 			}
 			catch(Exception e)
 			{
-				System.out.println("ça dégage");
 				continue;
 			}
 			switch(type)
@@ -73,10 +72,7 @@ public class LocalCommunicationListener extends Thread {
 				case CO:
 				ObjectInputStream iStream;
 				try {
-					
-					/*iStream = new ObjectInputStream(new ByteArrayInputStream(Message.extractContent(packet.getData())));*/
-					User u = new User(Message.extractContent(packet.getData()));/*(User) iStream.readObject();
-					iStream.close();*/
+					User u = new User(Message.extractContent(packet.getData()));
 					system.addLocalUser(u);
 					system.notifyConnectionResponse(packet);
 				} catch (IOException e) {

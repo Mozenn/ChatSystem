@@ -51,17 +51,17 @@ public class User{
 	 
 	 private byte[] extractID(byte[] content) 
 	 {
-		 return Arrays.copyOfRange(content, 0, 7);
+		 return Arrays.copyOfRange(content, 0, 6);
 	 }
 	 
 	 private byte[] extractIPAddr(byte[] content) 
 	 {
-		 return Arrays.copyOfRange(content, 7, 12);
+		 return Arrays.copyOfRange(content, 6, 10);
 	 }
 	 
 	 private byte[] extractUsername(byte[] content) 
 	 {
-		 return Arrays.copyOfRange(content, 12, 33);
+		 return Arrays.copyOfRange(content, 9, 33);
 	 }
 	 
 	 

@@ -32,17 +32,6 @@ public class NotifyLocalUsersTask implements Runnable
 	public void run() {
 		
 		// Write User to byte 
-		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-		
-		try {
-
-			ObjectOutput oo = new ObjectOutputStream(bStream); 
-			oo.writeObject(localSystem.getUser());
-			oo.close();
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
 		
 		SystemMessage msg = null;
 
