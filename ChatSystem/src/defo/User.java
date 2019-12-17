@@ -56,12 +56,12 @@ public class User{
 	 
 	 private byte[] extractIPAddr(byte[] content) 
 	 {
-		 return Arrays.copyOfRange(content, 6, 10);
+		 return Arrays.copyOfRange(content, 5, 9);
 	 }
 	 
 	 private byte[] extractUsername(byte[] content) 
 	 {
-		 return Arrays.copyOfRange(content, 9, 33);
+		 return Arrays.copyOfRange(content, 10, 33);
 	 }
 	 
 	 

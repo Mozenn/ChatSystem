@@ -86,6 +86,7 @@ public class LocalCommunicationListener extends Thread {
 				
 				case CR:
 					User u = new User(Message.extractContent(packet.getData()));
+					System.out.println("victoire");
 					system.addLocalUser(u);
 				break ;
 				
