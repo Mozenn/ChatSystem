@@ -15,35 +15,34 @@ public class UserMessage extends Message{
 
 	public UserMessageType subtype;
 	
-	public UserMessage(String t) 
+	public UserMessage(String text) throws IOException 
 	{
 		super();
-		content = t.getBytes();
-		try {
-			buildHeader((byte)0,UserMessageType.TX.name(), content.length);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+		content = text.getBytes();
+		buildHeader((byte)0,UserMessageType.TX.name(), content.length);
 	}
 	
-	//TODO : handle exception
+	public UserMessage(byte[] bytes,UserMessageType type) throws IOException 
+	{
+		super();
+		content = bytes;
+		buildHeader((byte)0,UserMessageType.TX.name(), content.length);
+	}
+	
 	public UserMessage(File f) throws IOException 
 	{
 		super();
 		content = Files.readAllBytes(f.toPath());
-		try {
-			buildHeader((byte)0,UserMessageType.FL.name(), content.length);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+		buildHeader((byte)0,UserMessageType.FL.name(), content.length);
 	}
 	
+	
+	/*
 	public UserMessage(byte[] tab) 
 	{
 		super();
 		content = Message.extractContent(tab);
 		this.header = Message.extractHeader(tab);	
 	}
+	*/
 }

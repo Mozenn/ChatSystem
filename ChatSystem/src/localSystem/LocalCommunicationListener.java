@@ -10,14 +10,14 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import defo.User;
+import main.User;
 import message.Message;
 import message.SystemMessage;
 import message.UserMessage;
 
-public class LocalCommunicationListener extends Thread {
+final class LocalCommunicationListener extends Thread {
 	
-	LocalSystem system ; 
+	final private LocalSystem system ; 
 	private MulticastSocket socket;
 	private AtomicBoolean run;
 	
@@ -38,12 +38,12 @@ public class LocalCommunicationListener extends Thread {
 			byte[] buffer = new byte[Message.MAX_SIZE];
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			try {
-				System.out.println("1");
+				System.out.println("wait receive");
 				socket.receive(packet);
-				System.out.println("2");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println("receive done");
+			} catch (IOException e) { // receive failed 
 				e.printStackTrace();
+				continue; 
 			}
 			String subtype = new String(Message.extractSubtype(packet.getData()));
 			System.out.println(subtype);
@@ -54,40 +54,41 @@ public class LocalCommunicationListener extends Thread {
 			{
 				type = SystemMessage.SystemMessageType.valueOf(subtype);
 			}
-			catch(Exception e)
+			catch(Exception e) // not a system message 
 			{
 				continue;
 			}
+			
 			switch(type)
 			{
-				case SS: 
+				case SS: // session started with current local user of localSystem  
 				try {
-					system.createSessionResponse(packet);
+					system.createSessionResponse(packet); // TODO implement observer pattern 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					continue ; 
 				}
 				break ;
 				
-				case CO:
+				case CO: // new user connection 
 				ObjectInputStream iStream;
 				try {
 					User u = new User(Message.extractContent(packet.getData()));
-					system.addLocalUser(u);
+					system.addLocalUser(u);  // TODO implement observer pattern 
 					system.notifyConnectionResponse(packet);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					continue ; 
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					continue ; 
 				}
 				break ;
 				
-				case CR:
+				case CR: // response to CO broadcast 
 					User u = new User(Message.extractContent(packet.getData()));
 					System.out.println("victoire");
-					system.addLocalUser(u);
+					system.addLocalUser(u);// TODO implement observer pattern 
 				break ;
 				
 				

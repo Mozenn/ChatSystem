@@ -2,7 +2,6 @@ package UI;
 
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import net.miginfocom.swing.MigLayout;
 import java.awt.BorderLayout;
 import java.awt.Font;
 

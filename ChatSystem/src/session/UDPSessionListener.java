@@ -36,11 +36,20 @@ public class UDPSessionListener extends Thread{
 			try {
 				socket.receive(packet);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				continue ; 
 			}
-			UserMessage msg = new UserMessage(buffer);
-			session.addMessage(msg);			
+			
+			// TODO deserialize content of packet and get 
+			UserMessage msg = null;
+			
+			try {
+				msg = new UserMessage("hey");
+			} catch (IOException e) {
+				e.printStackTrace();
+				continue;
+			}
+			session.addMessage(msg);	// TODO implement observer 		
 		}
 	}
 	

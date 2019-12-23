@@ -1,4 +1,5 @@
-package defo;
+package main;
+
 
 import java.util.Date;
 import java.util.Enumeration;
@@ -27,7 +28,7 @@ public class Main {
 
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		    
-		
+		// TODO use getLocalIPAddress method 
 		byte[] buf = new byte[4];
 		byte[] data = new byte[] {'g','l','a'};
 		

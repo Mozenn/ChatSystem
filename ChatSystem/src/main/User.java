@@ -1,13 +1,14 @@
-package defo;
+package main;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class User{
+final public class User{
 	
-	 private byte[] id;
-	 private byte[] ipAddress;
+	 private final byte[] id;
+	 private final byte[] ipAddress;
 	 private String username;
 	 
 	 public static final int MAX_NAME_SIZE = 20;
@@ -15,16 +16,22 @@ public class User{
 	 public User(byte[] id, byte[] ip, String uname) 
 	 {
 		 this.id = id;
-		 ipAddress = ip;
-		 username = uname;
+		 this.ipAddress = ip;
+		 this.username = uname;
 	 }
 	 
 	 
 	 public User(byte[] content) 
 	 {
-		 id = extractID(content);
-		 ipAddress = extractIPAddr(content);
-		 username = new String(extractUsername(content)).trim();
+		 this.id = extractID(content);
+		 this.ipAddress = extractIPAddr(content);
+		 this.username = new String(extractUsername(content)).trim();
+	 }
+	 
+	 @Override
+	 public String toString()
+	 {
+		 return username ; 
 	 }
 	 
 	 public byte[] getID() 
@@ -49,6 +56,7 @@ public class User{
 		return stream.toByteArray();
 	 }
 	 
+	 // TODO Use JSON 
 	 private byte[] extractID(byte[] content) 
 	 {
 		 return Arrays.copyOfRange(content, 0, 6);

@@ -60,7 +60,7 @@ public abstract class Message implements Serializable{
 		return Arrays.copyOfRange(m, START_CONTENT, END_TIME);
 	}
 	
-	public Message() 
+	protected Message() 
 	{
 
 	}

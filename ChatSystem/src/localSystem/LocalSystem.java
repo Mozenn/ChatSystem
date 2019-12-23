@@ -10,12 +10,12 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 
-import defo.User;
+import main.User;
 import message.Message;
 import message.SystemMessage;
 import session.LocalSession;
 
-public class LocalSystem implements AutoCloseable{
+final public class LocalSystem implements AutoCloseable{
 	
 	private ArrayList<User> localUsers;
 	private ArrayList<User> distantUsers;
@@ -24,11 +24,11 @@ public class LocalSystem implements AutoCloseable{
 	private InetAddress centralSysIp;
 	private int centralSysPort;
 	
-	ArrayList<LocalSession> sessions;
+	private ArrayList<LocalSession> sessions;
 	
-	LocalCommunicationListener listener ; 
+	private LocalCommunicationListener listener ; 
 	public static final int LISTENING_PORT = 8888; 
-	public static final String MULTICAST_ADDR = "228.228.228.228";
+	public static final String MULTICAST_ADDR = "228.228.228.228"; // TODO use a non routable multicast address between 224.0.0.0 to 224.0.0.255 
 	
 	
 	public LocalSystem() throws IOException 
@@ -70,7 +70,11 @@ public class LocalSystem implements AutoCloseable{
 	
 	public User getUser() 
 	{
-		return user;
+		synchronized(user)
+		{
+			return user;
+		}
+
 	}
 	
 	public void LoadUser() 
@@ -86,18 +90,31 @@ public class LocalSystem implements AutoCloseable{
 	protected void createSessionResponse(DatagramPacket packet) throws IOException 
 	{
 		byte[] c = Message.extractContent(packet.getData());
-		sessions.add(new LocalSession(user, new User(c)));
+		
+		synchronized(sessions)
+		{
+			sessions.add(new LocalSession(user, new User(c),packet.getPort())); // TODO check if getPort output the correct port 
+		}
+		
 	}
 	
 	public void StartLocalSession(User receiver) throws IOException
 	{
-		LocalSession locSes = new LocalSession(user,receiver);  
-		sessions.add(locSes); 
+		LocalSession locSes = new LocalSession(user,receiver); 
+		locSes.notifyStartSession(); // notify receiver system of session started 
+		synchronized(sessions)
+		{
+			sessions.add(locSes); 
+		}
+		
 	}
 	
 	public void addLocalUser(User u) 
 	{
-		localUsers.add(u);
+		synchronized(localUsers)
+		{
+			localUsers.add(u);
+		}
 		System.out.println(u.getUsername()); 
 	}
 

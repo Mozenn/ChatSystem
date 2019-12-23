@@ -1,4 +1,5 @@
-package defo;
+package main;
+
 
 public interface Observer {
 	

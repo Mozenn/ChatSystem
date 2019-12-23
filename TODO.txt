@@ -10,16 +10,26 @@
 - Maven 
 
 # Implementation 
--Database 
-	- Make IDatabase interaction interface (local sys & central sys)
-	- Voir moodle  
-- Clean current code 
-	- close socket 
+
+- Clean code 
+	- close resources(socket,connection,ect) 
 	- Override ToString
 	- use static factory ||factory pattern if needed 
+	- prohibit inheritance when not used 
+		- Make constructor private 
+		- Use final keyword 
+	- implement autocloseable 
+	- add @Override
+	- Add Comments 
+	- Make field final by default 
+	- Exception 
+		- clean 
+		- use try with when using resources 
+	- Serialization 
+		- Use Json format 
+	- add synchronization statement 
 
 -Pattern 
-	- Builder || Abstract factory  => message 
 	- Static factory method 
 	- Session => Abstract Factory
 		- local session 
@@ -29,15 +39,26 @@
 		- Systems subscribe to session  
 		- System subscribe to threads 
 
+
 - UI
-- Only the presentation layer need to change for mobile 
-- Do mockup on paper 
+
+- LocalCommunication 
+	- Try to make the system more scalable 
+	- Use interface & think of SOLID 
+	- make factory for message 
+	- observer between localsystem and listener 
+	- observer between localsystem and sessions ? 
+
+-Database 
+	- Make IDatabase interaction interface (local sys & central sys)
+	- Voir moodle  
 
 # Deploy
 - See database config 
 - See MAven 
 - Local DB
 	- Maven
+	- SQLite
 - Distributed DB
 	- MySQL 
 

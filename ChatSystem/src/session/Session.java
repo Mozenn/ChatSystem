@@ -1,10 +1,11 @@
 package session;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import defo.User;
+import main.User;
 import message.Message;
 import message.UserMessage;
 
@@ -14,8 +15,9 @@ public abstract class Session {
 	protected User emitter;
 	protected User receiver;
 	protected ArrayList<Message> messages;
+	protected int receiverPort ; 
 	
-	public Session()
+	protected Session()
 	{
 		
 	}
@@ -31,14 +33,31 @@ public abstract class Session {
 		messages = new ArrayList<Message>();
 	}
 	
-	// TODO : make synchronized method 
+	public Session(User e, User r, int receiverPort) throws IOException 
+	{
+		emitter = e;
+		receiver = r;
+		this.receiverPort = receiverPort ; 
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		stream.write(e.getID());
+		stream.write(r.getID());
+		id = stream.toByteArray();
+		messages = new ArrayList<Message>();
+	}
+	
 	public void addMessage(Message m) 
 	{
-		messages.add(m);
+		synchronized(messages)
+		{
+			messages.add(m);
+		}
+
 		// TODO: save to database.
 	}
 	
-	public abstract void sendMessage(UserMessage m);
+	public abstract void sendMessage(String s);
+	
+	public abstract void sendMessage(File f);
 	
 	public abstract void startSession();
 	
