@@ -31,14 +31,12 @@
 
 -Pattern 
 	- Static factory method 
-	- Session => Abstract Factory
-		- local session 
-		- distant session 
-		- Make ISession interface 
+	- Abstract factory 
 	- Observer 
-		- Systems subscribe to session  
-		- System subscribe to threads 
 
+- Maven	
+	- Turn project into maven project 
+	- generate & install 
 
 - UI
 
@@ -48,6 +46,9 @@
 	- make factory for message 
 	- observer between localsystem and listener 
 	- observer between localsystem and sessions ? 
+
+- Serialization 
+	- Use Json 
 
 -Database 
 	- Make IDatabase interaction interface (local sys & central sys)
