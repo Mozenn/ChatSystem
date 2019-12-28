@@ -41,17 +41,23 @@ public class Main {
 		DatagramPacket r = new DatagramPacket(buf, 3);
         
         ms.receive(r);
-        byte[] ipe = r.getAddress().getAddress();        
+        byte[] ipe = r.getAddress().getAddress();   
+        String ad = r.getAddress().toString() ; 
+        //var t = InetAddress.getByAddress(ad.getBytes()) ; 
+        System.out.println(ad) ; 
         
      // Obtenir l'adresse IP de la machine locale
 	    NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByAddress(ipe));
 	    byte[] mac = ni.getHardwareAddress();
 
+	    /*
         User u = new User(mac, ipe, "Ragnar Lodbrok");
         
         ms.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
         
 		LocalSystem locSys = new LocalSystem(u);
+        */ 
+        
 		/*byte[] content = new String("poisqdfisiducfhckduifhskdicfh").getBytes();
 		byte[] msg = new SystemMessage(SystemMessage.SystemMessageType.CO, content).toByteArray();
 		System.out.println(new String(Message.extractSubtype(msg)));

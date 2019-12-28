@@ -28,6 +28,8 @@
 	- Serialization 
 		- Use Json format 
 	- add synchronization statement 
+	- Make Serialization utility class 
+		- extract user from packet function 
 
 -Pattern 
 	- Static factory method 

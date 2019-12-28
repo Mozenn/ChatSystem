@@ -1,18 +1,16 @@
 package com.insa.localsystem;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.json.JSONObject;
+
 import com.insa.message.Message;
 import com.insa.message.SystemMessage;
-import com.insa.message.UserMessage;
 import com.insa.user.User;
 
 final class LocalCommunicationListener extends Thread {
@@ -71,9 +69,11 @@ final class LocalCommunicationListener extends Thread {
 				break ;
 				
 				case CO: // new user connection 
-				ObjectInputStream iStream;
 				try {
-					User u = new User(Message.extractContent(packet.getData()));
+					// Deserialization 
+					JSONObject userJson = new JSONObject(new String(Message.extractContent(packet.getData()))) ; 
+					User u = (User) userJson.get("user");
+					
 					system.addLocalUser(u);  // TODO implement observer pattern 
 					system.notifyConnectionResponse(packet);
 				} catch (IOException e) {
@@ -86,7 +86,9 @@ final class LocalCommunicationListener extends Thread {
 				break ;
 				
 				case CR: // response to CO broadcast 
-					User u = new User(Message.extractContent(packet.getData()));
+					JSONObject userJson = new JSONObject(new String(Message.extractContent(packet.getData()))) ; 
+					User u = (User) userJson.get("user");
+					
 					System.out.println("victoire");
 					system.addLocalUser(u);// TODO implement observer pattern 
 				break ;

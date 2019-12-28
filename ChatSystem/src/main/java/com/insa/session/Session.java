@@ -1,17 +1,15 @@
 package com.insa.session;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import com.insa.message.Message;
-import com.insa.message.UserMessage;
 import com.insa.user.User;
 
 public abstract class Session {
 
-	protected byte[] id;
+	protected String id;
 	protected User emitter;
 	protected User receiver;
 	protected ArrayList<Message> messages;
@@ -26,10 +24,7 @@ public abstract class Session {
 	{
 		emitter = e;
 		receiver = r;
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		stream.write(e.getID());
-		stream.write(r.getID());
-		id = stream.toByteArray();
+		id = e.getId() + r.getId() ; 
 		messages = new ArrayList<Message>();
 	}
 	
@@ -38,13 +33,26 @@ public abstract class Session {
 		emitter = e;
 		receiver = r;
 		this.receiverPort = receiverPort ; 
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		stream.write(e.getID());
-		stream.write(r.getID());
-		id = stream.toByteArray();
+		id = e.getId() + r.getId() ; 
 		messages = new ArrayList<Message>();
 	}
 	
+	public String getId() {
+		return id;
+	}
+
+	public User getEmitter() {
+		return emitter;
+	}
+	
+	public User getReceiver() {
+		return receiver;
+	}
+	
+	public int getReceiverPort() {
+		return receiverPort;
+	}
+
 	public void addMessage(Message m) 
 	{
 		synchronized(messages)

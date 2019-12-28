@@ -1,14 +1,11 @@
 package com.insa.localsystem;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+
+import org.json.JSONObject;
 
 import com.insa.message.Message;
 import com.insa.message.SystemMessage;
@@ -24,11 +21,13 @@ final class NotifyConnectionResponseTask implements Runnable {
 	public NotifyConnectionResponseTask(LocalSystem localSystem,DatagramPacket packet) throws IOException, ClassNotFoundException
 	{
 		this.localSystem = localSystem ; 
-		User u = new User(Message.extractContent(packet.getData()));
+		
+		JSONObject userJson = new JSONObject(new String(Message.extractContent(packet.getData()))) ; 
+		User u = (User) userJson.get("user");
 		addr = InetAddress.getByAddress(u.getIpAddress());
 		
 		//Debug 
-		System.out.println("longueur : "+u.getID().length);
+		System.out.println("longueur : "+u.getId().length());
 		System.out.println("longueur : "+u.getIpAddress().length);
 		System.out.println("longueur : "+u.getUsername().length());
 		
@@ -42,12 +41,11 @@ final class NotifyConnectionResponseTask implements Runnable {
 		
 		
 		byte[] serializedUser = null ;
-		try {
-			serializedUser = localSystem.getUser().getSerialized();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return ; 
-		}
+		// Serialization to Json 
+		JSONObject u = new JSONObject();
+		u.put("user", localSystem.getUser()) ; 
+		serializedUser = u.toString().getBytes();
+		
 		SystemMessage msg = null;
 		try {
 			msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);

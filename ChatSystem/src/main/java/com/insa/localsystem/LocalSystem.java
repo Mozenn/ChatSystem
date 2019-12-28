@@ -10,6 +10,8 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 import com.insa.message.Message;
 import com.insa.message.SystemMessage;
 import com.insa.session.LocalSession;
@@ -89,11 +91,13 @@ final public class LocalSystem implements AutoCloseable{
 	
 	protected void createSessionResponse(DatagramPacket packet) throws IOException 
 	{
-		byte[] c = Message.extractContent(packet.getData());
+		// Deserialization 
+		JSONObject userJson = new JSONObject(new String(Message.extractContent(packet.getData()))) ; 
+		User u = (User) userJson.get("user");
 		
 		synchronized(sessions)
 		{
-			sessions.add(new LocalSession(user, new User(c),packet.getPort())); // TODO check if getPort output the correct port 
+			sessions.add(new LocalSession(user, u,packet.getPort())); // TODO check if getPort output the correct port 
 		}
 		
 	}

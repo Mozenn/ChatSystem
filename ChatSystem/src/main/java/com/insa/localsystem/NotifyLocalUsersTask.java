@@ -1,18 +1,15 @@
 package com.insa.localsystem;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 
 import com.insa.message.SystemMessage;
-import com.insa.utility.NetworkUtility;
 
-import java.net.InetAddress;
+import org.json.JSONObject;
 
 final class NotifyLocalUsersTask implements Runnable 
 {
@@ -33,14 +30,20 @@ final class NotifyLocalUsersTask implements Runnable
 	@Override
 	public void run() {
 		
-		// Write User to byte 
+		// Write User to byte and initial message 
 		
 		SystemMessage msg = null;
 
 		byte[] serializedUser;
 		try {
-			serializedUser = localSystem.getUser().getSerialized();
+			// Serialization to Json 
+			JSONObject u = new JSONObject();
+			u.put("user", localSystem.getUser()) ; 
+			serializedUser = u.toString().getBytes(); 
+			
+			// Sending message 
 			msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
+			
 		} catch (IOException e2) {
 			e2.printStackTrace();
 			return ; 
@@ -48,16 +51,7 @@ final class NotifyLocalUsersTask implements Runnable
 		
 		
 		// Send message with user as content 
-			
-		InetAddress addr = null;
-		
-		try {
-			addr = InetAddress.getByName(LocalSystem.MULTICAST_ADDR);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			return ; 
-		}
-		
+					
 		
 		try(MulticastSocket socket = new MulticastSocket())
 		{
