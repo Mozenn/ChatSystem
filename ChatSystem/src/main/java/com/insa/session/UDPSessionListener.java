@@ -1,12 +1,12 @@
-package session;
+package com.insa.session;
 
 import java.net.DatagramSocket;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import message.Message;
-import message.UserMessage;
+import com.insa.message.Message;
+import com.insa.message.UserMessage;
 
 public class UDPSessionListener extends Thread{
 	

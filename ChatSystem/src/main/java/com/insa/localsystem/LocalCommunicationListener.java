@@ -1,4 +1,4 @@
-package localSystem;
+package com.insa.localsystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,10 +10,10 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import main.User;
-import message.Message;
-import message.SystemMessage;
-import message.UserMessage;
+import com.insa.message.Message;
+import com.insa.message.SystemMessage;
+import com.insa.message.UserMessage;
+import com.insa.user.User;
 
 final class LocalCommunicationListener extends Thread {
 	

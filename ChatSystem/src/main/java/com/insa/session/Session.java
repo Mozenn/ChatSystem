@@ -1,13 +1,13 @@
-package session;
+package com.insa.session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import main.User;
-import message.Message;
-import message.UserMessage;
+import com.insa.message.Message;
+import com.insa.message.UserMessage;
+import com.insa.user.User;
 
 public abstract class Session {
 

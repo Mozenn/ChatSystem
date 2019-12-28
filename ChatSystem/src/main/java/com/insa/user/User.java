@@ -1,4 +1,4 @@
-package main;
+package com.insa.user;
 
 
 import java.io.ByteArrayOutputStream;

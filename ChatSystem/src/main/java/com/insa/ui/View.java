@@ -1,4 +1,4 @@
-package UI;
+package com.insa.ui;
 
 import java.awt.EventQueue;
 

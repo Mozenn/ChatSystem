@@ -1,4 +1,4 @@
-package localSystem;
+package com.insa.localsystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,10 +10,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import main.User;
-import message.Message;
-import message.SystemMessage;
-import utility.NetworkUtility;
+import com.insa.message.Message;
+import com.insa.message.SystemMessage;
+import com.insa.user.User;
+import com.insa.utility.NetworkUtility;
 
 final class NotifyConnectionResponseTask implements Runnable {
 	

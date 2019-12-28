@@ -1,4 +1,4 @@
-package message;
+package com.insa.message;
 
 import java.util.Arrays;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package session;
+package com.insa.session;
 
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -9,13 +9,14 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.concurrent.ThreadLocalRandom;
-import java.net.InetAddress;
 
-import localSystem.LocalSystem;
-import main.User;
-import message.SystemMessage;
-import message.UserMessage;
-import utility.NetworkUtility;
+import com.insa.localsystem.LocalSystem;
+import com.insa.message.SystemMessage;
+import com.insa.message.UserMessage;
+import com.insa.user.User;
+import com.insa.utility.NetworkUtility;
+
+import java.net.InetAddress;
 
 final public class LocalSession extends Session{
 	

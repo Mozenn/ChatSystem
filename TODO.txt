@@ -53,6 +53,9 @@
 -Database 
 	- Make IDatabase interaction interface (local sys & central sys)
 	- Voir moodle  
+	- use SQLite 
+	- Make dao package 
+		- make dao class for users, sessions, messages 
 
 # Deploy
 - See database config 

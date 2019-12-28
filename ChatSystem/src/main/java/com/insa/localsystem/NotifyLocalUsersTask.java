@@ -1,4 +1,4 @@
-package localSystem;
+package com.insa.localsystem;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,10 +8,11 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
-import java.net.InetAddress;
 
-import message.SystemMessage;
-import utility.NetworkUtility;
+import com.insa.message.SystemMessage;
+import com.insa.utility.NetworkUtility;
+
+import java.net.InetAddress;
 
 final class NotifyLocalUsersTask implements Runnable 
 {

@@ -4,10 +4,11 @@ package main;
 import java.util.Date;
 import java.util.Enumeration;
 
-import localSystem.LocalSystem;
-import message.Message;
-import message.SystemMessage;
-import utility.NetworkUtility;
+import com.insa.localsystem.LocalSystem;
+import com.insa.message.Message;
+import com.insa.message.SystemMessage;
+import com.insa.user.User;
+import com.insa.utility.NetworkUtility;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

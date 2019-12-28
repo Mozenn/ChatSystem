@@ -1,4 +1,4 @@
-package localSystem;
+package com.insa.localsystem;
 
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -10,10 +10,10 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 
-import main.User;
-import message.Message;
-import message.SystemMessage;
-import session.LocalSession;
+import com.insa.message.Message;
+import com.insa.message.SystemMessage;
+import com.insa.session.LocalSession;
+import com.insa.user.User;
 
 final public class LocalSystem implements AutoCloseable{
 	

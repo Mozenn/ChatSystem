@@ -1,4 +1,4 @@
-package utility;
+package com.insa.utility;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -8,8 +8,8 @@ import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.util.concurrent.ThreadLocalRandom;
 
-import localSystem.LocalSystem;
-import session.UDPSessionListener;
+import com.insa.localsystem.LocalSystem;
+import com.insa.session.UDPSessionListener;
 
 public final class NetworkUtility {
 	
