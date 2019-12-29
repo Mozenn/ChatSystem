@@ -28,7 +28,8 @@ import java.sql.Timestamp;
 public class Main {
 
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
-		    
+		 
+		/* 
 		// TODO use getLocalIPAddress method 
 		byte[] buf = new byte[4];
 		byte[] data = new byte[] {'g','l','a'};
@@ -50,14 +51,15 @@ public class Main {
 	    NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByAddress(ipe));
 	    byte[] mac = ni.getHardwareAddress();
 
-	    /*
+	    
         User u = new User(mac, ipe, "Ragnar Lodbrok");
         
         ms.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
         
 		LocalSystem locSys = new LocalSystem(u);
         */ 
-        
+		
+		LocalSystem locSys = new LocalSystem();
 		/*byte[] content = new String("poisqdfisiducfhckduifhskdicfh").getBytes();
 		byte[] msg = new SystemMessage(SystemMessage.SystemMessageType.CO, content).toByteArray();
 		System.out.println(new String(Message.extractSubtype(msg)));

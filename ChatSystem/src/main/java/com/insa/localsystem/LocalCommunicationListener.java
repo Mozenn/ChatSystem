@@ -7,11 +7,12 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.insa.message.Message;
 import com.insa.message.SystemMessage;
 import com.insa.user.User;
+import com.insa.utility.SerializationUtility;
 
 final class LocalCommunicationListener extends Thread {
 	
@@ -42,19 +43,19 @@ final class LocalCommunicationListener extends Thread {
 			} catch (IOException e) { // receive failed 
 				e.printStackTrace();
 				continue; 
-			}
-			String subtype = new String(Message.extractSubtype(packet.getData()));
-			System.out.println(subtype);
-			System.out.println(packet.getAddress().toString());
+			} 
+
 			SystemMessage.SystemMessageType type ; 
-			
+			SystemMessage msg ; 
 			try
 			{
-				type = SystemMessage.SystemMessageType.valueOf(subtype);
+				msg = (SystemMessage)SerializationUtility.deserializeMessage(packet.getData()); 
+				type = msg.getSubtype(); 
+				System.out.println(type);
 			}
-			catch(Exception e) // not a system message 
+			catch(ClassCastException | IOException e) // not a system message 
 			{
-				continue;
+				continue; 
 			}
 			
 			switch(type)
@@ -71,11 +72,11 @@ final class LocalCommunicationListener extends Thread {
 				case CO: // new user connection 
 				try {
 					// Deserialization 
-					JSONObject userJson = new JSONObject(new String(Message.extractContent(packet.getData()))) ; 
-					User u = (User) userJson.get("user");
+					User u = SerializationUtility.deserializeUser(msg.getContent()) ; 
 					
 					system.addLocalUser(u);  // TODO implement observer pattern 
 					system.notifyConnectionResponse(packet);
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 					continue ; 
@@ -86,8 +87,19 @@ final class LocalCommunicationListener extends Thread {
 				break ;
 				
 				case CR: // response to CO broadcast 
-					JSONObject userJson = new JSONObject(new String(Message.extractContent(packet.getData()))) ; 
-					User u = (User) userJson.get("user");
+				User u;
+				try {
+					u = SerializationUtility.deserializeUser(msg.getContent());
+				} catch (JsonParseException e) {
+					e.printStackTrace();
+					return ; 
+				} catch (JsonMappingException e) {
+					e.printStackTrace();
+					return ; 
+				} catch (IOException e) {
+					e.printStackTrace();
+					return ; 
+				} 
 					
 					System.out.println("victoire");
 					system.addLocalUser(u);// TODO implement observer pattern 

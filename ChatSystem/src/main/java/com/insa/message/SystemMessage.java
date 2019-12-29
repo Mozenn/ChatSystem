@@ -23,11 +23,16 @@ public class SystemMessage extends Message{
 	    }
 	}
 	
+	private SystemMessageType subtype ; 
+	
+	public SystemMessageType getSubtype() {
+		return subtype;
+	}
+
 	public SystemMessage(SystemMessageType s, byte[] c) throws IOException 
 	{
-		super();
-		content = c;
-		buildHeader((byte)1, s.toString(), c.length);
+		super(c);
+		this.subtype = s ; 
 	
 	}
 }

@@ -6,10 +6,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.insa.localsystem.LocalSystem;
 import com.insa.message.SystemMessage;
+import com.insa.utility.SerializationUtility;
 
 class NotifyStartSessionTask implements Runnable{
 	
@@ -28,10 +28,14 @@ class NotifyStartSessionTask implements Runnable{
 	@Override
 	public void run() {
 		
-		// Serialization to Json 
-		JSONObject u = new JSONObject();
-		u.put("user", parentSession.getEmitter()) ; 
-		byte[] serializedUser = u.toString().getBytes();
+		byte[] serializedUser = null;
+		
+		try {
+			serializedUser = SerializationUtility.serializeUser(parentSession.getEmitter());
+		} catch (JsonProcessingException e3) {
+			e3.printStackTrace();
+			return ; 
+		} 
 		
 		SystemMessage msg;
 		
@@ -52,7 +56,9 @@ class NotifyStartSessionTask implements Runnable{
 		}
 		
 		try {
-			sendingSocket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalSystem.LISTENING_PORT));
+			
+			byte[] msgAsBytes = SerializationUtility.serializeMessage(msg);
+			sendingSocket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, LocalSystem.LISTENING_PORT));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ; 

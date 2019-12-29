@@ -2,6 +2,9 @@ package com.insa.message;
 
 import java.nio.file.Files;
 import java.util.Arrays;
+
+import com.insa.message.SystemMessage.SystemMessageType;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -13,27 +16,36 @@ public class UserMessage extends Message{
 		FL
 	}
 
-	public UserMessageType subtype;
+	private UserMessageType subtype;
+	private String senderId ; 
 	
-	public UserMessage(String text) throws IOException 
+	public UserMessage(String text, String senderId) throws IOException 
 	{
-		super();
-		content = text.getBytes();
-		buildHeader((byte)0,UserMessageType.TX.name(), content.length);
+		super(text.getBytes());
+		this.senderId = senderId ; 
+		subtype = UserMessageType.TX;
 	}
-	
+	/*
 	public UserMessage(byte[] bytes,UserMessageType type) throws IOException 
 	{
 		super();
 		content = bytes;
-		buildHeader((byte)0,UserMessageType.TX.name(), content.length);
+		subtype = UserMessageType.TX;
+	} */
+	
+	public UserMessage(File f, String senderId) throws IOException 
+	{
+		super(Files.readAllBytes(f.toPath()) );
+		subtype = UserMessageType.FL;
+		this.senderId = senderId ; 
 	}
 	
-	public UserMessage(File f) throws IOException 
-	{
-		super();
-		content = Files.readAllBytes(f.toPath());
-		buildHeader((byte)0,UserMessageType.FL.name(), content.length);
+	public UserMessageType getSubtype() {
+		return subtype;
+	}
+	
+	public String getSenderId() {
+		return senderId;
 	}
 	
 	

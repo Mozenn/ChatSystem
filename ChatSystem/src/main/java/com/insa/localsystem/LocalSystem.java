@@ -1,21 +1,19 @@
 package com.insa.localsystem;
 
 import java.net.InetAddress;
-import java.net.MulticastSocket;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 
-import org.json.JSONObject;
-
-import com.insa.message.Message;
-import com.insa.message.SystemMessage;
 import com.insa.session.LocalSession;
 import com.insa.user.User;
+import com.insa.utility.NetworkUtility;
+import com.insa.utility.SerializationUtility;
 
 final public class LocalSystem implements AutoCloseable{
 	
@@ -25,6 +23,8 @@ final public class LocalSystem implements AutoCloseable{
 	
 	private InetAddress centralSysIp;
 	private int centralSysPort;
+	private final String LocalUserFilePath = "data/localuser" ; 
+	private final String LocalUserDirectoryPath = "data/" ; 
 	
 	private ArrayList<LocalSession> sessions;
 	
@@ -38,7 +38,8 @@ final public class LocalSystem implements AutoCloseable{
 		localUsers = new ArrayList<User>();
 		distantUsers = new ArrayList<User>();
 		sessions = new ArrayList<LocalSession>();	
-	
+		
+		LoadLocalUser(); 
 		
 		listener = new LocalCommunicationListener(this);
 		
@@ -79,21 +80,109 @@ final public class LocalSystem implements AutoCloseable{
 
 	}
 	
-	public void LoadUser() 
+	public void LoadLocalUser() throws IOException 
 	{
-		// TODO : load user from database using mac address as id
+		File localUserFile = new File(LocalUserFilePath) ; 
+		
+		if(localUserFile.exists())
+		{
+			FileInputStream in = null ; 
+			
+		      try {
+		    	  in = new FileInputStream(LocalUserFilePath);
+		          
+		    	  byte[] userAsBytes = new byte[(int) localUserFile.length()] ; 
+		    			  
+		    	  in.read(userAsBytes) ; 
+		    	  
+		    	  this.user = SerializationUtility.deserializeUser(userAsBytes) ; 
+
+		       }
+		      finally {
+		    	   
+		          if (in != null) {
+		        	  in.close();
+		          }
+		       }
+		}
+		else 
+		{
+			createLocalUser(); 
+		}
 	}
 	
-	public void changeUname(String newName) 
+	private void createLocalUser() throws IOException
+	{
+		String username = "hey" ; // TODO ask username through UI 
+		
+		byte[] ipAdd = NetworkUtility.getLocalIPAddress(); 
+		
+	    NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByAddress(ipAdd));
+	    String id = ni.getHardwareAddress().toString();
+		
+		User newUser = new User(id,ipAdd, username) ; 
+		
+		this.user = newUser ; 
+		
+		byte[] userAsBytes = SerializationUtility.serializeUser(newUser); 
+		
+		File f = new File(LocalUserDirectoryPath) ; 
+		
+		f.mkdir() ; 
+		
+		
+		// Write user to file 
+		
+		FileOutputStream out = null;
+		
+	      try {
+	          out = new FileOutputStream(LocalUserFilePath);
+	          
+             out.write(userAsBytes);
+
+	       }
+	      finally {
+	    	   
+	          if (out != null) {
+	             out.close();
+	          }
+	       }
+	}
+	
+	private void saveLocalUser() throws IOException
+	{
+		byte[] userAsBytes = SerializationUtility.serializeUser(this.user); 
+		
+		// Write user to file 
+		
+		FileOutputStream out = null;
+		
+	      try {
+	          out = new FileOutputStream(LocalUserFilePath);
+	          
+             out.write(userAsBytes);
+
+	       }
+	      finally {
+	    	   
+	          if (out != null) {
+	             out.close();
+	          }
+	       }
+	}
+	
+	public void changeUname(String newName) throws IOException 
 	{
 		// TODO : request name change
+		
+		
+		saveLocalUser(); 
 	}
 	
 	protected void createSessionResponse(DatagramPacket packet) throws IOException 
 	{
 		// Deserialization 
-		JSONObject userJson = new JSONObject(new String(Message.extractContent(packet.getData()))) ; 
-		User u = (User) userJson.get("user");
+		User u = SerializationUtility.deserializeUser(SerializationUtility.deserializeMessage(packet.getData()).getContent());
 		
 		synchronized(sessions)
 		{

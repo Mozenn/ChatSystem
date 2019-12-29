@@ -10,8 +10,6 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.json.JSONObject;
-
 import com.insa.localsystem.LocalSystem;
 import com.insa.message.SystemMessage;
 import com.insa.message.UserMessage;
@@ -65,7 +63,7 @@ final public class LocalSession extends Session{
 		UserMessage m;
 		
 		try {
-			m = new UserMessage(s);
+			m = new UserMessage(s, emitter.getId());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return ; 
@@ -80,7 +78,7 @@ final public class LocalSession extends Session{
 		UserMessage m;
 		
 		try {
-			m = new UserMessage(f);
+			m = new UserMessage(f, emitter.getId());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return ; 

@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.insa.message.Message;
 import com.insa.message.UserMessage;
+import com.insa.utility.SerializationUtility;
 
 public class UDPSessionListener extends Thread{
 	
@@ -40,15 +43,27 @@ public class UDPSessionListener extends Thread{
 				continue ; 
 			}
 			
-			// TODO deserialize content of packet and get 
-			UserMessage msg = null;
+			UserMessage msg = null ; 
 			
-			try {
-				msg = new UserMessage("hey");
+			try
+			{
+				msg = (UserMessage) SerializationUtility.deserializeMessage(packet.getData());
+			}
+			catch(ClassCastException e) // Packet received is not a UserMessage  ;
+			{
+				continue ; 
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+				continue ; 
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+				continue ; 
 			} catch (IOException e) {
 				e.printStackTrace();
-				continue;
+				continue ; 
 			}
+
+			
 			session.addMessage(msg);	// TODO implement observer 		
 		}
 	}

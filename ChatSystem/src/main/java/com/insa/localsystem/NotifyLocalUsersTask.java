@@ -8,8 +8,7 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 
 import com.insa.message.SystemMessage;
-
-import org.json.JSONObject;
+import com.insa.utility.SerializationUtility;
 
 final class NotifyLocalUsersTask implements Runnable 
 {
@@ -36,10 +35,7 @@ final class NotifyLocalUsersTask implements Runnable
 
 		byte[] serializedUser;
 		try {
-			// Serialization to Json 
-			JSONObject u = new JSONObject();
-			u.put("user", localSystem.getUser()) ; 
-			serializedUser = u.toString().getBytes(); 
+			serializedUser = SerializationUtility.serializeUser(localSystem.getUser()) ; 
 			
 			// Sending message 
 			msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
@@ -56,8 +52,9 @@ final class NotifyLocalUsersTask implements Runnable
 		try(MulticastSocket socket = new MulticastSocket())
 		{
 			try {
+				byte[] msgAsBytes = SerializationUtility.serializeMessage(msg); 
 				socket.joinGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
-				socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, InetAddress.getByName(LocalSystem.MULTICAST_ADDR), LocalSystem.LISTENING_PORT));
+				socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, InetAddress.getByName(LocalSystem.MULTICAST_ADDR), LocalSystem.LISTENING_PORT));
 				socket.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
 				
 			} catch (UnknownHostException e) {

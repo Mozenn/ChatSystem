@@ -5,12 +5,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.insa.message.Message;
 import com.insa.message.SystemMessage;
 import com.insa.user.User;
 import com.insa.utility.NetworkUtility;
+import com.insa.utility.SerializationUtility;
 
 final class NotifyConnectionResponseTask implements Runnable {
 	
@@ -22,8 +22,7 @@ final class NotifyConnectionResponseTask implements Runnable {
 	{
 		this.localSystem = localSystem ; 
 		
-		JSONObject userJson = new JSONObject(new String(Message.extractContent(packet.getData()))) ; 
-		User u = (User) userJson.get("user");
+		User u = SerializationUtility.deserializeUser(SerializationUtility.deserializeMessage(packet.getData()).getContent());
 		addr = InetAddress.getByAddress(u.getIpAddress());
 		
 		//Debug 
@@ -40,11 +39,13 @@ final class NotifyConnectionResponseTask implements Runnable {
 	public void run() {
 		
 		
-		byte[] serializedUser = null ;
-		// Serialization to Json 
-		JSONObject u = new JSONObject();
-		u.put("user", localSystem.getUser()) ; 
-		serializedUser = u.toString().getBytes();
+		byte[] serializedUser;
+		try {
+			serializedUser = SerializationUtility.serializeUser(localSystem.getUser());
+		} catch (JsonProcessingException e1) {
+			e1.printStackTrace();
+			return ; 
+		} 
 		
 		SystemMessage msg = null;
 		try {
@@ -58,7 +59,9 @@ final class NotifyConnectionResponseTask implements Runnable {
 		DatagramSocket socket = NetworkUtility.getUDPSocketWithRandomPort() ; 	
 		
 		try {
-			socket.send(new DatagramPacket(msg.toByteArray(), msg.toByteArray().length, addr, LocalSystem.LISTENING_PORT));
+			
+			byte[] msgAsBytes = SerializationUtility.serializeMessage(msg);
+			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, LocalSystem.LISTENING_PORT));
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("send failed") ; 

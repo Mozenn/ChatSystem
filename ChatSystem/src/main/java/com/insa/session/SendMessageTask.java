@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import com.insa.message.UserMessage;
+import com.insa.utility.SerializationUtility;
 
 public class SendMessageTask implements Runnable{
 	
@@ -30,7 +31,7 @@ public class SendMessageTask implements Runnable{
 		
 		DatagramPacket packet ; 
 		try {
-			buffer = messageToSend.toByteArray();
+			buffer = SerializationUtility.serializeMessage(messageToSend); 
 			InetAddress ipAdd = InetAddress.getByAddress(parentSession.getReceiver().getIpAddress()) ;  // TODO check if that is correct 
 			packet = new DatagramPacket(buffer, buffer.length, ipAdd ,parentSession.getReceiverPort());
 			
