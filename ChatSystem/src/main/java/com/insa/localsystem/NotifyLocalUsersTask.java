@@ -69,9 +69,9 @@ final class NotifyLocalUsersTask implements Runnable
 			e1.printStackTrace();
 			return ; 
 		} 
-
 		
-
+		
+		System.out.println("CO notify multicasted");
 
 	}
 }

@@ -2,7 +2,9 @@ package com.insa.dao;
 
 import com.insa.message.Message;
 
-public interface MessageDAO {
+public interface DAO {
+	
+	public void connect(); 
 	
 	public void addMessage(Message message) ; 
 	

@@ -9,7 +9,6 @@ import java.io.Serializable;
 
 public abstract class Message {
 	
-	// TODO : move all helper to specific MessageUtility class 
 	public static final int MAX_SIZE = 1310720;
 	
 	protected byte[] content;
@@ -18,6 +17,18 @@ public abstract class Message {
 	
 	public byte[] getContent() {
 		return content;
+	}
+	
+	public Timestamp getDate()
+	{
+		return this.date ; 
+	}
+	
+	protected Message()
+	{
+		this.content = new byte[512] ; 
+		Date d = new Date();
+		this.date = new Timestamp(d.getTime());
 	}
 	
 	protected Message(byte[] content) 

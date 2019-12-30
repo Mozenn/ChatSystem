@@ -64,6 +64,8 @@ class NotifyStartSessionTask implements Runnable{
 			return ; 
 		}
 		
+		System.out.println("NotifyStartSession sent");
+		
 	}
 
 }

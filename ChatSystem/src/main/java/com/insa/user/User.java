@@ -3,7 +3,7 @@ package com.insa.user;
 
 final public class User{
 	
-	 private String id;
+	 private byte[] id;
 	 private byte[] ipAddress;
 	 private String username;
 	 
@@ -11,7 +11,7 @@ final public class User{
 	 
 	 public User() {} 
 	 
-	 public User(String id, byte[] ip, String uname) 
+	 public User(byte[] id, byte[] ip, String uname) 
 	 {
 		 this.id = id;
 		 this.ipAddress = ip;
@@ -36,12 +36,12 @@ final public class User{
 	}
 
 
-	public String getId() {
+	public byte[] getId() {
 		return id;
 	}
 
 
-	public void setId(String id) {
+	public void setId(byte[] id) {
 		this.id = id;
 	}
 

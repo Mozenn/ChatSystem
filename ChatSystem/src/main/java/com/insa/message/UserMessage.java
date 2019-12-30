@@ -17,9 +17,16 @@ public class UserMessage extends Message{
 	}
 
 	private UserMessageType subtype;
-	private String senderId ; 
+	private byte[] senderId ; 
 	
-	public UserMessage(String text, String senderId) throws IOException 
+	public UserMessage()
+	{
+		super();
+		this.subtype = UserMessageType.TX;
+		this.senderId = new byte[18]; 
+	}
+	
+	public UserMessage(String text, byte[] senderId) throws IOException 
 	{
 		super(text.getBytes());
 		this.senderId = senderId ; 
@@ -33,7 +40,7 @@ public class UserMessage extends Message{
 		subtype = UserMessageType.TX;
 	} */
 	
-	public UserMessage(File f, String senderId) throws IOException 
+	public UserMessage(File f, byte[] senderId) throws IOException 
 	{
 		super(Files.readAllBytes(f.toPath()) );
 		subtype = UserMessageType.FL;
@@ -44,7 +51,7 @@ public class UserMessage extends Message{
 		return subtype;
 	}
 	
-	public String getSenderId() {
+	public byte[] getSenderId() {
 		return senderId;
 	}
 	

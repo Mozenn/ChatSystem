@@ -22,13 +22,15 @@ final class NotifyConnectionResponseTask implements Runnable {
 	{
 		this.localSystem = localSystem ; 
 		
-		User u = SerializationUtility.deserializeUser(SerializationUtility.deserializeMessage(packet.getData()).getContent());
+		User u = SerializationUtility.deserializeUser(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
 		addr = InetAddress.getByAddress(u.getIpAddress());
 		
 		//Debug 
-		System.out.println("longueur : "+u.getId().length());
+		/*
+		System.out.println("longueur : "+u.getId().length);
 		System.out.println("longueur : "+u.getIpAddress().length);
 		System.out.println("longueur : "+u.getUsername().length());
+		*/
 		
 		// Start thread 
 		thread = new Thread(this,"NotifyConnectionResponse") ; 
@@ -49,7 +51,7 @@ final class NotifyConnectionResponseTask implements Runnable {
 		
 		SystemMessage msg = null;
 		try {
-			msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
+			msg = new SystemMessage(SystemMessage.SystemMessageType.CR, serializedUser);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("system message creation failed") ; 

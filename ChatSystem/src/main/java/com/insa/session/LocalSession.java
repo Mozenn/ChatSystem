@@ -42,6 +42,8 @@ final public class LocalSession extends Session{
 		socket = NetworkUtility.getUDPSocketWithRandomPort() ; 
 		
 		listener = new UDPSessionListener(this, socket);
+		
+		System.out.println("LocalSession Started");
 	}
 	
 	public void notifyStartSession() throws IOException 

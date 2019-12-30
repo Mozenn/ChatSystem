@@ -51,6 +51,8 @@ public class SendMessageTask implements Runnable{
 			return ; 
 		}
 		
+		System.out.println("SessionMessage sent");
+		
 	}
 
 }

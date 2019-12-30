@@ -9,7 +9,6 @@ import com.insa.user.User;
 
 public abstract class Session {
 
-	protected String id;
 	protected User emitter;
 	protected User receiver;
 	protected ArrayList<Message> messages;
@@ -24,7 +23,6 @@ public abstract class Session {
 	{
 		emitter = e;
 		receiver = r;
-		id = e.getId() + r.getId() ; 
 		messages = new ArrayList<Message>();
 	}
 	
@@ -33,12 +31,7 @@ public abstract class Session {
 		emitter = e;
 		receiver = r;
 		this.receiverPort = receiverPort ; 
-		id = e.getId() + r.getId() ; 
 		messages = new ArrayList<Message>();
-	}
-	
-	public String getId() {
-		return id;
 	}
 
 	public User getEmitter() {

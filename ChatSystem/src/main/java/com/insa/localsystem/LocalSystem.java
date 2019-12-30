@@ -39,6 +39,8 @@ final public class LocalSystem implements AutoCloseable{
 		distantUsers = new ArrayList<User>();
 		sessions = new ArrayList<LocalSession>();	
 		
+		System.out.println("LocalSystem Started") ; 
+		
 		LoadLocalUser(); 
 		
 		listener = new LocalCommunicationListener(this);
@@ -118,8 +120,8 @@ final public class LocalSystem implements AutoCloseable{
 		byte[] ipAdd = NetworkUtility.getLocalIPAddress(); 
 		
 	    NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByAddress(ipAdd));
-	    String id = ni.getHardwareAddress().toString();
-		
+	    byte[] id = ni.getHardwareAddress();
+	    
 		User newUser = new User(id,ipAdd, username) ; 
 		
 		this.user = newUser ; 
@@ -182,7 +184,7 @@ final public class LocalSystem implements AutoCloseable{
 	protected void createSessionResponse(DatagramPacket packet) throws IOException 
 	{
 		// Deserialization 
-		User u = SerializationUtility.deserializeUser(SerializationUtility.deserializeMessage(packet.getData()).getContent());
+		User u = SerializationUtility.deserializeUser(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
 		
 		synchronized(sessions)
 		{
@@ -208,7 +210,7 @@ final public class LocalSystem implements AutoCloseable{
 		{
 			localUsers.add(u);
 		}
-		System.out.println(u.getUsername()); 
+		System.out.println("Local User added " + u.getUsername()); 
 	}
 
 	public void close() throws UnknownHostException, IOException

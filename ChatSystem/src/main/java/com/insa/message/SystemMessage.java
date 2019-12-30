@@ -28,6 +28,12 @@ public class SystemMessage extends Message{
 	public SystemMessageType getSubtype() {
 		return subtype;
 	}
+	
+	public SystemMessage() throws IOException 
+	{
+		super();
+	
+	}
 
 	public SystemMessage(SystemMessageType s, byte[] c) throws IOException 
 	{

@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.insa.message.Message;
+import com.insa.message.SystemMessage;
+import com.insa.message.UserMessage;
 import com.insa.user.User;
 
 final public class SerializationUtility {
@@ -33,10 +35,16 @@ final public class SerializationUtility {
 		return uJson.writeValueAsString(m).getBytes(); 
 	}
 	
-	public static Message deserializeMessage(byte[] messageAsByte) throws JsonParseException, JsonMappingException, IOException
+	public static UserMessage deserializeUserMessage(byte[] messageAsByte) throws JsonParseException, JsonMappingException, IOException
 	{
       ObjectMapper o = new ObjectMapper () ; 
-      return  o.readValue(messageAsByte, Message.class); 
+      return  o.readValue(messageAsByte, UserMessage.class); 
+	}
+	
+	public static SystemMessage deserializeSystemMessage(byte[] messageAsByte) throws JsonParseException, JsonMappingException, IOException
+	{
+      ObjectMapper o = new ObjectMapper () ; 
+      return  o.readValue(messageAsByte, SystemMessage.class); 
 	}
 
 }

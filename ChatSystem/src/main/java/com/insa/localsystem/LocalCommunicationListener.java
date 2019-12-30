@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.insa.message.Message;
 import com.insa.message.SystemMessage;
 import com.insa.user.User;
+import com.insa.utility.NetworkUtility;
 import com.insa.utility.SerializationUtility;
 
 final class LocalCommunicationListener extends Thread {
@@ -28,6 +29,8 @@ final class LocalCommunicationListener extends Thread {
 		run = new AtomicBoolean(); 
 		run.set(true);
 		start();
+		
+		System.out.println("Start LocalCommunicationListener") ; 
 	}
 	
 	public void run() 
@@ -37,24 +40,36 @@ final class LocalCommunicationListener extends Thread {
 			byte[] buffer = new byte[Message.MAX_SIZE];
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			try {
-				System.out.println("wait receive");
+				System.out.println("LocalCommunicationListener wait receive");
 				socket.receive(packet);
-				System.out.println("receive done");
+				System.out.println("LocalCommunicationListener receive done");
 			} catch (IOException e) { // receive failed 
 				e.printStackTrace();
 				continue; 
 			} 
-
+			/*
+			// ignore packet coming for this machine 
+			try {
+				if(packet.getAddress().equals(InetAddress.getByAddress(NetworkUtility.getLocalIPAddress())))
+					continue ;
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				continue ; 
+			} 
+			 */
 			SystemMessage.SystemMessageType type ; 
 			SystemMessage msg ; 
 			try
 			{
-				msg = (SystemMessage)SerializationUtility.deserializeMessage(packet.getData()); 
+				msg = SerializationUtility.deserializeSystemMessage(packet.getData()); 
 				type = msg.getSubtype(); 
-				System.out.println(type);
+				System.out.println("LocalCommunicationListener message subtype " + type);
+				System.out.println("LocalCommunicationListener message port " + packet.getPort());
+				System.out.println();
 			}
 			catch(ClassCastException | IOException e) // not a system message 
 			{
+				e.printStackTrace();
 				continue; 
 			}
 			
@@ -101,7 +116,7 @@ final class LocalCommunicationListener extends Thread {
 					return ; 
 				} 
 					
-					System.out.println("victoire");
+				System.out.println("LocalCommunicationListener CR received ");
 					system.addLocalUser(u);// TODO implement observer pattern 
 				break ;
 				
@@ -114,6 +129,7 @@ final class LocalCommunicationListener extends Thread {
 	
 	public void stopRun() throws UnknownHostException, IOException 
 	{
+		System.out.println("LocalCommunicationListener Stop");
 		run.set(false);
 		socket.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
 		socket.close();

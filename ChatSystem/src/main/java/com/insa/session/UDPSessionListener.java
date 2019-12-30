@@ -47,7 +47,7 @@ public class UDPSessionListener extends Thread{
 			
 			try
 			{
-				msg = (UserMessage) SerializationUtility.deserializeMessage(packet.getData());
+				msg = SerializationUtility.deserializeUserMessage(packet.getData());
 			}
 			catch(ClassCastException e) // Packet received is not a UserMessage  ;
 			{
