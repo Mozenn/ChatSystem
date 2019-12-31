@@ -5,9 +5,6 @@
 - Servlet 
 	- How to use 
 	- REST 
-- DB
-	- Search Javabean 
-- Maven 
 
 # Implementation 
 
@@ -36,10 +33,6 @@
 	- Abstract factory 
 	- Observer 
 
-- Maven	
-	- Turn project into maven project 
-	- generate & install 
-
 - UI
 
 - LocalCommunication 
@@ -49,27 +42,16 @@
 	- observer between localsystem and listener 
 	- observer between localsystem and sessions ? 
 
-- Serialization 
-	- Use Json 
 
--Database 
-	- Make IDatabase interaction interface (local sys & central sys)
-	- Voir moodle  
-	- use SQLite 
-	- Make dao package 
-		- make dao class for users, sessions, messages 
+# Perf 
+	- Multithread dao 
 
 # Deploy
-- See database config 
-- See MAven 
-- Local DB
-	- Maven
-	- SQLite
-- Distributed DB
-	- MySQL 
+
 
 # Polish 
 	- Produce javadoc with comments (see resources)
 	- Review effective Java items 
+		- item 10 to 14 
 	- Add documentation 
 		- readMe

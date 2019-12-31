@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.insa.dao.DAO;
+import com.insa.dao.DAOSQLite;
 import com.insa.message.Message;
+import com.insa.message.UserMessage;
 import com.insa.user.User;
 
 public abstract class Session {
@@ -46,14 +49,16 @@ public abstract class Session {
 		return receiverPort;
 	}
 
-	public void addMessage(Message m) 
+	public void addMessage(UserMessage m) 
 	{
 		synchronized(messages)
 		{
 			messages.add(m);
 		}
 
-		// TODO: save to database.
+		DAO dao = new DAOSQLite() ; 
+		
+		dao.addMessage(m);
 	}
 	
 	public abstract void sendMessage(String s);

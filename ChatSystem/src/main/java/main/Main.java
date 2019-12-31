@@ -5,9 +5,12 @@ import java.util.Date;
 import java.util.Enumeration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.insa.dao.DAO;
+import com.insa.dao.DAOSQLite;
 import com.insa.localsystem.LocalSystem;
 import com.insa.message.Message;
 import com.insa.message.SystemMessage;
+import com.insa.message.UserMessage;
 import com.insa.user.User;
 import com.insa.utility.NetworkUtility;
 import com.insa.utility.SerializationUtility;
@@ -34,7 +37,6 @@ public class Main {
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		 
 		/*
-		// TODO use getLocalIPAddress method 
 		byte[] buf = new byte[4];
 		byte[] data = new byte[] {'g','l','a'};
 		
@@ -113,12 +115,19 @@ public class Main {
 		          }
 		       }
 		*/
+		
+		/*
+		UserMessage m1 = new UserMessage("data","u1".getBytes(),"u2".getBytes()) ; 
+		UserMessage m2 = new UserMessage("data","u2".getBytes(),"u1".getBytes()) ; 
+		
+		DAO dao = new DAOSQLite() ; 
+		
+		dao.addMessage(m1);
+		dao.addMessage(m2);
+		
+		var messages = dao.getHistory("u1".getBytes()) ; */
 		      
 		LocalSystem locSys = new LocalSystem();
-		
-		var add = InetAddress.getByAddress(NetworkUtility.getLocalIPAddress()); 
-		
-		System.out.println("Local IP" + add);
         
 		/*byte[] content = new String("poisqdfisiducfhckduifhskdicfh").getBytes();
 		byte[] msg = new SystemMessage(SystemMessage.SystemMessageType.CO, content).toByteArray();

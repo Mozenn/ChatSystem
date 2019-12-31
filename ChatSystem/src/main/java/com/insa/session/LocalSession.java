@@ -44,6 +44,8 @@ final public class LocalSession extends Session{
 		listener = new UDPSessionListener(this, socket);
 		
 		System.out.println("LocalSession Started");
+		
+		// TODO load history 
 	}
 	
 	public void notifyStartSession() throws IOException 
@@ -65,13 +67,15 @@ final public class LocalSession extends Session{
 		UserMessage m;
 		
 		try {
-			m = new UserMessage(s, emitter.getId());
+			m = new UserMessage(s, receiver.getId(), emitter.getId());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return ; 
 		} 
 		
 		new SendMessageTask(this,socket,m);
+		
+		addMessage(m) ; 
 	}
 
 	@Override
@@ -80,13 +84,15 @@ final public class LocalSession extends Session{
 		UserMessage m;
 		
 		try {
-			m = new UserMessage(f, emitter.getId());
+			m = new UserMessage(f, receiver.getId(), emitter.getId());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return ; 
 		} 
 		
 		new SendMessageTask(this,socket,m);
+		
+		addMessage(m) ; 
 	}
 }
 

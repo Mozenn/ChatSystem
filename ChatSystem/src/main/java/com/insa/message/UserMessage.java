@@ -12,47 +12,66 @@ public class UserMessage extends Message{
 	
 	public enum UserMessageType
 	{
-		TX,
-		FL
+		TX("TX"),
+		FL("FL");
+		
+	    private String type;
+
+	    UserMessageType(String type) {
+	        this.type = type;
+	    }
+
+	    String getType() {
+	        return type;
+	    }
 	}
 
 	private UserMessageType subtype;
+	private byte[] receiverId ; 
 	private byte[] senderId ; 
 	
 	public UserMessage()
 	{
 		super();
 		this.subtype = UserMessageType.TX;
+		this.receiverId = new byte[18]; 
 		this.senderId = new byte[18]; 
 	}
 	
-	public UserMessage(String text, byte[] senderId) throws IOException 
+	public UserMessage(String text, byte[] receiverId, byte[] senderId ) throws IOException 
 	{
 		super(text.getBytes());
+		this.receiverId = receiverId ; 
 		this.senderId = senderId ; 
 		subtype = UserMessageType.TX;
 	}
-	/*
-	public UserMessage(byte[] bytes,UserMessageType type) throws IOException 
-	{
-		super();
-		content = bytes;
-		subtype = UserMessageType.TX;
-	} */
 	
-	public UserMessage(File f, byte[] senderId) throws IOException 
+	public UserMessage(byte[] content,UserMessageType type, byte[] receiverId, byte[] senderId) throws IOException 
+	{
+		super(content);
+		subtype = type;
+		this.receiverId= receiverId ; 
+		this.senderId = senderId ; 
+	} 
+	
+	public UserMessage(File f, byte[] receiverId, byte[] senderId) throws IOException 
 	{
 		super(Files.readAllBytes(f.toPath()) );
 		subtype = UserMessageType.FL;
-		this.senderId = senderId ; 
+		this.receiverId = receiverId ; 
 	}
 	
 	public UserMessageType getSubtype() {
 		return subtype;
 	}
 	
-	public byte[] getSenderId() {
-		return senderId;
+	public byte[] getReceiverId() {
+		return receiverId;
+	}
+	
+	public byte[] getSenderId()
+	{
+		return this.senderId ; 
 	}
 	
 	

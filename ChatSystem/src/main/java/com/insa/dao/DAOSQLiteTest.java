@@ -14,9 +14,9 @@ import java.util.List;
 
 import com.insa.message.UserMessage;
 
-public class DAOSQLite implements DAO {
+public class DAOSQLiteTest implements DAO {
 	
-	private static final String DB_URL = "jdbc:sqlite:data/data.db" ;
+	private static final String DB_URL = "jdbc:sqlite:data/test.db" ;
 
 	@Override
 	public void addMessage(UserMessage message)  {
@@ -98,7 +98,7 @@ public class DAOSQLite implements DAO {
        
        return messages ; 
 	}
-
+	
 	@Override
 	public void clearHistory() {
 		
