@@ -32,7 +32,7 @@ public class SendMessageTask implements Runnable{
 		DatagramPacket packet ; 
 		try {
 			buffer = SerializationUtility.serializeMessage(messageToSend); 
-			InetAddress ipAdd = InetAddress.getByAddress(parentSession.getReceiver().getIpAddress()) ;  // TODO check if that is correct 
+			InetAddress ipAdd = parentSession.getReceiver().getIpAddress() ;  // TODO check if that is correct 
 			packet = new DatagramPacket(buffer, buffer.length, ipAdd ,parentSession.getReceiverPort());
 			
 		} catch (IOException e) {

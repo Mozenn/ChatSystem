@@ -59,6 +59,8 @@ public abstract class Session {
 		DAO dao = new DAOSQLite() ; 
 		
 		dao.addMessage(m);
+		
+		// TODO Notify UI 
 	}
 	
 	public abstract void sendMessage(String s);
@@ -66,6 +68,8 @@ public abstract class Session {
 	public abstract void sendMessage(File f);
 	
 	public abstract void startSession();
+	
+	public abstract void notifyStartSession() ;
 	
 	public abstract void closeSession();
 	

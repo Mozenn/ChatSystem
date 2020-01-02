@@ -58,6 +58,12 @@ public abstract class Message implements Comparable<Message>{
 	}
 	
 	@Override 
+	public int hashCode()
+	{
+		return 31 * Arrays.hashCode(content) + date.hashCode() ; 
+	}
+	
+	@Override 
 	public String toString()
 	{
 		return "Timestamp : " + date.toString(); 

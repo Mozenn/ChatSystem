@@ -34,6 +34,7 @@
 	- Observer 
 
 - UI
+	- use grid for main window 
 
 - LocalCommunication 
 	- Try to make the system more scalable 
@@ -42,9 +43,27 @@
 	- observer between localsystem and listener 
 	- observer between localsystem and sessions ? 
 
+- Session 
+	- two state 
+		- open 
+		- close 
+			- othert user has close session or is not online 
+
 
 # Perf 
 	- Multithread dao 
+	- Constraints 
+		- Deployment <= 2h
+		- username change visible to everyone <= 20s 
+		- time between sending & receiving messages <= 1s
+		- Central system able to withstand 1000 sessions 
+		- LocalSystem able to withstand 50 sessions 
+		- Inform of username unavailability <= 3s
+		- Show Online user on connection <= 5s 
+		- CentralSys withstand 100 000 users 
+		- CentralSys memory footprint <= 100Mo 
+		- CPU use <= 1% in 5s range measure 
+
 
 # Deploy
 
@@ -55,3 +74,4 @@
 		- item 10 to 14 
 	- Add documentation 
 		- readMe
+	- Redo UML 

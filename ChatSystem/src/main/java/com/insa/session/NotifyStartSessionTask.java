@@ -46,14 +46,7 @@ class NotifyStartSessionTask implements Runnable{
 			return ; 
 		}
 		
-		InetAddress addr;
-		
-		try {
-			addr = InetAddress.getByAddress(parentSession.getReceiver().getIpAddress());
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
-			return  ; 
-		}
+		 InetAddress addr = parentSession.getReceiver().getIpAddress();
 		
 		try {
 			

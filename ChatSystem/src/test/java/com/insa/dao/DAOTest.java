@@ -7,14 +7,15 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.insa.message.UserMessage;
+import com.insa.user.UserId;
 
 public class DAOTest {
 	
 	@Test 
 	public void getHistoryTest() throws IOException
 	{
-		UserMessage m1 = new UserMessage("data","u1".getBytes(),"u2".getBytes()) ; 
-		UserMessage m2 = new UserMessage("data","u2".getBytes(),"u1".getBytes()) ; 
+		UserMessage m1 = new UserMessage("data",new UserId("u1".getBytes()), new UserId("u2".getBytes())) ; 
+		UserMessage m2 = new UserMessage("data",new UserId("u2".getBytes()), new UserId("u1".getBytes())) ; 
 		
 		DAO dao = new DAOSQLiteTest() ; 
 		
@@ -23,7 +24,7 @@ public class DAOTest {
 		dao.addMessage(m1);
 		dao.addMessage(m2);
 		
-		var messages = dao.getHistory("u1".getBytes()) ; 
+		var messages = dao.getHistory(new UserId("u1".getBytes())) ; 
 		
 		messages.forEach( m -> System.out.println(m.getDate().toString() + " " + m.getSubtype()));
 		

@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 
 import com.insa.message.SystemMessage.SystemMessageType;
+import com.insa.user.UserId;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,18 +28,18 @@ public class UserMessage extends Message{
 	}
 
 	private UserMessageType subtype;
-	private byte[] receiverId ; 
-	private byte[] senderId ; 
+	private UserId receiverId ; // TODO change to UserId 
+	private UserId senderId ;  // TODO change to UserId 
 	
 	public UserMessage()
 	{
 		super();
 		this.subtype = UserMessageType.TX;
-		this.receiverId = new byte[18]; 
-		this.senderId = new byte[18]; 
+		this.receiverId = new UserId(); 
+		this.senderId = new UserId(); 
 	}
 	
-	public UserMessage(String text, byte[] receiverId, byte[] senderId ) throws IOException 
+	public UserMessage(String text, UserId receiverId, UserId senderId ) throws IOException 
 	{
 		super(text.getBytes());
 		this.receiverId = receiverId ; 
@@ -46,7 +47,7 @@ public class UserMessage extends Message{
 		subtype = UserMessageType.TX;
 	}
 	
-	public UserMessage(byte[] content,UserMessageType type, byte[] receiverId, byte[] senderId) throws IOException 
+	public UserMessage(byte[] content,UserMessageType type, UserId receiverId, UserId senderId) throws IOException 
 	{
 		super(content);
 		subtype = type;
@@ -54,7 +55,7 @@ public class UserMessage extends Message{
 		this.senderId = senderId ; 
 	} 
 	
-	public UserMessage(File f, byte[] receiverId, byte[] senderId) throws IOException 
+	public UserMessage(File f, UserId receiverId, UserId senderId) throws IOException 
 	{
 		super(Files.readAllBytes(f.toPath()) );
 		subtype = UserMessageType.FL;
@@ -65,22 +66,34 @@ public class UserMessage extends Message{
 		return subtype;
 	}
 	
-	public byte[] getReceiverId() {
+	public UserId getReceiverId() {
 		return receiverId;
 	}
 	
-	public byte[] getSenderId()
+	public UserId getSenderId()
 	{
 		return this.senderId ; 
 	}
 	
-	
-	/*
-	public UserMessage(byte[] tab) 
+	@Override
+	public boolean equals(Object obj)
 	{
-		super();
-		content = Message.extractContent(tab);
-		this.header = Message.extractHeader(tab);	
+		if(!(obj instanceof UserMessage))
+			return false ; 
+		
+		UserMessage m = (UserMessage) obj ; 
+		
+		return super.equals(obj) && this.senderId.equals(m.getSenderId()) && this.receiverId.equals(m.getReceiverId()) ;  
 	}
-	*/
+	
+	@Override 
+	public int hashCode()
+	{
+		int res = super.hashCode() ; 
+		res = 31 * res + senderId.hashCode() ; 
+		res = 31 * res + receiverId.hashCode() ; 
+		return res ; 
+	}
+	
+	
 }

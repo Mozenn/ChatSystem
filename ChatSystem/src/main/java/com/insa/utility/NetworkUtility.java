@@ -38,7 +38,7 @@ public final class NetworkUtility {
 	/*
 	 * Sends and receives UDP Packet on same socket to get local ip address 
 	 */
-	public static byte[] getLocalIPAddress() throws IOException
+	public static InetAddress getLocalIPAddress() throws IOException
 	{
 		byte[] buf = new byte[4];
 		byte[] data = new byte[] {'g','l','a'};
@@ -54,7 +54,7 @@ public final class NetworkUtility {
         
         ms.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
         
-        return r.getAddress().getAddress();   
+        return r.getAddress();   
 	}
 
 }

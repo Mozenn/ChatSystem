@@ -9,16 +9,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.insa.session.LocalSession;
+import com.insa.session.Session;
 import com.insa.user.User;
+import com.insa.user.UserId;
 import com.insa.utility.NetworkUtility;
 import com.insa.utility.SerializationUtility;
 
 final public class LocalSystem implements AutoCloseable{
 	
-	private ArrayList<User> localUsers;
-	private ArrayList<User> distantUsers;
+	private HashMap<UserId,User> localUsers;
+	private HashMap<UserId,User> distantUsers;
 	private User user;
 	
 	private InetAddress centralSysIp;
@@ -26,7 +29,7 @@ final public class LocalSystem implements AutoCloseable{
 	private final String LocalUserFilePath = "data/localuser" ; 
 	private final String LocalUserDirectoryPath = "data/" ; 
 	
-	private ArrayList<LocalSession> sessions;
+	private HashMap<UserId,Session> sessions;
 	
 	private LocalCommunicationListener listener ; 
 	public static final int LISTENING_PORT = 8888; 
@@ -35,9 +38,9 @@ final public class LocalSystem implements AutoCloseable{
 	
 	public LocalSystem() throws IOException 
 	{
-		localUsers = new ArrayList<User>();
-		distantUsers = new ArrayList<User>();
-		sessions = new ArrayList<LocalSession>();	
+		localUsers = new HashMap<UserId,User>();
+		distantUsers = new HashMap<UserId,User>();
+		sessions = new HashMap<UserId,Session>() ;	
 		
 		System.out.println("LocalSystem Started") ; 
 		
@@ -47,19 +50,23 @@ final public class LocalSystem implements AutoCloseable{
 		
 		notifyLocalUsers(); 
 		
+		RequestDistantUser();
+		
 	}
 	
 	public LocalSystem(User u) throws IOException 
 	{
-		localUsers = new ArrayList<User>();
-		distantUsers = new ArrayList<User>();
-		sessions = new ArrayList<LocalSession>();	
+		localUsers = new HashMap<UserId,User>();
+		distantUsers = new HashMap<UserId,User>();
+		sessions = new HashMap<UserId,Session>() ;	
 		
 		user = u ; 
 		
 		listener = new LocalCommunicationListener(this);
 		
 		notifyLocalUsers();
+		
+		RequestDistantUser(); 
 		
 	}
 	
@@ -117,38 +124,20 @@ final public class LocalSystem implements AutoCloseable{
 	{
 		String username = "hey" ; // TODO ask username through UI 
 		
-		byte[] ipAdd = NetworkUtility.getLocalIPAddress(); 
+		InetAddress ipAdd = NetworkUtility.getLocalIPAddress(); 
 		
-	    NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByAddress(ipAdd));
+	    NetworkInterface ni = NetworkInterface.getByInetAddress(ipAdd);
 	    byte[] id = ni.getHardwareAddress();
 	    
-		User newUser = new User(id,ipAdd, username) ; 
+		User newUser = new User(new UserId(id),ipAdd, username) ; 
 		
 		this.user = newUser ; 
-		
-		byte[] userAsBytes = SerializationUtility.serializeUser(newUser); 
 		
 		File f = new File(LocalUserDirectoryPath) ; 
 		
 		f.mkdir() ; 
 		
-		
-		// Write user to file 
-		
-		FileOutputStream out = null;
-		
-	      try {
-	          out = new FileOutputStream(LocalUserFilePath);
-	          
-             out.write(userAsBytes);
-
-	       }
-	      finally {
-	    	   
-	          if (out != null) {
-	             out.close();
-	          }
-	       }
+		saveLocalUser(); 
 	}
 	
 	private void saveLocalUser() throws IOException
@@ -173,9 +162,23 @@ final public class LocalSystem implements AutoCloseable{
 	       }
 	}
 	
+	public void RequestDistantUser()
+	{
+		// TODO send request to central system as a runnable task 
+	}
+	
 	public void changeUname(String newName) throws IOException 
 	{
 		// TODO : request name change
+		
+		// communicate to central system to check availability 
+		
+		// if not available 
+			// notify UI 
+		
+		// if available 
+			// update localUser 
+			// multicast notify change to all local users 
 		
 		
 		saveLocalUser(); 
@@ -188,7 +191,7 @@ final public class LocalSystem implements AutoCloseable{
 		
 		synchronized(sessions)
 		{
-			sessions.add(new LocalSession(user, u,packet.getPort())); // TODO check if getPort output the correct port 
+			sessions.put(u.getId(), new LocalSession(user, u,packet.getPort())); // TODO check if getPort output the correct port 
 		}
 		
 	}
@@ -199,7 +202,7 @@ final public class LocalSystem implements AutoCloseable{
 		locSes.notifyStartSession(); // notify receiver system of session started 
 		synchronized(sessions)
 		{
-			sessions.add(locSes); 
+			sessions.put(receiver.getId(),locSes); 
 		}
 		
 	}
@@ -208,9 +211,11 @@ final public class LocalSystem implements AutoCloseable{
 	{
 		synchronized(localUsers)
 		{
-			localUsers.add(u);
+			localUsers.put(u.getId(),u);
 		}
 		System.out.println("Local User added " + u.getUsername()); 
+		
+		// TODO notify GUI 
 	}
 
 	public void close() throws UnknownHostException, IOException

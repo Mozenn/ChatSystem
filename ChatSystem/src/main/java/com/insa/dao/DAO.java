@@ -6,12 +6,13 @@ import java.util.List;
 
 import com.insa.message.Message;
 import com.insa.message.UserMessage;
+import com.insa.user.UserId;
 
 public interface DAO {
 	
 	public void addMessage(UserMessage message) ; 
 	
-	public List<UserMessage> getHistory(byte[] receiverId) ; 
+	public List<UserMessage> getHistory(UserId receiverId) ; 
 	
 	public void clearHistory() ; 
 

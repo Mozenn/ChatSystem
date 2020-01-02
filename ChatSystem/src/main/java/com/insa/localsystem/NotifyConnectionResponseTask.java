@@ -6,7 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.insa.message.Message;
 import com.insa.message.SystemMessage;
 import com.insa.user.User;
 import com.insa.utility.NetworkUtility;
@@ -23,7 +22,7 @@ final class NotifyConnectionResponseTask implements Runnable {
 		this.localSystem = localSystem ; 
 		
 		User u = SerializationUtility.deserializeUser(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
-		addr = InetAddress.getByAddress(u.getIpAddress());
+		addr = u.getIpAddress();
 		
 		//Debug 
 		/*

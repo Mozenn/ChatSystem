@@ -34,11 +34,18 @@ public class MainWindow extends JFrame {
 		// Add menuBar 
 		
 		var menuBar = new JMenuBar(); 
+		
 		var fileMenu = new JMenu("File") ; 
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		var exitMenuItem = new JMenuItem("Exit");
 		fileMenu.add(exitMenuItem);
 		menuBar.add(fileMenu); 
+		
+		var editMenu = new JMenu("Edit") ; 
+		fileMenu.setMnemonic(KeyEvent.VK_E);
+		var ChangeUsernameItem = new JMenuItem("Change Username");
+		fileMenu.add(ChangeUsernameItem);
+		menuBar.add(editMenu); 
 		
 		setJMenuBar(menuBar);
 		

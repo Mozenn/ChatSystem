@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.insa.message.UserMessage;
+import com.insa.user.UserId;
 
 public class DAOSQLite implements DAO {
 	
@@ -41,8 +42,8 @@ public class DAOSQLite implements DAO {
 	    
 	    try(PreparedStatement pstmt = conn.prepareStatement(insertStmt))
 	    {
-	        pstmt.setBytes(1, message.getReceiverId());
-	        pstmt.setBytes(2, message.getSenderId());
+	        pstmt.setBytes(1, message.getReceiverId().getId());
+	        pstmt.setBytes(2, message.getSenderId().getId());
 	        pstmt.setString(3, message.getDate().toString());
 	        pstmt.setString(4, message.getSubtype().toString());
 	        pstmt.setBytes(5, message.getContent());
@@ -56,7 +57,7 @@ public class DAOSQLite implements DAO {
 	}
 
 	@Override
-	public List<UserMessage> getHistory(byte[] receiverId) {
+	public List<UserMessage> getHistory(UserId receiverId) {
 
 		List<UserMessage> messages = new ArrayList<UserMessage>();
 		
@@ -66,16 +67,16 @@ public class DAOSQLite implements DAO {
 		
        try (Connection conn = DriverManager.getConnection(DB_URL);
     		   PreparedStatement pstmt = conn.prepareStatement(query)){
-    	   pstmt.setBytes(1,receiverId); 
-    	   pstmt.setBytes(2,receiverId); 
+    	   pstmt.setBytes(1,receiverId.getId()); 
+    	   pstmt.setBytes(2,receiverId.getId()); 
     	   ResultSet rs = pstmt.executeQuery();
     	   
     	   
     	   
               // loop through the result set
               while (rs.next()) { 
-            	  byte[] receiverIdResult = rs.getBytes("receiverid") ;
-            	  byte[] senderIdResult = rs.getBytes("senderid") ;
+            	  UserId receiverIdResult = new UserId(rs.getBytes("receiverid")) ;
+            	  UserId senderIdResult = new UserId(rs.getBytes("senderid")) ;
             	  Timestamp ts = Timestamp.valueOf(rs.getString("timestamp")) ; 
             	  byte[] content = rs.getBytes("content") ; 
             	  String type = rs.getString("type") ;

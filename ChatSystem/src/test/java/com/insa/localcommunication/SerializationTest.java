@@ -12,6 +12,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.insa.message.SystemMessage;
+import com.insa.user.User;
+import com.insa.user.UserId;
+import com.insa.utility.NetworkUtility;
 import com.insa.utility.SerializationUtility;
 
 public class SerializationTest {
@@ -37,7 +40,7 @@ public class SerializationTest {
 	}
 	
 	@Test (expected = MismatchedInputException.class)
-	public void InvalidMessageSerialization() throws IOException
+	public void InvalidSystemMessageSerialization() throws IOException
 	{
 
 		String s = "hey" ; 
@@ -52,9 +55,44 @@ public class SerializationTest {
 		
 		SystemMessage messageAfter = SerializationUtility.deserializeSystemMessage(content) ;
 
-
+	}
+	
+	@Test 
+	public void ValidUserSerialization() throws JsonParseException, JsonMappingException, IOException
+	{
+		String s = "hey" ; 
+		
+		User userBefore = new User(new UserId("u1".getBytes()),NetworkUtility.getLocalIPAddress(),"username") ; 
+		
+		ObjectMapper o = new ObjectMapper() ;
+		
+		var content = o.writeValueAsString(userBefore).getBytes() ; 
+		
+		User userAfter = SerializationUtility.deserializeUser(content) ;
+		
+		assertEquals(userBefore.getId(),userAfter.getId()); 
+		assertEquals(userBefore.getIpAddress(),userAfter.getIpAddress()); 
+		assertEquals(userBefore.getUsername(),userAfter.getUsername()); 
 		
 	     
+	}
+	
+	@Test (expected = MismatchedInputException.class)
+	public void InvalidUserSerialization() throws IOException
+	{
+
+		String s = "hey" ; 
+		
+
+		ObjectMapper o = new ObjectMapper() ;
+		
+		byte[] content;
+
+		content = o.writeValueAsString(s).getBytes();
+
+		
+		User user = SerializationUtility.deserializeUser(content) ;
+
 	}
 
 }

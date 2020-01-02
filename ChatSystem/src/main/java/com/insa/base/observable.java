@@ -1,4 +1,4 @@
-package main;
+package com.insa.base;
 
 
 public interface observable {

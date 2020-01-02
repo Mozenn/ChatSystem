@@ -1,4 +1,4 @@
-package main;
+package com.insa.base;
 
 
 import java.util.Date;
@@ -32,7 +32,7 @@ import java.net.NetworkInterface;
 
 import java.sql.Timestamp;
 
-public class Main {
+public class App {
 
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		 

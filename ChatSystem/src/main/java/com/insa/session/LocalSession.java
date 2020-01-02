@@ -48,9 +48,13 @@ final public class LocalSession extends Session{
 		// TODO load history 
 	}
 	
-	public void notifyStartSession() throws IOException 
+	public void notifyStartSession() 
 	{
 		new NotifyStartSessionTask(this,socket) ; 
+		
+		// TODO join thread and wait x sec for response 
+		// if no response 
+			// close thread then close session and notify localSystem 
 	}
 	
 	
