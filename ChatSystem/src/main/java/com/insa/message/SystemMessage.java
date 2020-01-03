@@ -10,7 +10,9 @@ public class SystemMessage extends Message{
 		CR("CR"), // connectionResponse
 		GU("GU"), // getDistantUsers
 		CV("CV"), // checkUsernameValidity
-		SS("SS");  // startSession	
+		SS("SS"),  // startSession	
+		SR("SR"),  // startSessionResponse
+		CS("CS");  // closeSession // TODO 
 		
 	    private String type;
 

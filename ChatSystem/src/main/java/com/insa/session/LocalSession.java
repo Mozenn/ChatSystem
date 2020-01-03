@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.insa.dao.DAO;
+import com.insa.dao.DAOSQLite;
 import com.insa.localsystem.LocalSystem;
 import com.insa.message.SystemMessage;
 import com.insa.message.UserMessage;
@@ -45,16 +48,19 @@ final public class LocalSession extends Session{
 		
 		System.out.println("LocalSession Started");
 		
-		// TODO load history 
+		DAO dao = new DAOSQLite() ; 
+		
+		messages = (ArrayList<UserMessage>) dao.getHistory(receiver.getId()) ; 
 	}
 	
 	public void notifyStartSession() 
 	{
-		new NotifyStartSessionTask(this,socket) ; 
-		
-		// TODO join thread and wait x sec for response 
-		// if no response 
-			// close thread then close session and notify localSystem 
+		new NotifyStartSessionTask(this,socket.getLocalPort()) ; 
+	}
+	
+	public void notifyStartSessionResponse(Object packetReceived)
+	{
+		new NotifyStartSessionResponseTask((DatagramPacket)packetReceived) ; 
 	}
 	
 	
@@ -63,6 +69,8 @@ final public class LocalSession extends Session{
 	public void closeSession() {
 		listener.stopRun();
 		socket.close();
+		
+		// Notify UI 
 	}
 
 	@Override

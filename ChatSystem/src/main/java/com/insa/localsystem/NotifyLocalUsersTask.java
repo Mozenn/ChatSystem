@@ -72,6 +72,7 @@ final class NotifyLocalUsersTask implements Runnable
 		
 		
 		System.out.println("CO notify multicasted");
+		
 
 	}
 }

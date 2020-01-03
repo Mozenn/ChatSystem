@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import com.insa.session.LocalSession;
 import com.insa.session.Session;
+import com.insa.session.SessionData;
 import com.insa.user.User;
 import com.insa.user.UserId;
 import com.insa.utility.NetworkUtility;
@@ -186,12 +187,14 @@ final public class LocalSystem implements AutoCloseable{
 	
 	protected void createSessionResponse(DatagramPacket packet) throws IOException 
 	{
-		// Deserialization 
-		User u = SerializationUtility.deserializeUser(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
+
+		SessionData s = SerializationUtility.deserializeSessionData(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
+		LocalSession session = new LocalSession(user, s.getUser(), s.getPort()) ; 
 		
 		synchronized(sessions)
 		{
-			sessions.put(u.getId(), new LocalSession(user, u,packet.getPort())); // TODO check if getPort output the correct port 
+			sessions.put(s.getUser().getId(), session);
+			session.notifyStartSessionResponse(packet);
 		}
 		
 	}

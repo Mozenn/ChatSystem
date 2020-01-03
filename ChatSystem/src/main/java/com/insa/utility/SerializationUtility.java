@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.insa.message.Message;
 import com.insa.message.SystemMessage;
 import com.insa.message.UserMessage;
+import com.insa.session.SessionData;
 import com.insa.user.User;
 
 final public class SerializationUtility {
@@ -26,6 +27,19 @@ final public class SerializationUtility {
 	{
 	      ObjectMapper o = new ObjectMapper () ; 
 	      return  o.readValue(userAsByte, User.class); 
+	}
+	
+	public static byte[] serializeSessionData(SessionData s) throws JsonProcessingException
+	{
+		// Serialization to Json 
+		ObjectMapper uJson = new ObjectMapper();
+		return uJson.writeValueAsString(s).getBytes(); 
+	}
+	
+	public static SessionData deserializeSessionData(byte[] sessionDataAsBytes) throws JsonParseException, JsonMappingException, IOException
+	{
+	      ObjectMapper o = new ObjectMapper () ; 
+	      return  o.readValue(sessionDataAsBytes, SessionData.class); 
 	}
 	
 	public static byte[] serializeMessage(Message m) throws JsonProcessingException

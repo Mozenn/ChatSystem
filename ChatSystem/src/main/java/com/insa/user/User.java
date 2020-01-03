@@ -5,7 +5,7 @@ import java.net.InetAddress;
 final public class User{
 	
 	 private UserId id;  
-	 private InetAddress ipAddress;  // TODO change to InetAddress  (for equal purpose) 
+	 private InetAddress ipAddress;  
 	 private String username;
 	 
 	 public static final int MAX_NAME_SIZE = 20;

@@ -14,7 +14,7 @@ public abstract class Session {
 
 	protected User emitter;
 	protected User receiver;
-	protected ArrayList<Message> messages;
+	protected ArrayList<UserMessage> messages;
 	protected int receiverPort ; 
 	
 	protected Session()
@@ -26,7 +26,7 @@ public abstract class Session {
 	{
 		emitter = e;
 		receiver = r;
-		messages = new ArrayList<Message>();
+		messages = new ArrayList<UserMessage>();
 	}
 	
 	public Session(User e, User r, int receiverPort) throws IOException 
@@ -34,7 +34,7 @@ public abstract class Session {
 		emitter = e;
 		receiver = r;
 		this.receiverPort = receiverPort ; 
-		messages = new ArrayList<Message>();
+		messages = new ArrayList<UserMessage>();
 	}
 
 	public User getEmitter() {
@@ -69,7 +69,11 @@ public abstract class Session {
 	
 	public abstract void startSession();
 	
+	// Call on initiator session  
 	public abstract void notifyStartSession() ;
+	
+	// Call on responding session 
+	public abstract void notifyStartSessionResponse(Object packetReceived) ;
 	
 	public abstract void closeSession();
 	

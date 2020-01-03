@@ -28,8 +28,8 @@ public class UserMessage extends Message{
 	}
 
 	private UserMessageType subtype;
-	private UserId receiverId ; // TODO change to UserId 
-	private UserId senderId ;  // TODO change to UserId 
+	private UserId receiverId ;
+	private UserId senderId ;  
 	
 	public UserMessage()
 	{

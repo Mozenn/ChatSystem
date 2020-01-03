@@ -35,7 +35,7 @@ public class UDPSessionListener extends Thread{
 		while(run.get()) 
 		{
 			byte[] buffer = new byte[Message.MAX_SIZE];
-			DatagramPacket packet = new DatagramPacket(buffer, 0);
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			try {
 				socket.receive(packet);
 			} catch (IOException e) {
