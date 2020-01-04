@@ -6,8 +6,10 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.insa.message.UserMessage;
-import com.insa.user.UserId;
+import com.chatsystem.dao.DAO;
+import com.chatsystem.dao.DAOSQLiteTest;
+import com.chatsystem.message.UserMessage;
+import com.chatsystem.user.UserId;
 
 public class DAOTest {
 	

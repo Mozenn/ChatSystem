@@ -7,15 +7,15 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.chatsystem.message.SystemMessage;
+import com.chatsystem.user.User;
+import com.chatsystem.user.UserId;
+import com.chatsystem.utility.NetworkUtility;
+import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.insa.message.SystemMessage;
-import com.insa.user.User;
-import com.insa.user.UserId;
-import com.insa.utility.NetworkUtility;
-import com.insa.utility.SerializationUtility;
 
 public class SerializationTest {
 	

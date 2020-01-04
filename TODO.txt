@@ -34,7 +34,14 @@
 	- Observer 
 
 - UI
-	- use grid for main window 
+	- Rescale components when downsizing window 
+	- Use Icon for buttons (use labels & source folder)
+	- Open dialog window to request username on first use 
+	- Add button to embed file in message 
+	- MVC 
+		- Make Model interface allowing view to update using observer pattern 
+			- Use listModel or similar component ? 
+	
 
 - LocalCommunication 
 	- Try to make the system more scalable 
@@ -48,6 +55,7 @@
 		- open 
 		- close 
 			- othert user has close session or is not online 
+	- Make factory for session ( calling specific method depending on type of session ... )
 
 
 # Perf 
