@@ -35,7 +35,7 @@ final class NotifyLocalUsersTask implements Runnable
 
 		byte[] serializedUser;
 		try {
-			serializedUser = SerializationUtility.serializeUser(localSystem.getUser()) ; 
+			serializedUser = SerializationUtility.serializeUser(localSystem.getUser().get()) ; 
 			
 			// Sending message 
 			msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);

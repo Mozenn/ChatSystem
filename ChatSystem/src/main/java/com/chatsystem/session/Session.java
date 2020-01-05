@@ -3,19 +3,26 @@ package com.chatsystem.session;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.event.EventListenerList;
 
 import com.chatsystem.dao.DAO;
 import com.chatsystem.dao.DAOSQLite;
 import com.chatsystem.message.Message;
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.SessionListener;
+import com.chatsystem.model.SessionModel;
 import com.chatsystem.user.User;
 
-public abstract class Session {
+public abstract class Session implements SessionModel{
 
 	protected User emitter;
 	protected User receiver;
 	protected ArrayList<UserMessage> messages;
 	protected int receiverPort ; 
+	
+	private final EventListenerList listeners = new EventListenerList();
 	
 	protected Session()
 	{
@@ -36,6 +43,30 @@ public abstract class Session {
 		this.receiverPort = receiverPort ; 
 		messages = new ArrayList<UserMessage>();
 	}
+	
+	public void addSessionListener(SessionListener sl) 
+	{
+		listeners.add(SessionListener.class, sl);
+	}
+	
+	public void removeSessionListener(SessionListener sl) 
+	{
+		listeners.remove(SessionListener.class, sl);
+	}
+	
+	public SessionListener[] getSessionListeners() 
+	{
+		return listeners.getListeners(SessionListener.class); 
+	}
+	
+	
+	protected void fireMessageReceived(UserMessage newMessage)
+	{
+		for(SessionListener sl : getSessionListeners())
+		{
+			sl.messageReceived(newMessage);
+		}
+	}
 
 	public User getEmitter() {
 		return emitter;
@@ -47,6 +78,11 @@ public abstract class Session {
 	
 	public int getReceiverPort() {
 		return receiverPort;
+	}
+	
+	public List<UserMessage> getMessages()
+	{
+		return this.messages; 
 	}
 
 	public void addMessage(UserMessage m) 
@@ -60,7 +96,7 @@ public abstract class Session {
 		
 		dao.addMessage(m);
 		
-		// TODO Notify View 
+		fireMessageReceived(m);
 	}
 	
 	public abstract void sendMessage(String s);

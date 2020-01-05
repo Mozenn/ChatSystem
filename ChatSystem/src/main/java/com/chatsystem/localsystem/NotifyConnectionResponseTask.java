@@ -42,7 +42,7 @@ final class NotifyConnectionResponseTask implements Runnable {
 		
 		byte[] serializedUser;
 		try {
-			serializedUser = SerializationUtility.serializeUser(localSystem.getUser());
+			serializedUser = SerializationUtility.serializeUser(localSystem.getUser().get());
 		} catch (JsonProcessingException e1) {
 			e1.printStackTrace();
 			return ; 

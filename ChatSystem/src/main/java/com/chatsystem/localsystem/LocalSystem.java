@@ -2,15 +2,19 @@ package com.chatsystem.localsystem;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
+import com.chatsystem.model.SystemContract;
 import com.chatsystem.session.LocalSession;
 import com.chatsystem.session.Session;
 import com.chatsystem.session.SessionData;
@@ -18,8 +22,9 @@ import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-final public class LocalSystem implements AutoCloseable{
+final public class LocalSystem implements AutoCloseable , SystemContract{
 	
 	private HashMap<UserId,User> localUsers;
 	private HashMap<UserId,User> distantUsers;
@@ -55,6 +60,7 @@ final public class LocalSystem implements AutoCloseable{
 		
 	}
 	
+	/*
 	public LocalSystem(User u) throws IOException 
 	{
 		localUsers = new HashMap<UserId,User>();
@@ -69,7 +75,7 @@ final public class LocalSystem implements AutoCloseable{
 		
 		RequestDistantUser(); 
 		
-	}
+	}*/
 	
 	public void close() throws UnknownHostException, IOException
 	{
@@ -106,19 +112,27 @@ final public class LocalSystem implements AutoCloseable{
 		
 	}
 	
-	// Called by Controller 
-	public void StartLocalSession(User receiver) throws IOException
+	public boolean startLocalSession(User receiver) 
 	{
-		LocalSession locSes = new LocalSession(user,receiver); 
+		LocalSession locSes = null;
+		try {
+			locSes = new LocalSession(user,receiver);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false ;
+		} 
+		
 		locSes.notifyStartSession(); // notify receiver system of session started 
 		synchronized(sessions)
 		{
-			sessions.put(receiver.getId(),locSes); 
+			sessions.put(receiver.getId(),locSes); // TODO notify View ? 
 		}
+		
+		return true ;
 		
 	}
 	
-	// Called by Controller 
+	
 	public void closeSession(User receiver) 
 	{
 		
@@ -146,17 +160,30 @@ final public class LocalSystem implements AutoCloseable{
 	
 	//---------- LOCAL USER 
 	
-	public User getUser() 
+	public Optional<User> getUser() 
 	{
+		
 		synchronized(user)
 		{
-			return user;
+			if(user == null)
+			{
+				try {
+					LoadLocalUser();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+			}
+
+			return Optional.of(user);
+			
 		}
 
 	}
 	
-	public void LoadLocalUser() throws IOException 
+	private boolean LoadLocalUser() throws IOException 
 	{
+		boolean result = false ; 
+		
 		File localUserFile = new File(LocalUserFilePath) ; 
 		
 		if(localUserFile.exists())
@@ -171,8 +198,14 @@ final public class LocalSystem implements AutoCloseable{
 		    	  in.read(userAsBytes) ; 
 		    	  
 		    	  this.user = SerializationUtility.deserializeUser(userAsBytes) ; 
+		    	  
+		    	  result = true ; 
 
 		       }
+		      catch(Exception e)
+		      {
+		    	  result = false ; 
+		      }
 		      finally {
 		    	   
 		          if (in != null) {
@@ -182,37 +215,64 @@ final public class LocalSystem implements AutoCloseable{
 		      
 		      
 		}
-		else 
-		{
-			createLocalUser(); 
-		}
+	
+		return result ; 
 		
-		// TODO launch main window 
+		
 	}
 	
-	private void createLocalUser() throws IOException
+	public Optional<User> createLocalUser(String username) 
 	{
-		String username = "hey" ; // TODO ask username through UI window 
 		
-		InetAddress ipAdd = NetworkUtility.getLocalIPAddress(); 
+		InetAddress ipAdd;
+		try {
+			ipAdd = NetworkUtility.getLocalIPAddress();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return Optional.of(user); 
+		} 
 		
-	    NetworkInterface ni = NetworkInterface.getByInetAddress(ipAdd);
-	    byte[] id = ni.getHardwareAddress();
+	    NetworkInterface ni;
+	    byte[] id ; 
+	    
+		try {
+			ni = NetworkInterface.getByInetAddress(ipAdd);
+			id = ni.getHardwareAddress();
+		} catch (SocketException e1) {
+			e1.printStackTrace();
+			return Optional.of(user); 
+		}
+	    
 	    
 		User newUser = new User(new UserId(id),ipAdd, username) ; 
 		
-		this.user = newUser ; 
+		synchronized(user)
+		{
+			this.user = newUser ; 
+		}
 		
 		File f = new File(LocalUserDirectoryPath) ; 
 		
 		f.mkdir() ; 
 		
-		saveLocalUser(); 
+		try {
+			saveLocalUser();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
+		return Optional.of(user); 
 	}
 	
-	private void saveLocalUser() throws IOException
+	private void saveLocalUser() throws IOException 
 	{
-		byte[] userAsBytes = SerializationUtility.serializeUser(this.user); 
+		byte[] userAsBytes;
+		try {
+			userAsBytes = SerializationUtility.serializeUser(this.user);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return ; 
+		} 
 		
 		// Write user to file 
 		
@@ -223,7 +283,7 @@ final public class LocalSystem implements AutoCloseable{
 	          
              out.write(userAsBytes);
 
-	       }
+	       } 
 	      finally {
 	    	   
 	          if (out != null) {
@@ -232,9 +292,9 @@ final public class LocalSystem implements AutoCloseable{
 	       }
 	}
 	
-	// TODO called by controller 
-	public void changeUname(String newName) throws IOException 
+	public boolean changeUname(String newName) 
 	{
+		boolean res = false ; 
 		
 		// communicate to central system to check availability 
 		
@@ -247,7 +307,13 @@ final public class LocalSystem implements AutoCloseable{
 			// notify view 
 		
 		
-		saveLocalUser(); 
+		try {
+			saveLocalUser();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
+		return res ;
 	}
 
 

@@ -39,8 +39,13 @@
 	- Open dialog window to request username on first use 
 	- Add button to embed file in message 
 	- MVC 
-		- Make Model interface allowing view to update using observer pattern 
-			- Use listModel or similar component ? 
+		- Model-View 
+			- Setup SessionModel 
+			- Setup UserModel 
+			- Setup EventListeners 
+		- Make JChatPanel 
+		- Hook JChatPanel to Controller & make event response to send Message in controller 
+		- Remove hard coded string 
 	
 
 - LocalCommunication 

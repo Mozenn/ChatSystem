@@ -33,34 +33,19 @@ public class MainWindow extends JFrame {
 	private JPanel contentPane;
 	private JPanel ongoingSessionPannel ; 
 	private JPanel connectedUserPannel ; 
-	private JPanel messagePanel ;
-	private JPanel textPannel ; 
 	private JMenuBar mainMenuBar ; 
-	private JButton sendButton ; 
-	private JTextArea textArea ; 
+	private JChatPanel chatPanel ; 
 	
 	public JPanel getOngoingSessionPannel() {
 		return ongoingSessionPannel;
 	}
 
-
 	public JPanel getConnectedUserPannel() {
 		return connectedUserPannel;
 	}
 
-
-	public JPanel getMessagePanel() {
-		return messagePanel;
-	}
-
-
-	public JPanel getTextPannel() {
-		return textPannel;
-	}
-
-	public JTextArea getTextArea()
-	{
-		return this.textArea; 
+	public JChatPanel getChatPanel() {
+		return chatPanel;
 	}
 
 	public JMenuBar getmainMenuBar() {
@@ -68,10 +53,6 @@ public class MainWindow extends JFrame {
 		return this.mainMenuBar;
 	}
 	
-	public JButton getSendButton()
-	{
-		return sendButton  ; 
-	}
 
 	/**
 	 * Create the frame.
@@ -87,9 +68,9 @@ public class MainWindow extends JFrame {
 		
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] {2, 570, 2};
-		gbl_contentPane.rowHeights = new int[] {306, 23};
-		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 0.0};
-		gbl_contentPane.rowWeights = new double[]{1.0, 0.0};
+		gbl_contentPane.rowHeights = new int[] {350};
+		gbl_contentPane.columnWeights = new double[]{0.5, 1.0, 0.5};
+		gbl_contentPane.rowWeights = new double[]{1.0};
 		contentPane.setLayout(gbl_contentPane);
 		
 		// Add mainMenuBar 
@@ -115,11 +96,11 @@ public class MainWindow extends JFrame {
 		ongoingSessionPannel = new JPanel();
 				
 		JScrollPane sessionScrollPane = new JScrollPane(ongoingSessionPannel);
-		sessionScrollPane.setMinimumSize(new Dimension(200, 500));
+		sessionScrollPane.setMinimumSize(new Dimension(100, 500));
 		sessionScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 		GridBagConstraints gbc_sessionScrollPane = new GridBagConstraints();
-		gbc_sessionScrollPane.gridheight = 2;
-		gbc_sessionScrollPane.weightx = 1.0;
+		gbc_sessionScrollPane.gridheight = 1;
+		gbc_sessionScrollPane.weightx = 0.7;
 		gbc_sessionScrollPane.weighty = 1.0;
 		gbc_sessionScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_sessionScrollPane.insets = new Insets(0, 0, 5, 5);
@@ -135,55 +116,34 @@ public class MainWindow extends JFrame {
 		
 		JScrollPane connectedUserScrollPane = new JScrollPane(connectedUserPannel);
 		connectedUserScrollPane.getVerticalScrollBar().setUnitIncrement(20);
-		connectedUserScrollPane.setMinimumSize(new Dimension(200, 500));
+		connectedUserScrollPane.setMinimumSize(new Dimension(100, 500));
 		GridBagConstraints gbc_connectedUserScrollPane = new GridBagConstraints();
 		gbc_connectedUserScrollPane.insets = new Insets(0, 0, 5, 0);
-		gbc_connectedUserScrollPane.gridheight = 2;
+		gbc_connectedUserScrollPane.gridheight = 1;
 		gbc_connectedUserScrollPane.weighty = 1.0;
-		gbc_connectedUserScrollPane.weightx = 1.0;
+		gbc_connectedUserScrollPane.weightx = 0.7;
 		gbc_connectedUserScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_connectedUserScrollPane.gridx = 2;
 		gbc_connectedUserScrollPane.gridy = 0;
 		contentPane.add(connectedUserScrollPane, gbc_connectedUserScrollPane);
 		connectedUserPannel.setLayout(new BoxLayout(connectedUserPannel, BoxLayout.Y_AXIS));
 		
-		// Messages Panel 		
-		messagePanel = new JPanel();
+		// Chat Panel 		
+
+		chatPanel = new JChatPanel();
 		
-		JScrollPane messageScrollPane = new JScrollPane(messagePanel);
-		messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
-		messageScrollPane.getVerticalScrollBar().setUnitIncrement(20);
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.weighty = 4.0;
-		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.anchor = GridBagConstraints.SOUTH;
-		gbc_scrollPane.gridx = 1;
-		gbc_scrollPane.gridy = 0;
-		gbc_scrollPane.weightx = 1.0;
-		contentPane.add(messageScrollPane, gbc_scrollPane);
+		connectedUserScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+		chatPanel.setMinimumSize(new Dimension(200, 500));
+		GridBagConstraints gbc_chatPanel = new GridBagConstraints();
+		gbc_chatPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_chatPanel.gridheight = 1;
+		gbc_chatPanel.weighty = 1.0;
+		gbc_chatPanel.weightx = 1.0;
+		gbc_chatPanel.fill = GridBagConstraints.BOTH;
+		gbc_chatPanel.gridx = 1;
+		gbc_chatPanel.gridy = 0;
+		contentPane.add(chatPanel, gbc_chatPanel);
 		
-		// Text Panel 
-		
-		textPannel = new JPanel();
-		GridBagConstraints gbc_textPannel = new GridBagConstraints();
-		gbc_textPannel.weighty = 1.0;
-		gbc_textPannel.insets = new Insets(0, 0, 5, 5);
-		gbc_textPannel.anchor = GridBagConstraints.PAGE_END;
-		gbc_textPannel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textPannel.gridx = 1;
-		gbc_textPannel.gridy = 1;
-		gbc_textPannel.weightx = 1.0;
-		contentPane.add(textPannel, gbc_textPannel);
-		textPannel.setLayout(new BoxLayout(textPannel, BoxLayout.X_AXIS));
-		
-		textArea = new JTextArea();
-		textArea.setLineWrap(true);
-		textArea.setWrapStyleWord(true);
-		textPannel.add(textArea);
-		
-		JButton sendButton = new JButton("Send");
-		textPannel.add(sendButton);
 		
 		for(int i = 0 ; i < 100 ; i++)
 		{
@@ -197,10 +157,25 @@ public class MainWindow extends JFrame {
 			ongoingSessionPannel.add(p);
 		}
 		
+		boolean b = true ; 
+		
 		for(int i = 0 ; i < 30 ; i++)
 		{
-			JMessagePanel p = new JMessagePanel();
-			messagePanel.add(p);
+			JMessagePanel p = new JMessagePanel("Filler Text");
+			if(b)
+			{
+				p.setToEmitterColor();
+				chatPanel.getMessagePanel().add(p);
+				b= !b ; 
+			}
+			else
+			{
+				p.setToReceiverColor();
+				chatPanel.getMessagePanel().add(p);
+				b= !b ; 
+			}
+				
+			
 		}
 		
 

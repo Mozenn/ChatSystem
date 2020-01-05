@@ -34,7 +34,7 @@ public class JUserPanel extends JPanel implements ActionListener{
 		
 		this.user = u ; 
 		
-		setBorder(new LineBorder(new Color(250, 250, 210), 1, true));
+		setBorder(new LineBorder(new Color(105, 105, 105), 1, true));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {100};
 		gridBagLayout.rowHeights = new int[] {50, 50};
@@ -63,6 +63,8 @@ public class JUserPanel extends JPanel implements ActionListener{
 		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 0;
 		add(lblNewLabel, gbc_lblNewLabel);
+		
+		actionListeners = new ArrayList<ActionListener>();
 
 	}
 	
@@ -85,6 +87,16 @@ public class JUserPanel extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		
 		actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,STARTSESSION_ACTIONCOMMAND))); 
+	}
+	
+	public void makeInactive()
+	{
+		startSessionButton.setEnabled(false);
+	}
+	
+	public void makeActive()
+	{
+		startSessionButton.setEnabled(true);
 	}
 
 }
