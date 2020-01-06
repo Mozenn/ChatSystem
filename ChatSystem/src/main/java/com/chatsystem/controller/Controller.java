@@ -22,9 +22,7 @@ public class Controller implements ControllerContract{
 	private View view ; 
 	
 	public Controller() throws IOException
-	{
-		
-		
+	{	
 		this.model = new LocalSystem(); 
 		
 		this.view = new View(this,model);

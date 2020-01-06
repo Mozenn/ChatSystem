@@ -100,6 +100,9 @@ public class View implements ActionListener, SystemListener{
     	newSession.addActionListener(this);
     	newSession.addActionListener(controller);
     	mainWindow.getOngoingSessionPannel().add(newSession);
+    	mainWindow.getOngoingSessionPannel().validate();
+    	mainWindow.getOngoingSessionPannel().repaint();
+    	
     }
     
     private void addConnectedUserPanel(User u)
@@ -108,6 +111,8 @@ public class View implements ActionListener, SystemListener{
     	newUser.addActionListener(this);
     	newUser.addActionListener(controller);
     	mainWindow.getConnectedUserPannel().add(newUser);
+    	mainWindow.getConnectedUserPannel().validate();
+    	mainWindow.getConnectedUserPannel().repaint();
     }
 
 	@Override
@@ -146,6 +151,8 @@ public class View implements ActionListener, SystemListener{
 		       if(up.getUser().equals(u))
 		       {
 		    	   mainWindow.getConnectedUserPannel().remove(up);
+			       mainWindow.getConnectedUserPannel().validate();
+			       mainWindow.getConnectedUserPannel().repaint();
 		       }
 		    }
 		}
