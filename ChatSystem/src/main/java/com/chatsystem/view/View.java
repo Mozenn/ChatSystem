@@ -38,24 +38,10 @@ public class View implements ActionListener, SystemListener{
 		mainWindow = new MainWindow();
 		mainWindow.setVisible(true);
 		mainWindow.getChatPanel().getSendButton().setActionCommand(JChatPanel.SENDMESSAGE_ACTIONCOMMAND); 
-		mainWindow.getChatPanel().getSendButton().addActionListener(this);
-		mainWindow.getChatPanel().getSendButton().addActionListener(controller);
+		mainWindow.getChatPanel().addActionListener(this);
+		mainWindow.getChatPanel().addActionListener(controller);
 
 	}
-	
-    
-    private void addSessionPanel(User u, SessionModel sm)
-    {
-    	JSessionPanel newSession = new JSessionPanel(u,sm); 
-    	newSession.addActionListener(this);
-    	newSession.addActionListener(controller);
-    	mainWindow.getOngoingSessionPannel().add(newSession);
-    }
-    
-    private void addConnectedUserPanel(User u)
-    {
-    	// TODO 
-    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -68,7 +54,7 @@ public class View implements ActionListener, SystemListener{
 			for (Component c : mainWindow.getConnectedUserPannel().getComponents()) {
 			    if (c instanceof JUserPanel ) { 
 			       JUserPanel up = (JUserPanel)c ; 
-			       if(up.getUser().equals(js.getReceiver()))
+			       if(up.getUser().equals(js.getSessionModel().getReceiver()))
 			       {
 			    	   up.makeActive();
 			       }
@@ -81,34 +67,88 @@ public class View implements ActionListener, SystemListener{
 		{
 			JSessionPanel js = (JSessionPanel) e.getSource(); 
 			
-			mainWindow.getChatPanel().ChangeDisplayedConversation(js.getReceiver(), js.getSession().getMessages()); 
+			if(!mainWindow.getChatPanel().getCurrentUser().equals(js.getSessionModel().getReceiver()))
+			{
+				mainWindow.getChatPanel().ChangeConversation(js.getSessionModel().getReceiver(), js.getSessionModel().getMessages()); 
+			}
+			
+			
 		}
-		else if(e.getActionCommand().equals(JUserPanel.STARTSESSION_ACTIONCOMMAND)) // TODO this code should be called by listening to system Model 
+		else if(e.getActionCommand().equals(JUserPanel.STARTSESSION_ACTIONCOMMAND)) 
 		{
 			JUserPanel up = (JUserPanel) e.getSource(); 
 			
-			addSession(up.getUser());
 			up.makeInactive();
-			mainWindow.getChatPanel().ChangeDisplayedConversation(up.getUser(), messagesToDisplay); // TODO query model to get history 
+			
 		}
 		else if(e.getActionCommand().equals(JChatPanel.SENDMESSAGE_ACTIONCOMMAND)) 
 		{
 			// clear text area 
 			mainWindow.getChatPanel().getTextArea().setText("");
 		}
+		else if(e.getActionCommand().equals(JSessionPanel.MESSAGERECEIVED_ACTIONCOMMAND)) 
+		{
+			// Update 
+		}
 			
 		
 	}
+	
+    private void addSessionPanel(SessionModel sm)
+    {
+    	JSessionPanel newSession = new JSessionPanel(sm); 
+    	newSession.addActionListener(this);
+    	newSession.addActionListener(controller);
+    	mainWindow.getOngoingSessionPannel().add(newSession);
+    }
+    
+    private void addConnectedUserPanel(User u)
+    {
+    	JUserPanel newUser = new JUserPanel(u); 
+    	newUser.addActionListener(this);
+    	newUser.addActionListener(controller);
+    	mainWindow.getConnectedUserPannel().add(newUser);
+    }
 
 	@Override
-	public void sessionCreated(SessionModel sm) {
-		// TODO create new session pannel 
+	public void sessionStarted(SessionModel sm) {
+		addSessionPanel(sm);
+		mainWindow.getChatPanel().ChangeConversation(sm.getReceiver(), sm.getMessages()); 
 		
 	}
 
 	@Override
 	public void sessionClosed(SessionModel sm) {
-		// TODO remove sessionpanel 
+		
+		for (Component c : mainWindow.getOngoingSessionPannel().getComponents()) {
+		    if (c instanceof JSessionPanel ) { 
+		    	JSessionPanel sp = (JSessionPanel)c ; 
+		       if(sp.getSessionModel().getReceiver().equals(sm.getReceiver()))
+		       {
+		    	   mainWindow.getOngoingSessionPannel().remove(sp) ; 
+		       }
+		    }
+		}
+	}
+
+	@Override
+	public void userConnection(User u) {
+		addConnectedUserPanel(u);
+		
+	}
+
+	@Override
+	public void userDisconnection(User u) {
+		
+		for (Component c : mainWindow.getConnectedUserPannel().getComponents()) {
+		    if (c instanceof JUserPanel ) { 
+		       JUserPanel up = (JUserPanel)c ; 
+		       if(up.getUser().equals(u))
+		       {
+		    	   mainWindow.getConnectedUserPannel().remove(up);
+		       }
+		    }
+		}
 		
 	}
     

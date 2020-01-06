@@ -6,5 +6,6 @@ import com.chatsystem.message.UserMessage;
 
 public interface SessionListener extends EventListener{
 	
-	public void messageReceived(UserMessage m) ; 
+	public void messageAdded(UserMessage m) ; 
+	
 }

@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.chatsystem.localsystem.LocalSystem;
 import com.chatsystem.message.Message;
@@ -75,14 +77,39 @@ class NotifyStartSessionTask implements Runnable{
 		byte[] buffer = new byte[Message.MAX_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		try {
-			socket.receive(packet);
-		} catch (SocketTimeoutException e) { // TODO modify this to check if received message is SR and limit to 1sec at same time 
+			boolean bStop = false ; 
+			
+			long t = System.currentTimeMillis();
+			System.out.println("NotifyStartSession wait receive");
+			while(!bStop && t - System.currentTimeMillis() < 1000)
+			{
+				socket.receive(packet);
+				
+				SystemMessage receivedMsg = SerializationUtility.deserializeSystemMessage(packet.getData()); 
+				
+				if(receivedMsg.getSubtype().equals(SystemMessage.SystemMessageType.SR)) // session valid 
+				{
+					System.out.println("NotifyStartSession session confirmed");
+					socket.close();
+					return ; 
+				}
+					
+			}
+
+			System.out.println("NotifyStartSession not received");
 			socket.close();
+			parentSession.closeSession();
+			
+		} catch (SocketTimeoutException e) { 
+			socket.close();
+			System.out.println("NotifyStartSession not received");
 			parentSession.closeSession();
 
 		}catch (IOException e) {
 			e.printStackTrace();
 			
+			socket.close();
+			parentSession.closeSession();
 		}
 		
 	}

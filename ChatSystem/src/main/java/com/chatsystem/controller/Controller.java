@@ -23,31 +23,33 @@ public class Controller implements ControllerContract{
 	
 	public Controller() throws IOException
 	{
-		// TODO 
 		
-		// this.localSystem = new LocalSystem(); 
 		
-		this.view = new View(this);
+		this.model = new LocalSystem(); 
+		
+		this.view = new View(this,model);
 		
 		var user = model.getUser(); 
 		
 		if(user.isEmpty())
 		{
+			// TODO 
 			// Open user creation window ( async and wait ) 
 			// get username from user 
 			// createUser in model 
 			// open main window 
+			model.createLocalUser("Name") ; 
 		}
-		else
-		{
-	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	            	createAndShowMainWindow();
-	            }
-	        });
-		}
-		
-
+		/*
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	
+            }
+        });
+        */
+        createAndShowMainWindow();
+        
+        model.start();
 		
 	}
 	
@@ -72,12 +74,12 @@ public class Controller implements ControllerContract{
 	
 	public void sendMessage(User receiver, String text)
 	{
-		// TODO call localSystem method
+		model.sendMessage(receiver, text);
 	}
 	
 	public void sendMessage(User receiver, File file)
 	{
-		// TODO call localSystem method
+		model.sendFileMessage(receiver, file);
 	}
 
 	@Override
@@ -86,7 +88,7 @@ public class Controller implements ControllerContract{
 		if(e.getActionCommand().equals(JSessionPanel.CLOSE_ACTIONCOMMAND)) 
 		{
 			JSessionPanel s = (JSessionPanel) e.getSource() ;
-			closeSession(s.getReceiver()) ; 
+			closeSession(s.getSessionModel().getReceiver()) ; 
 		}
 		else if(e.getActionCommand().equals(JUserPanel.STARTSESSION_ACTIONCOMMAND)) 
 		{
@@ -99,6 +101,8 @@ public class Controller implements ControllerContract{
 			sendMessage(mp.getCurrentUser(),mp.getTextArea().getText()) ; 
 			
 		}
+		// TODO CHANGEUNAME_ACTIONCOMMAND
+		// TODO SENDFILEMESSAGE_ACTIONCOMMAND 
 		
 	}
 

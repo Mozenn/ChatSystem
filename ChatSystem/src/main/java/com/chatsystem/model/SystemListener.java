@@ -1,9 +1,16 @@
 package com.chatsystem.model;
 
+import java.util.EventListener;
 
-public interface SystemListener {
+import com.chatsystem.user.User;
 
-	public void sessionCreated(SessionModel sm) ; 
+public interface SystemListener extends EventListener{
+
+	public void sessionStarted(SessionModel sm) ; 
 	
 	public void sessionClosed(SessionModel sm); 
+	
+	public void userConnection(User u); 
+	
+	public void userDisconnection(User u); 
 }

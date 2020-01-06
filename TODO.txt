@@ -22,11 +22,7 @@
 	- Exception 
 		- clean 
 		- use try with when using resources 
-	- Serialization 
-		- Use Json format 
 	- add synchronization statement 
-	- Make Serialization utility class 
-		- extract user from packet function 
 
 -Pattern 
 	- Static factory method 
@@ -34,21 +30,21 @@
 	- Observer 
 
 - UI
-	- Rescale components when downsizing window 
-	- Use Icon for buttons (use labels & source folder)
-	- Open dialog window to request username on first use 
-	- Add button to embed file in message 
-	- MVC 
-		- Model-View 
-			- Setup SessionModel 
-			- Setup UserModel 
-			- Setup EventListeners 
-		- Make JChatPanel 
-		- Hook JChatPanel to Controller & make event response to send Message in controller 
-		- Remove hard coded string 
+	- Polish 
+		- Rescale components when downsizing window 
+		- Use Icon for buttons (use labels & source folder)
+	- First use Window 
+		- Open dialog window to request username on first use 
+	- File message 
+		- Add button to embed file in message 
+	- Message 
+		- add timestamp 
+	- Profil window 
+	- Change Uname window 
 	
 
 - LocalCommunication 
+	- DECONNECTION ! 
 	- Try to make the system more scalable 
 	- Use interface & think of SOLID 
 	- make factory for message 
@@ -56,10 +52,6 @@
 	- observer between localsystem and sessions ? 
 
 - Session 
-	- two state 
-		- open 
-		- close 
-			- othert user has close session or is not online 
 	- Make factory for session ( calling specific method depending on type of session ... )
 
 

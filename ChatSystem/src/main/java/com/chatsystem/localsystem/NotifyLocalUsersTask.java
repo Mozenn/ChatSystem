@@ -8,22 +8,43 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 
 import com.chatsystem.message.SystemMessage;
+import com.chatsystem.message.SystemMessage.SystemMessageType;
 import com.chatsystem.utility.SerializationUtility;
+
+
 
 final class NotifyLocalUsersTask implements Runnable 
 {
+	
+	public enum LocalNotifyType
+	{
+		CONNECTION("CO"), 
+		DISCONNECTION("DC"); 
+
+	    private String type;
+
+	    LocalNotifyType(String type) {
+	        this.type = type;
+	    }
+
+	    String getType() {
+	        return type;
+	    }
+	}
 
 	private LocalSystem localSystem ; 
 	private Thread thread; 
+	private final LocalNotifyType type ;
 ;
 	
-	public NotifyLocalUsersTask(LocalSystem localSystem) throws UnknownHostException
+	public NotifyLocalUsersTask(LocalSystem localSystem, LocalNotifyType type ) 
 	{
 		this.localSystem = localSystem ; 
 	
 		// Start Thread 
 		this.thread = new Thread(this,"NotifyLocalUsers") ; 
 		this.thread.start();
+		this.type = type ; 
 	}
 	
 	@Override
@@ -38,7 +59,16 @@ final class NotifyLocalUsersTask implements Runnable
 			serializedUser = SerializationUtility.serializeUser(localSystem.getUser().get()) ; 
 			
 			// Sending message 
-			msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
+			switch(type)
+			{
+				case CONNECTION :
+					msg = new SystemMessage(SystemMessage.SystemMessageType.CO, serializedUser);
+					break ; 
+				case DISCONNECTION:
+					msg = new SystemMessage(SystemMessage.SystemMessageType.DC, serializedUser);
+					break ; 
+			}
+			
 			
 		} catch (IOException e2) {
 			e2.printStackTrace();
@@ -70,8 +100,16 @@ final class NotifyLocalUsersTask implements Runnable
 			return ; 
 		} 
 		
+		switch(type)
+		{
+			case CONNECTION :
+				System.out.println("CO notify multicasted");
+				break ; 
+			case DISCONNECTION:
+				System.out.println("DC notify multicasted");
+				break ; 
+		}
 		
-		System.out.println("CO notify multicasted");
 		
 
 	}

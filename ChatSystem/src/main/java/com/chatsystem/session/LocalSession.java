@@ -16,6 +16,7 @@ import com.chatsystem.dao.DAOSQLite;
 import com.chatsystem.localsystem.LocalSystem;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.SystemContract;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.NetworkUtility;
 
@@ -26,15 +27,16 @@ final public class LocalSession extends Session{
 	private DatagramSocket socket;
 	private LocalSessionListener listener;
 
-	public LocalSession(User e, User r) throws IOException 
+
+	public LocalSession(User e, User r, SystemContract system) throws IOException 
 	{
-		super(e,r);
+		super(e,r,system);
 		startSession();
 	}
 	
-	public LocalSession(User e, User r, int receiverPort) throws IOException 
+	public LocalSession(User e, User r, int receiverPort, SystemContract system) throws IOException 
 	{
-		super(e,r,receiverPort);
+		super(e,r,receiverPort,system);
 		startSession();
 	}
 	
@@ -65,14 +67,21 @@ final public class LocalSession extends Session{
 		new NotifyStartSessionResponseTask((DatagramPacket)packetReceived) ; 
 	}
 	
-	
+	@Override
+	public void notifyCloseSession() {
+
+		new NotifyCloseSessionTask(this); 
+		
+	}
 	
 	@Override
-	public void closeSession() {
+	protected void closeSession() {
 		listener.stopRun();
-		socket.close();
-		
-		// Notify UI 
+		/*
+		if(!socket.isClosed())
+			socket.close();
+		*/ 
+		system.closeSession(receiver);
 	}
 
 	@Override
@@ -109,12 +118,7 @@ final public class LocalSession extends Session{
 		addMessage(m) ; 
 	}
 
-	@Override
-	public void notifyCloseSession() {
 
-		// TODO send close session message as runnable task 
-		
-	}
 }
 
 

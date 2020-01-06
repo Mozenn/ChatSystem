@@ -105,6 +105,7 @@ public class JChatPanel extends JPanel implements ActionListener {
 		textPannel.add(textScrollPane);
 		
 		sendButton = new JButton("Send");
+		sendButton.addActionListener(this);
 		textPannel.add(sendButton);
 		
 		actionListeners = new ArrayList<ActionListener>();
@@ -128,11 +129,24 @@ public class JChatPanel extends JPanel implements ActionListener {
 		actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,SENDMESSAGE_ACTIONCOMMAND)));
 	}
 	
-	public void ChangeDisplayedConversation(User newUser,List<UserMessage> messages)
+	public void ChangeConversation(User newUser,List<UserMessage> messages)
 	{
-		currentUser = newUser ;  
+		messagePanel.removeAll();
+		
+		currentUser = newUser ; 
+		
+		for(UserMessage m : messages)
+		{
+			
+		}
 		
 		// TODO loop through messages and add JMessagePanel or JFileMessagePanel to messagePanel 
+	}
+	
+	public void UpdateConversation(UserMessage newMessage)
+	{
+		
+		// TODO add new messagePanel by comparing sender id to current user id 
 	}
 
 }

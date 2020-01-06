@@ -19,7 +19,22 @@ import javax.swing.border.LineBorder;
 
 public class JSessionPanel extends JPanel implements ActionListener, SessionListener {
 	
-	private User receiver ; 
+	public enum SessionPanelState
+	{
+		UNREAD("UNREAD"),
+		READ("READ");
+		
+	    private String type;
+
+	    SessionPanelState(String type) {
+	        this.type = type;
+	    }
+
+	    String getType() {
+	        return type;
+	    }
+	}
+	
 	private SessionModel session ; 
 	
 	private JButton closeButton ; 
@@ -33,10 +48,10 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 	/**
 	 * Create the panel.
 	 */
-	public JSessionPanel(User u, SessionModel s) {
+	public JSessionPanel(SessionModel s) {
 		setBorder(new LineBorder(new Color(105, 105, 105), 1, true));
 		
-		JLabel usernameLabel = new JLabel(u.getUsername());
+		JLabel usernameLabel = new JLabel(s.getReceiver().getUsername());
 		add(usernameLabel);
 		
 		displayButton = new JButton("Display");
@@ -53,15 +68,10 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 		
 		this.session = s ; 
 		session.addSessionListener(this);
-		this.receiver = u ; 
 
 	}
 	
-	public User getReceiver() {
-		return receiver;
-	}
-	
-	public SessionModel getSession()
+	public SessionModel getSessionModel()
 	{
 		return session ; 
 	}
@@ -83,13 +93,34 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 		if(e.getActionCommand().equals(CLOSE_ACTIONCOMMAND) && !actionListeners.isEmpty())
 			actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,CLOSE_ACTIONCOMMAND)));
 		else if(e.getActionCommand().equals(DISPLAY_ACTIONCOMMAND) && !actionListeners.isEmpty())
+		{
 			actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,DISPLAY_ACTIONCOMMAND)));
+			setState(SessionPanelState.READ); 
+		}
+			
 	}
 
 	@Override
-	public void messageReceived(UserMessage m) {
+	public void messageAdded(UserMessage m) {
 		actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,MESSAGERECEIVED_ACTIONCOMMAND)));
-		
+		setState(SessionPanelState.UNREAD); 
+	}
+	
+	private void setState(SessionPanelState state)
+	{
+		switch(state)
+		{
+			case UNREAD:
+			{
+				// TODO change color 
+				break ; 
+			}
+			case READ :
+			{
+				// TODO change color 
+				break ; 
+			}
+		}
 	}
 
 }

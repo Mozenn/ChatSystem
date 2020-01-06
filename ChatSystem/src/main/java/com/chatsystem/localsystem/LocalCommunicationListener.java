@@ -47,8 +47,8 @@ final class LocalCommunicationListener extends Thread {
 				e.printStackTrace();
 				continue; 
 			} 
-			
-			// ignore packet coming for this machine 
+			/*
+			// ignore packet coming from this machine 
 			try {
 				if(packet.getAddress().equals(NetworkUtility.getLocalIPAddress()))
 					continue ;
@@ -56,7 +56,7 @@ final class LocalCommunicationListener extends Thread {
 				e1.printStackTrace();
 				continue ; 
 			} 
-			 
+			 */
 			SystemMessage.SystemMessageType type ; 
 			SystemMessage msg ; 
 			try
@@ -76,62 +76,89 @@ final class LocalCommunicationListener extends Thread {
 			switch(type)
 			{
 				case SS: // session started with current local user of localSystem  
-				try {
-					system.createSessionResponse(packet); // TODO implement observer pattern 
-				} catch (IOException e) {
-					e.printStackTrace();
-					continue ; 
+				{
+					try {
+						system.createSessionResponse(packet); // TODO implement observer pattern 
+					} catch (IOException e) {
+						e.printStackTrace();
+						continue ; 
+					}
+					break ;
 				}
-				break ;
-				
 				case CO: // new user connection 
-				try {
-					// Deserialization 
-					User u = SerializationUtility.deserializeUser(msg.getContent()) ; 
-					
-					system.addLocalUser(u);  // TODO implement observer pattern 
-					system.notifyConnectionResponse(packet);
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-					continue ; 
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-					continue ; 
+				{
+					try {
+						// Deserialization 
+						User u = SerializationUtility.deserializeUser(msg.getContent()) ; 
+						
+						system.addLocalUser(u);  // TODO implement observer pattern 
+						system.notifyConnectionResponse(packet);
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+						continue ; 
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+						continue ; 
+					}
+					break ;
 				}
-				break ;
-				
 				case CR: // response to CO broadcast 
-				User u;
-				try {
-					u = SerializationUtility.deserializeUser(msg.getContent());
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-					return ; 
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-					return ; 
-				} catch (IOException e) {
-					e.printStackTrace();
-					return ; 
-				} 
-					
-				System.out.println("LocalCommunicationListener CR received ");
+				{
+					User u;
+					try {
+						u = SerializationUtility.deserializeUser(msg.getContent());
+					} catch (JsonParseException e) {
+						e.printStackTrace();
+						return ; 
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+						return ; 
+					} catch (IOException e) {
+						e.printStackTrace();
+						return ; 
+					} 
+						
+					System.out.println("LocalCommunicationListener CR received ");
 					system.addLocalUser(u);// TODO implement observer pattern 
-				break ;
-				
-				
+					break ;
+				}
+				case DC:
+				{
+					User u;
+					try {
+						u = SerializationUtility.deserializeUser(msg.getContent());
+					} catch (JsonParseException e) {
+						e.printStackTrace();
+						return ; 
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+						return ; 
+					} catch (IOException e) {
+						e.printStackTrace();
+						return ; 
+					} 
+						
+					System.out.println("LocalCommunicationListener DC received ");
+					system.removeLocalUser(u);// TODO implement observer pattern 
+				}
+
+					
 				default : 
 					break ; 
 			}
 		}
 	}
 	
-	public void stopRun() throws UnknownHostException, IOException 
+	public void stopRun() 
 	{
 		System.out.println("LocalCommunicationListener Stop");
 		run.set(false);
-		socket.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
+		try {
+			socket.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		socket.close();
 	}
 

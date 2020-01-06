@@ -3,6 +3,7 @@ package com.chatsystem.view;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -11,6 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.chatsystem.session.LocalSession;
 import com.chatsystem.user.User;
 
 import javax.swing.JToolBar;
@@ -144,7 +146,7 @@ public class MainWindow extends JFrame {
 		gbc_chatPanel.gridy = 0;
 		contentPane.add(chatPanel, gbc_chatPanel);
 		
-		
+		/*
 		for(int i = 0 ; i < 100 ; i++)
 		{
 			JUserPanel u = new JUserPanel(new User());
@@ -153,7 +155,12 @@ public class MainWindow extends JFrame {
 		
 		for(int i = 0 ; i < 100 ; i++)
 		{
-			JSessionPanel p = new JSessionPanel(new User()); 
+			JSessionPanel p = null;
+			try {
+				p = new JSessionPanel(new LocalSession(new User(), new User(),null));
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 			ongoingSessionPannel.add(p);
 		}
 		
@@ -177,7 +184,7 @@ public class MainWindow extends JFrame {
 				
 			
 		}
-		
+		*/
 
 	}
 

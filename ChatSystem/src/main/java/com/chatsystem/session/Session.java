@@ -13,6 +13,7 @@ import com.chatsystem.message.Message;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
+import com.chatsystem.model.SystemContract;
 import com.chatsystem.user.User;
 
 public abstract class Session implements SessionModel{
@@ -21,6 +22,7 @@ public abstract class Session implements SessionModel{
 	protected User receiver;
 	protected ArrayList<UserMessage> messages;
 	protected int receiverPort ; 
+	protected SystemContract system ; 
 	
 	private final EventListenerList listeners = new EventListenerList();
 	
@@ -29,19 +31,21 @@ public abstract class Session implements SessionModel{
 		
 	}
 	
-	public Session(User e, User r) throws IOException 
+	public Session(User e, User r, SystemContract system) throws IOException 
 	{
 		emitter = e;
 		receiver = r;
 		messages = new ArrayList<UserMessage>();
+		this.system = system ; 
 	}
 	
-	public Session(User e, User r, int receiverPort) throws IOException 
+	public Session(User e, User r, int receiverPort,SystemContract system) throws IOException 
 	{
 		emitter = e;
 		receiver = r;
 		this.receiverPort = receiverPort ; 
 		messages = new ArrayList<UserMessage>();
+		this.system = system ; 
 	}
 	
 	public void addSessionListener(SessionListener sl) 
@@ -60,11 +64,11 @@ public abstract class Session implements SessionModel{
 	}
 	
 	
-	protected void fireMessageReceived(UserMessage newMessage)
+	protected void fireMessageAdded(UserMessage newMessage)
 	{
 		for(SessionListener sl : getSessionListeners())
 		{
-			sl.messageReceived(newMessage);
+			sl.messageAdded(newMessage);
 		}
 	}
 
@@ -96,14 +100,14 @@ public abstract class Session implements SessionModel{
 		
 		dao.addMessage(m);
 		
-		fireMessageReceived(m);
+		fireMessageAdded(m);
 	}
 	
 	public abstract void sendMessage(String s);
 	
 	public abstract void sendMessage(File f);
 	
-	public abstract void startSession();
+	protected abstract void startSession();
 	
 	// Call on initiator session  
 	public abstract void notifyStartSession() ;
@@ -114,7 +118,7 @@ public abstract class Session implements SessionModel{
 	// Notify session to send closeSession message 
 	public abstract void notifyCloseSession() ;
 	
-	public abstract void closeSession();
+	protected abstract void closeSession();
 	
 	
 	

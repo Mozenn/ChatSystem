@@ -14,7 +14,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
+import javax.swing.event.EventListenerList;
+
+import com.chatsystem.localsystem.NotifyLocalUsersTask.LocalNotifyType;
+import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.SessionListener;
+import com.chatsystem.model.SessionModel;
 import com.chatsystem.model.SystemContract;
+import com.chatsystem.model.SystemListener;
 import com.chatsystem.session.LocalSession;
 import com.chatsystem.session.Session;
 import com.chatsystem.session.SessionData;
@@ -37,7 +44,9 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	
 	private HashMap<UserId,Session> sessions;
 	
-	private LocalCommunicationListener listener ; 
+	private final EventListenerList listeners = new EventListenerList();
+	
+	private LocalCommunicationListener communicationListener ; 
 	public static final int LISTENING_PORT = 8888; 
 	public static final String MULTICAST_ADDR = "228.228.228.228"; // TODO use a non routable multicast address between 224.0.0.0 to 224.0.0.255 
 	
@@ -48,47 +57,40 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		distantUsers = new HashMap<UserId,User>();
 		sessions = new HashMap<UserId,Session>() ;	
 		
+	}
+	
+	public void start()
+	{
 		System.out.println("LocalSystem Started") ; 
 		
-		LoadLocalUser(); 
-		
-		listener = new LocalCommunicationListener(this);
+		try {
+			communicationListener = new LocalCommunicationListener(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		notifyLocalUsers(); 
 		
 		RequestDistantUser();
-		
 	}
 	
-	/*
-	public LocalSystem(User u) throws IOException 
+	public void close() 
 	{
-		localUsers = new HashMap<UserId,User>();
-		distantUsers = new HashMap<UserId,User>();
-		sessions = new HashMap<UserId,Session>() ;	
 		
-		user = u ; 
+		new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 
 		
-		listener = new LocalCommunicationListener(this);
+		// TODO send Disconnection notify to central system 
 		
-		notifyLocalUsers();
-		
-		RequestDistantUser(); 
-		
-	}*/
-	
-	public void close() throws UnknownHostException, IOException
-	{
-		listener.stopRun();	
+		communicationListener.stopRun();	
 	}
 	
 	// ---------- COMMUNICATION 
 	
 	// CONNECTION 
 	
-	public void notifyLocalUsers() throws IOException 
+	public void notifyLocalUsers() 
 	{
-		new NotifyLocalUsersTask(this);
+		new NotifyLocalUsersTask(this,LocalNotifyType.CONNECTION);
 	}
 	
 	public void notifyConnectionResponse(DatagramPacket packet) throws IOException, ClassNotFoundException 
@@ -102,21 +104,23 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	{
 
 		SessionData s = SerializationUtility.deserializeSessionData(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
-		LocalSession session = new LocalSession(user, s.getUser(), s.getPort()) ; 
+		LocalSession session = new LocalSession(user, s.getUser(), s.getPort(),this) ; 
 		
 		synchronized(sessions)
 		{
 			sessions.put(s.getUser().getId(), session);
 			session.notifyStartSessionResponse(packet);
+			fireSessionStarted(session); // notify view 
 		}
 		
 	}
 	
+	@Override
 	public boolean startLocalSession(User receiver) 
 	{
 		LocalSession locSes = null;
 		try {
-			locSes = new LocalSession(user,receiver);
+			locSes = new LocalSession(user,receiver,this);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false ;
@@ -125,22 +129,46 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		locSes.notifyStartSession(); // notify receiver system of session started 
 		synchronized(sessions)
 		{
-			sessions.put(receiver.getId(),locSes); // TODO notify View ? 
+			sessions.put(receiver.getId(),locSes); 
+			
+			fireSessionStarted(locSes); // notify view 
 		}
 		
 		return true ;
 		
 	}
 	
-	
+	@Override
 	public void closeSession(User receiver) 
 	{
+		synchronized(sessions)
+		{
+			fireSessionClosed(sessions.get(receiver.getId())) ; 
+			sessions.remove(receiver.getId()) ; 
+		}
+	}
+	
+	@Override
+	public void sendMessage(User receiver, String text) {
 		
+		synchronized(sessions)
+		{
+			sessions.get(receiver.getId()).sendMessage(text);
+		}
+	}
+
+	@Override
+	public void sendFileMessage(User receiver, File file) {
+		
+		synchronized(sessions)
+		{
+			sessions.get(receiver.getId()).sendMessage(file);
+		}
 	}
 	
 	// USERS 
 	
-	public void addLocalUser(User u) 
+	protected void addLocalUser(User u) 
 	{
 		synchronized(localUsers)
 		{
@@ -148,35 +176,107 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		}
 		System.out.println("Local User added " + u.getUsername()); 
 		
-		// TODO notify View  
+		fireuserConnection(u); // notify view 
 	}
 	
-	public void RequestDistantUser()
+	protected void removeLocalUser(User u)
+	{
+		synchronized(localUsers)
+		{
+			localUsers.remove(u.getId());
+		}
+		System.out.println("Local User removed " + u.getUsername()); 
+		
+		fireuserDisconnection(u);
+		
+		synchronized(sessions)
+		{
+			if(sessions.containsKey(u.getId()))
+			{
+				fireSessionClosed(sessions.get(u.getId())); 
+				
+				sessions.remove(u.getId());
+			}
+		}
+		
+
+	}
+	
+	private void RequestDistantUser()
 	{
 		// TODO send request to central system as a runnable task 
 		
 		// if reception succeed, notify view 
 	}
 	
+	// --------- LISTENERS 
+	
+	@Override
+	public void addSystemListener(SystemListener sl) {
+		
+		listeners.add(SystemListener.class, sl);
+	}
+
+	@Override
+	public void removeSystemListener(SystemListener sl) {
+		listeners.remove(SystemListener.class, sl);
+		
+	}
+
+	@Override
+	public SystemListener[] getSystemListeners() {
+		
+		return listeners.getListeners(SystemListener.class); 
+	}
+	
+	protected void fireSessionStarted(SessionModel sm)
+	{
+		for(SystemListener sl : getSystemListeners())
+		{
+			sl.sessionStarted(sm);
+		}
+	}
+	
+	protected void fireSessionClosed(SessionModel sm)
+	{
+		for(SystemListener sl : getSystemListeners())
+		{
+			sl.sessionClosed(sm);
+		}
+	}
+	
+	protected void fireuserConnection(User u)
+	{
+		for(SystemListener sl : getSystemListeners())
+		{
+			sl.userConnection(u);
+		}
+	}
+	
+	protected void fireuserDisconnection(User u)
+	{
+		for(SystemListener sl : getSystemListeners())
+		{
+			sl.userDisconnection(u);
+		}
+	}
+	
 	//---------- LOCAL USER 
 	
+	@Override
 	public Optional<User> getUser() 
 	{
 		
-		synchronized(user)
+		if(user == null)
 		{
-			if(user == null)
-			{
-				try {
-					LoadLocalUser();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} 
-			}
-
-			return Optional.of(user);
-			
+			try {
+				LoadLocalUser();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 		}
+
+		return Optional.of(user);
 
 	}
 	
@@ -221,6 +321,7 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		
 	}
 	
+	@Override
 	public Optional<User> createLocalUser(String username) 
 	{
 		
@@ -292,9 +393,12 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	       }
 	}
 	
+	@Override
 	public boolean changeUname(String newName) 
 	{
 		boolean res = false ; 
+		
+		// TODO 
 		
 		// communicate to central system to check availability 
 		
@@ -317,4 +421,9 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	}
 
 
+
+
 }
+
+
+
