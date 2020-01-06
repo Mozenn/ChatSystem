@@ -98,7 +98,9 @@ public class Controller implements ControllerContract{
 		else if(e.getActionCommand().equals(JChatPanel.SENDMESSAGE_ACTIONCOMMAND)) 
 		{
 			JChatPanel mp = (JChatPanel) e.getSource() ;
-			sendMessage(mp.getCurrentUser(),mp.getTextArea().getText()) ; 
+			
+			if(mp.getCurrentUser() != null )
+				sendMessage(mp.getCurrentUser(),mp.getTextArea().getText()) ; 
 			
 		}
 		// TODO CHANGEUNAME_ACTIONCOMMAND

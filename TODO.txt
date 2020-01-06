@@ -51,6 +51,14 @@
 	- observer between localsystem and listener 
 	- observer between localsystem and sessions ? 
 
+- DB
+	- ask mysql credentials
+	- see mysql 
+
+- Presence server 
+	- see tomcat 
+	- see servlet 
+
 - Session 
 	- Make factory for session ( calling specific method depending on type of session ... )
 
