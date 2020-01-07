@@ -106,6 +106,7 @@ public class JChatPanel extends JPanel implements ActionListener {
 		
 		sendButton = new JButton("Send");
 		sendButton.addActionListener(this);
+		sendButton.setEnabled(false);
 		textPannel.add(sendButton);
 		
 		actionListeners = new ArrayList<ActionListener>();
@@ -131,22 +132,68 @@ public class JChatPanel extends JPanel implements ActionListener {
 	
 	public void ChangeConversation(User newUser,List<UserMessage> messages)
 	{
-		messagePanel.removeAll();
+		clear();
+
+		sendButton.setEnabled(true);
 		
 		currentUser = newUser ; 
 		
 		for(UserMessage m : messages)
 		{
-			
+			switch(m.getSubtype())
+			{
+				case TX:
+				{
+					JMessagePanel mp = new JMessagePanel(new String(m.getContent()));
+					System.out.println("Message Added " + new String(m.getContent()));
+					if(m.getSenderId().equals(currentUser.getId()))
+					{
+						mp.setToEmitterColor();
+					}
+					else
+					{
+						mp.setToReceiverColor();
+					}
+					
+					messagePanel.add(mp);
+					break ; 
+				}
+				case FL:
+				{
+					// TODO 
+					break ; 
+				}
+			}
 		}
 		
-		// TODO loop through messages and add JMessagePanel or JFileMessagePanel to messagePanel 
+		messagePanel.validate();
+		messagePanel.repaint();
 	}
 	
 	public void UpdateConversation(UserMessage newMessage)
 	{
+		JMessagePanel mp = new JMessagePanel(new String(newMessage.getContent()));
+		if(newMessage.getSenderId().equals(currentUser.getId()))
+		{
+			mp.setToEmitterColor();
+		}
+		else
+		{
+			mp.setToReceiverColor();
+		}
 		
-		// TODO add new messagePanel by comparing sender id to current user id 
+		messagePanel.add(mp);
+		messagePanel.validate();
+		messagePanel.repaint();
+		
+	}
+	
+	public void clear()
+	{
+		messagePanel.removeAll();
+		messagePanel.validate();
+		messagePanel.repaint();
+		sendButton.setEnabled(false);
 	}
 
 }

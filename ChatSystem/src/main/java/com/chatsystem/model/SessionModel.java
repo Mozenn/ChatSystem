@@ -13,6 +13,8 @@ public interface SessionModel {
 	
 	public SessionListener[] getSessionListeners() ; 
 	
+	public void clearSessionListeners() ; 
+	
 	public List<UserMessage> getMessages(); 
 	
 	public User getReceiver(); // TODO change this to UserModel ? 

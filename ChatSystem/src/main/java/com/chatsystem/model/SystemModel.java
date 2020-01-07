@@ -12,6 +12,8 @@ public interface SystemModel {
 	
 	public SystemListener[] getSystemListeners() ; 
 	
+	public void clearSystemListeners() ; 
+	
 	Optional<User> getUser(); 
 
 }

@@ -10,12 +10,14 @@ import javax.swing.JFrame;
 
 import com.chatsystem.controller.Controller;
 import com.chatsystem.controller.ControllerContract;
+import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
 import com.chatsystem.model.SystemListener;
 import com.chatsystem.model.SystemModel;
 import com.chatsystem.user.User;
 
-public class View implements ActionListener, SystemListener{
+public class View implements ActionListener, SystemListener, SessionListener{
 	
 	private MainWindow mainWindow ; 
 	private ControllerContract controller ; 
@@ -62,6 +64,9 @@ public class View implements ActionListener, SystemListener{
 			}
 			
 			mainWindow.getOngoingSessionPannel().remove(js);
+	    	mainWindow.getOngoingSessionPannel().validate();
+	    	mainWindow.getOngoingSessionPannel().repaint();
+	    	mainWindow.getChatPanel().clear(); 
 		}
 		else if(e.getActionCommand().equals(JSessionPanel.DISPLAY_ACTIONCOMMAND)) 
 		{
@@ -81,14 +86,9 @@ public class View implements ActionListener, SystemListener{
 			up.makeInactive();
 			
 		}
-		else if(e.getActionCommand().equals(JChatPanel.SENDMESSAGE_ACTIONCOMMAND)) 
-		{
-			// clear text area 
-			mainWindow.getChatPanel().getTextArea().setText("");
-		}
 		else if(e.getActionCommand().equals(JSessionPanel.MESSAGERECEIVED_ACTIONCOMMAND)) 
 		{
-			// Update 
+			//
 		}
 			
 		
@@ -96,6 +96,7 @@ public class View implements ActionListener, SystemListener{
 	
     private void addSessionPanel(SessionModel sm)
     {
+    	sm.addSessionListener(this);
     	JSessionPanel newSession = new JSessionPanel(sm); 
     	newSession.addActionListener(this);
     	newSession.addActionListener(controller);
@@ -130,6 +131,7 @@ public class View implements ActionListener, SystemListener{
 		    	JSessionPanel sp = (JSessionPanel)c ; 
 		       if(sp.getSessionModel().getReceiver().equals(sm.getReceiver()))
 		       {
+		    	   sp.getSessionModel().clearSessionListeners();
 		    	   mainWindow.getOngoingSessionPannel().remove(sp) ; 
 		       }
 		    }
@@ -157,6 +159,15 @@ public class View implements ActionListener, SystemListener{
 		    }
 		}
 		
+	}
+
+	@Override
+	public void messageAdded(UserMessage m) {
+		
+		if(mainWindow.getChatPanel().getCurrentUser().getId().equals(m.getReceiverId()) || mainWindow.getChatPanel().getCurrentUser().getId().equals(m.getSenderId()))
+		{
+			mainWindow.getChatPanel().UpdateConversation(m);
+		}
 	}
     
 }

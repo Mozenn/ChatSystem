@@ -100,7 +100,7 @@ public class LocalSessionListener extends Thread{
 				continue ; 
 			}
 
-			
+			System.out.println("LocalSession Message Received");
 			session.addMessage(msg);	// TODO implement observer 		
 		}
 		

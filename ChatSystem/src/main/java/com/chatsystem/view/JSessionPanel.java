@@ -44,11 +44,15 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 	public static final String CLOSE_ACTIONCOMMAND = "Close" ; 
 	public static final String DISPLAY_ACTIONCOMMAND = "Display" ; 
 	public static final String MESSAGERECEIVED_ACTIONCOMMAND = "Received" ; 
+	
+	private final Color UNREAD_COLOR = new Color(255, 165, 0) ; 
+	private final Color READ_COLOR = new Color(211,211,211); 
 
 	/**
 	 * Create the panel.
 	 */
 	public JSessionPanel(SessionModel s) {
+		setBackground(new Color(211,211,211));
 		setBorder(new LineBorder(new Color(105, 105, 105), 1, true));
 		
 		JLabel usernameLabel = new JLabel(s.getReceiver().getUsername());
@@ -112,12 +116,12 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 		{
 			case UNREAD:
 			{
-				// TODO change color 
+				setBackground(UNREAD_COLOR);
 				break ; 
 			}
 			case READ :
 			{
-				// TODO change color 
+				setBackground(READ_COLOR);
 				break ; 
 			}
 		}

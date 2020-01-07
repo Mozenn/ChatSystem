@@ -63,6 +63,15 @@ public abstract class Session implements SessionModel{
 		return listeners.getListeners(SessionListener.class); 
 	}
 	
+	public void clearSessionListeners()
+	{
+		for(var sl : getSessionListeners())
+		{
+			listeners.remove(SessionListener.class, sl);
+		}
+		
+	}
+	
 	
 	protected void fireMessageAdded(UserMessage newMessage)
 	{

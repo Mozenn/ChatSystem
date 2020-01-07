@@ -41,10 +41,10 @@
 		- add timestamp 
 	- Profil window 
 	- Change Uname window 
+	- File Download path menu 
 	
 
 - LocalCommunication 
-	- DECONNECTION ! 
 	- Try to make the system more scalable 
 	- Use interface & think of SOLID 
 	- make factory for message 
@@ -60,6 +60,7 @@
 	- see servlet 
 
 - Session 
+	- Always use tcp 
 	- Make factory for session ( calling specific method depending on type of session ... )
 
 

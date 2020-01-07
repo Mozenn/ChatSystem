@@ -1,4 +1,4 @@
-package com.chatsystem.localsystem;
+package com.chatsystem.system;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

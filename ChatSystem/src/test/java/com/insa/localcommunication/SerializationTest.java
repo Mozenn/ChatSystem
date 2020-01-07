@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.chatsystem.message.SystemMessage;
+import com.chatsystem.message.UserMessage;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
@@ -54,6 +55,49 @@ public class SerializationTest {
 
 		
 		SystemMessage messageAfter = SerializationUtility.deserializeSystemMessage(content) ;
+
+	}
+	
+	@Test 
+	public void ValidUserMessageSerialization() throws JsonParseException, JsonMappingException, IOException
+	{
+		String s = "hey" ; 
+		
+		UserId id1 = new UserId("id1".getBytes()) ; 
+		UserId id2 = new UserId("id2".getBytes()) ; 
+		
+		UserMessage messageBefore = new UserMessage(s,id1,id2) ; 
+		
+		ObjectMapper o = new ObjectMapper() ;
+		
+		var content = o.writeValueAsString(messageBefore).getBytes() ; 
+		
+		UserMessage messageAfter = SerializationUtility.deserializeUserMessage(content) ;
+		
+		assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
+		assertEquals(messageBefore.getSubtype(),messageAfter.getSubtype()); 
+		assertEquals(s,new String(messageAfter.getContent())); 
+		assertEquals(id1,messageAfter.getReceiverId()); 
+		assertEquals(id2,messageAfter.getSenderId()); 
+		
+	     
+	}
+	
+	@Test (expected = MismatchedInputException.class)
+	public void InvalidUserMessageSerialization() throws IOException
+	{
+
+		String s = "hey" ; 
+		
+
+		ObjectMapper o = new ObjectMapper() ;
+		
+		byte[] content;
+
+		content = o.writeValueAsString(s).getBytes();
+
+		
+		UserMessage messageAfter = SerializationUtility.deserializeUserMessage(content) ;
 
 	}
 	

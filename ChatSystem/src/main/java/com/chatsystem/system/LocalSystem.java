@@ -1,4 +1,4 @@
-package com.chatsystem.localsystem;
+package com.chatsystem.system;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import javax.swing.event.EventListenerList;
 
-import com.chatsystem.localsystem.NotifyLocalUsersTask.LocalNotifyType;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
@@ -25,6 +24,7 @@ import com.chatsystem.model.SystemListener;
 import com.chatsystem.session.LocalSession;
 import com.chatsystem.session.Session;
 import com.chatsystem.session.SessionData;
+import com.chatsystem.system.NotifyLocalUsersTask.LocalNotifyType;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
@@ -79,7 +79,7 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		
 		new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 
 		
-		// TODO send Disconnection notify to central system 
+		// TODO send Disconnection notify to central server
 		
 		communicationListener.stopRun();	
 	}
@@ -106,10 +106,11 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		SessionData s = SerializationUtility.deserializeSessionData(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
 		LocalSession session = new LocalSession(user, s.getUser(), s.getPort(),this) ; 
 		
+		session.notifyStartSessionResponse(packet);
+		
 		synchronized(sessions)
 		{
 			sessions.put(s.getUser().getId(), session);
-			session.notifyStartSessionResponse(packet);
 			fireSessionStarted(session); // notify view 
 		}
 		
@@ -118,6 +119,9 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	@Override
 	public boolean startLocalSession(User receiver) 
 	{
+		if(sessions.containsKey(receiver.getId()))
+			return false ; 
+		
 		LocalSession locSes = null;
 		try {
 			locSes = new LocalSession(user,receiver,this);
@@ -172,6 +176,9 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	{
 		synchronized(localUsers)
 		{
+			if(localUsers.containsKey(u.getId()))
+				return ; 
+			
 			localUsers.put(u.getId(),u);
 		}
 		System.out.println("Local User added " + u.getUsername()); 
@@ -204,7 +211,7 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	
 	private void RequestDistantUser()
 	{
-		// TODO send request to central system as a runnable task 
+		// TODO send request to central server as a runnable task 
 		
 		// if reception succeed, notify view 
 	}
@@ -227,6 +234,16 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	public SystemListener[] getSystemListeners() {
 		
 		return listeners.getListeners(SystemListener.class); 
+	}
+	
+	@Override
+	public void clearSystemListeners()
+	{
+		for(var sl : getSystemListeners())
+		{
+			listeners.remove(SystemListener.class, sl);
+		}
+		
 	}
 	
 	protected void fireSessionStarted(SessionModel sm)

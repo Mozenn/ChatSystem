@@ -7,8 +7,8 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 
-import com.chatsystem.localsystem.LocalSystem;
 import com.chatsystem.model.SystemContract;
+import com.chatsystem.system.LocalSystem;
 import com.chatsystem.user.User;
 import com.chatsystem.view.JChatPanel;
 import com.chatsystem.view.JSessionPanel;
@@ -99,6 +99,8 @@ public class Controller implements ControllerContract{
 			
 			if(mp.getCurrentUser() != null )
 				sendMessage(mp.getCurrentUser(),mp.getTextArea().getText()) ; 
+			
+			mp.getTextArea().setText("");
 			
 		}
 		// TODO CHANGEUNAME_ACTIONCOMMAND

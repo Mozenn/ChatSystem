@@ -10,9 +10,9 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.chatsystem.localsystem.LocalSystem;
 import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
+import com.chatsystem.system.LocalSystem;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;

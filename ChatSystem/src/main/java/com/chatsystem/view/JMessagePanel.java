@@ -10,20 +10,22 @@ import javax.swing.UIManager;
 
 public class JMessagePanel extends JPanel {
 	
-	private JTextPane messagePane ; 
+	private JLabel messageLabel ; 
 
-	public JTextPane getMessagePane() {
-		return messagePane;
+	public JLabel getMessagePane() {
+		return messageLabel;
 	}
 	
 	public void setToEmitterColor()
 	{
-		messagePane.setBackground(new Color(240, 248, 255));
+		messageLabel.setBackground(new Color(240, 248, 255));
+		messageLabel.repaint();
 	}
 	
 	public void setToReceiverColor()
 	{
-		messagePane.setBackground(new Color(255, 239, 213));
+		messageLabel.setBackground(new Color(255, 239, 213));
+		messageLabel.repaint();
 	}
 
 	/**
@@ -38,10 +40,11 @@ public class JMessagePanel extends JPanel {
 		JLabel usernameLabel = new JLabel("Username");
 		add(usernameLabel);
 		
-		messagePane = new JTextPane();
-		messagePane.setText(text);
-		messagePane.setBackground(new Color(255, 239, 213));
-		add(messagePane);
+		messageLabel = new JLabel(text);
+		messageLabel.setOpaque(true);
+		//messageLabel.setText(text);
+		messageLabel.setBackground(new Color(211, 211, 211));
+		add(messageLabel);
 
 
 	}

@@ -13,10 +13,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.chatsystem.dao.DAO;
 import com.chatsystem.dao.DAOSQLite;
-import com.chatsystem.localsystem.LocalSystem;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.SystemContract;
+import com.chatsystem.system.LocalSystem;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.NetworkUtility;
 

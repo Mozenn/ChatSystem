@@ -32,6 +32,8 @@ public class DAOTest {
 		
 		assertTrue(messages.contains(m1)) ;
 		assertTrue(messages.contains(m2)) ;
+		assertTrue(new String(messages.get(0).getContent()).equals("data"));
+		System.out.println(new String(messages.get(0).getContent()));
 	}
 
 }
