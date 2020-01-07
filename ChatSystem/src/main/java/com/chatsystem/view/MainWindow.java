@@ -146,45 +146,6 @@ public class MainWindow extends JFrame {
 		gbc_chatPanel.gridy = 0;
 		contentPane.add(chatPanel, gbc_chatPanel);
 		
-		/*
-		for(int i = 0 ; i < 100 ; i++)
-		{
-			JUserPanel u = new JUserPanel(new User());
-			connectedUserPannel.add(u);
-		}
-		
-		for(int i = 0 ; i < 100 ; i++)
-		{
-			JSessionPanel p = null;
-			try {
-				p = new JSessionPanel(new LocalSession(new User(), new User(),null));
-			} catch (IOException e) {
-				e.printStackTrace();
-			} 
-			ongoingSessionPannel.add(p);
-		}
-		
-		boolean b = true ; 
-		
-		for(int i = 0 ; i < 30 ; i++)
-		{
-			JMessagePanel p = new JMessagePanel("Filler Text");
-			if(b)
-			{
-				p.setToEmitterColor();
-				chatPanel.getMessagePanel().add(p);
-				b= !b ; 
-			}
-			else
-			{
-				p.setToReceiverColor();
-				chatPanel.getMessagePanel().add(p);
-				b= !b ; 
-			}
-				
-			
-		}
-		*/
 
 	}
 

@@ -5,6 +5,8 @@ import javax.swing.JTextPane;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import java.awt.Color;
+import java.sql.Timestamp;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.UIManager;
 
@@ -31,7 +33,7 @@ public class JMessagePanel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public JMessagePanel(String text) {
+	public JMessagePanel(String text,Timestamp date) {
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		setBackground(new Color(248, 248, 255));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -42,8 +44,8 @@ public class JMessagePanel extends JPanel {
 		
 		messageLabel = new JLabel(text);
 		messageLabel.setOpaque(true);
-		//messageLabel.setText(text);
 		messageLabel.setBackground(new Color(211, 211, 211));
+		messageLabel.repaint();
 		add(messageLabel);
 
 

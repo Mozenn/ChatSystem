@@ -1,12 +1,54 @@
-# Research 
-- Swing 
-	- Search java swing best practices & design ( mvp ? other )
-	- FireManagement 
-- Servlet 
-	- How to use 
-	- REST 
+### Ongoing 
+
+- Test Local presence + local session communication
+- Distant session 
+- Presence server 
+- Create Profile window  
+- Add timestamp to message 
+
+- file message UI 
+- Settings Window 
 
 # Implementation 
+
+- UI
+	- Polish 
+		- Rescale components when downsizing window 
+		- Use Icon for buttons (use labels & source folder)
+	- First use Window 
+		- Open dialog window to request username on first use 
+	- File message 
+		- Add button to embed file in message 
+		- Make JFileMessagePanel 
+		- Add implementation in JChatPanel 
+	- Message 
+		- add timestamp 
+	- Settings window (in edit menu)
+		- profil sub window 
+			- change username button 
+		- other sub window 
+			- download path 
+	
+
+- LocalCommunication 
+	- Try to make the system more scalable 
+	- Use interface & think of SOLID 
+	- make factory for message 
+	- observer between localsystem and listener 
+	- observer between localsystem and sessions ? 
+
+- DB
+	- ask mysql credentials
+	- see mysql 
+
+- Presence server 
+	- see tomcat 
+	- see servlet & REST 
+
+- Session 
+	- Always use tcp 
+	- Make distant Communication 
+	- Make factory for session ( calling specific method depending on type of session ... )
 
 - Clean code 
 	- close resources(socket,connection,ect) 
@@ -27,41 +69,7 @@
 -Pattern 
 	- Static factory method 
 	- Abstract factory 
-	- Observer 
-
-- UI
-	- Polish 
-		- Rescale components when downsizing window 
-		- Use Icon for buttons (use labels & source folder)
-	- First use Window 
-		- Open dialog window to request username on first use 
-	- File message 
-		- Add button to embed file in message 
-	- Message 
-		- add timestamp 
-	- Profil window 
-	- Change Uname window 
-	- File Download path menu 
-	
-
-- LocalCommunication 
-	- Try to make the system more scalable 
-	- Use interface & think of SOLID 
-	- make factory for message 
-	- observer between localsystem and listener 
-	- observer between localsystem and sessions ? 
-
-- DB
-	- ask mysql credentials
-	- see mysql 
-
-- Presence server 
-	- see tomcat 
-	- see servlet 
-
-- Session 
-	- Always use tcp 
-	- Make factory for session ( calling specific method depending on type of session ... )
+	- Observer 	
 
 
 # Perf 
@@ -77,8 +85,6 @@
 		- CentralSys withstand 100 000 users 
 		- CentralSys memory footprint <= 100Mo 
 		- CPU use <= 1% in 5s range measure 
-
-
 # Deploy
 
 
