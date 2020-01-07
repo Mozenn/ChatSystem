@@ -47,7 +47,7 @@ final class LocalCommunicationListener extends Thread {
 				e.printStackTrace();
 				continue; 
 			} 
-			/*
+			
 			// ignore packet coming from this machine 
 			try {
 				if(packet.getAddress().equals(NetworkUtility.getLocalIPAddress()))
@@ -56,7 +56,7 @@ final class LocalCommunicationListener extends Thread {
 				e1.printStackTrace();
 				continue ; 
 			} 
-			 */
+			 
 			SystemMessage.SystemMessageType type ; 
 			SystemMessage msg ; 
 			try
