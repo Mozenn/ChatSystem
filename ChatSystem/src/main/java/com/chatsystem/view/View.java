@@ -38,6 +38,7 @@ public class View implements ActionListener, SystemListener, SessionListener{
 	public void openMainWindow()
 	{
 		mainWindow = new MainWindow();
+		mainWindow.addActionListener(controller) ; 
 		mainWindow.setVisible(true);
 		mainWindow.getChatPanel().getSendButton().setActionCommand(JChatPanel.SENDMESSAGE_ACTIONCOMMAND); 
 		mainWindow.getChatPanel().addActionListener(this);

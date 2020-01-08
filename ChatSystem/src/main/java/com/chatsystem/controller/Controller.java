@@ -96,6 +96,11 @@ public class Controller implements ControllerContract{
 	{
 		model.sendFileMessage(receiver, file);
 	}
+	
+	public void close()
+	{
+		// TODO close Model 
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -118,6 +123,11 @@ public class Controller implements ControllerContract{
 				sendMessage(mp.getCurrentUser(),mp.getTextArea().getText()) ; 
 			
 			mp.getTextArea().setText("");
+			
+		}
+		else if(e.getActionCommand().equals(MainWindow.CLOSEMAINWINDOW_ACTIONCOMMAND)) 
+		{
+			// TODO 
 			
 		}
 		// TODO CHANGEUNAME_ACTIONCOMMAND

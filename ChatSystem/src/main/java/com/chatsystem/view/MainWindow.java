@@ -2,8 +2,11 @@ package com.chatsystem.view;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -55,6 +58,20 @@ public class MainWindow extends JFrame {
 		return this.mainMenuBar;
 	}
 	
+	private ArrayList<ActionListener> actionListeners ; 
+	
+	public static final String CLOSEMAINWINDOW_ACTIONCOMMAND = "CloseMainWindow" ; 
+	
+	public void addActionListener(ActionListener l)
+	{
+		if(!actionListeners.contains(l))
+			actionListeners.add(l); 
+	}
+	
+	public void removeActionListener(ActionListener l) 
+	{
+		actionListeners.remove(l) ; 
+	}
 
 	/**
 	 * Create the frame.
@@ -64,6 +81,13 @@ public class MainWindow extends JFrame {
 		setBounds(100, 100, 600, 400);
 		setMinimumSize(new Dimension(500, 350));
 		//setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent e) {
+		    	actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,CLOSEMAINWINDOW_ACTIONCOMMAND)));
+		    }
+		});
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
