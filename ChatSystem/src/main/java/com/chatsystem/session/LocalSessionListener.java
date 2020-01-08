@@ -13,6 +13,7 @@ import com.chatsystem.message.UserMessage;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException ; 
 
 public class LocalSessionListener extends Thread{
 	
@@ -72,7 +73,7 @@ public class LocalSessionListener extends Thread{
 			{
 				msg = SerializationUtility.deserializeUserMessage(packet.getData());
 			}
-			catch(ClassCastException e) // Packet received is not a UserMessage  ;
+			catch(ClassCastException | JsonMappingException e) // Packet received is not a UserMessage  ;
 			{
 				try
 				{
@@ -91,9 +92,6 @@ public class LocalSessionListener extends Thread{
 				}
 				continue ; 
 			} catch (JsonParseException e) {
-				e.printStackTrace();
-				continue ; 
-			} catch (JsonMappingException e) {
 				e.printStackTrace();
 				continue ; 
 			} catch (IOException e) {
