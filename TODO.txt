@@ -15,8 +15,10 @@
 	- Polish 
 		- Rescale components when downsizing window 
 		- Use Icon for buttons (use labels & source folder)
-	- First use Window 
-		- Open dialog window to request username on first use 
+	- Create Profile window  
+		- limit size 
+		- limit character type 
+		- Check validity when button push 
 	- File message 
 		- Add button to embed file in message 
 		- Make JFileMessagePanel 
@@ -46,8 +48,18 @@
 	- see servlet & REST 
 
 - Session 
-	- Always use tcp 
+	- TCP 
+		- DistantSession has serverSocket || Socket 
+	- DistantCommListener => Use ThreadPool to handle all connection (see Server5.java)
 	- Make distant Communication 
+		- Use tcp socket 
+		- Make distantCommunicationListener 
+			- StartDistantsession called by controller 
+			- System create distant session and call notifystartSession on created session 
+				- Session create notifystartSessionTask that send SS to distantcommunicationListener port of receiveripaddress with sessionData(serverSocket port) in messageContent, via TCP 
+			- DistantCommListener receive SS, create new DistantSession and call notify startSessionResponse
+				- created distant session try to connect to first distantSession using Socket class 
+			- firstDistantSession 
 	- Make factory for session ( calling specific method depending on type of session ... )
 
 - Clean code 

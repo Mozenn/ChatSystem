@@ -144,7 +144,7 @@ public class JChatPanel extends JPanel implements ActionListener {
 			{
 				case TX:
 				{
-					JMessagePanel mp = new JMessagePanel(new String(m.getContent()));
+					JMessagePanel mp = new JMessagePanel(new String(m.getContent()),m.getDate());
 					System.out.println("Message Added " + new String(m.getContent()));
 					if(m.getSenderId().equals(currentUser.getId()))
 					{
@@ -172,7 +172,7 @@ public class JChatPanel extends JPanel implements ActionListener {
 	
 	public void UpdateConversation(UserMessage newMessage)
 	{
-		JMessagePanel mp = new JMessagePanel(new String(newMessage.getContent()));
+		JMessagePanel mp = new JMessagePanel(new String(newMessage.getContent()),newMessage.getDate());
 		if(newMessage.getSenderId().equals(currentUser.getId()))
 		{
 			mp.setToEmitterColor();

@@ -32,12 +32,15 @@ public class Controller implements ControllerContract{
 		if(user.isEmpty())
 		{
 			// TODO 
-			// Open user creation window ( async and wait ) 
+			// Open user creation window 
 			// get username from user 
 			// createUser in model 
 			// open main window 
 			model.createLocalUser("Name") ; 
 		}
+		else 
+			openMainWindow();
+
 		/*
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -45,14 +48,28 @@ public class Controller implements ControllerContract{
             }
         });
         */
-        createAndShowMainWindow();
-        
-        model.start();
 		
 	}
 	
     private void createAndShowMainWindow() {
+    	
 		this.view.openMainWindow();
+    }
+    
+    private void openCreateProfileWindow()
+    {
+    	// TODO 
+    	// create window 
+    	// subscribe to ConfirmButton 
+    	// implementation on button push in actionperformed 
+    	
+    }
+    
+    private void openMainWindow()
+    {
+        createAndShowMainWindow();
+        
+        model.start();
     }
 	
 	public void changeUsername(String newUsername)
@@ -105,6 +122,7 @@ public class Controller implements ControllerContract{
 		}
 		// TODO CHANGEUNAME_ACTIONCOMMAND
 		// TODO SENDFILEMESSAGE_ACTIONCOMMAND 
+		// TODO CHECKPROFILE_ACTIONCOMMAND 
 		
 	}
 
