@@ -135,9 +135,22 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		    	   mainWindow.getOngoingSessionPannel().remove(sp) ; 
 		    	   mainWindow.getOngoingSessionPannel().validate();
 		    	   mainWindow.getOngoingSessionPannel().repaint();
+				
 		       }
 		    }
 		}
+		
+		for (Component c2 : mainWindow.getConnectedUserPannel().getComponents()) {
+		    if (c2 instanceof JUserPanel ) { 
+		       JUserPanel up = (JUserPanel)c2 ; 
+		       if(up.getUser().equals(sm.getReceiver()))
+		       {
+		    	   up.makeActive();
+		       }
+		    }
+		}
+		
+		mainWindow.getChatPanel().clear() ; 
 	}
 
 	@Override
