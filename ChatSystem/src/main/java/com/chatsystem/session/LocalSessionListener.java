@@ -80,6 +80,7 @@ public class LocalSessionListener extends Thread{
 					
 					if(sMsg.getSubtype().equals(SystemMessage.SystemMessageType.CS))
 					{
+						System.out.println("LocalSessionListener close Session received") ; 
 						session.closeSession(); // TODO Use ObserverPattern 
 						return ; 
 					}

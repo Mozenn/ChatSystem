@@ -133,6 +133,8 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		       {
 		    	   sp.getSessionModel().clearSessionListeners();
 		    	   mainWindow.getOngoingSessionPannel().remove(sp) ; 
+		    	   mainWindow.getOngoingSessionPannel().validate();
+		    	   mainWindow.getOngoingSessionPannel().repaint();
 		       }
 		    }
 		}

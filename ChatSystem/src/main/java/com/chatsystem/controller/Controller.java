@@ -84,7 +84,7 @@ public class Controller implements ControllerContract{
 	
 	public void closeSession(User receiver)
 	{
-		model.closeSession(receiver);
+		model.closeSessionNotified(receiver);
 	}
 	
 	public void sendMessage(User receiver, String text)

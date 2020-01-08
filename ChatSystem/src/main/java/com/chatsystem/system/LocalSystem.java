@@ -143,6 +143,16 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	}
 	
 	@Override
+	public void closeSessionNotified(User receiver) 
+	{
+		synchronized(sessions)
+		{
+			fireSessionClosed(sessions.get(receiver.getId())) ; 
+			sessions.get(receiver.getId()).notifyCloseSession() ; 
+			sessions.remove(receiver.getId()) ; 
+		}
+	}
+	
 	public void closeSession(User receiver) 
 	{
 		synchronized(sessions)
