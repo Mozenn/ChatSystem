@@ -7,14 +7,19 @@ import java.net.DatagramSocket;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class NotifyStartSessionResponseTask implements Runnable {
 	
 	private DatagramPacket packetReceived ; 
+	private final int sessionPort ; 
+	private final Session parentSession ; 
 	
-	public NotifyStartSessionResponseTask(DatagramPacket packetReceived)
+	public NotifyStartSessionResponseTask(DatagramPacket packetReceived,int sessionPort, Session parentSession)
 	{
 		this.packetReceived = packetReceived  ; 
+		this.sessionPort = sessionPort ; 
+		this.parentSession = parentSession ; 
 		
 		Thread thread = new Thread(this,"NotifyStartSessionResponse") ; 
 		thread.start();
@@ -23,11 +28,19 @@ public class NotifyStartSessionResponseTask implements Runnable {
 	@Override
 	public void run() {
 		
+		byte[] serializedData = null;
+		
+		try {
+			serializedData = SerializationUtility.serializeSessionData(new SessionData(parentSession.getEmitter(),sessionPort));
+		} catch (JsonProcessingException e3) {
+			e3.printStackTrace();
+			return ; 
+		} 
 		
 		SystemMessage msg;
 		
 		try {
-			msg = new SystemMessage(SystemMessage.SystemMessageType.SR, new byte[8]); // content is not used 
+			msg = new SystemMessage(SystemMessage.SystemMessageType.SR, serializedData); 
 		} catch (IOException e2) {
 			e2.printStackTrace();
 			return ; 

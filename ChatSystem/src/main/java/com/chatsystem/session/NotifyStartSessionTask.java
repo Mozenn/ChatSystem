@@ -89,6 +89,10 @@ class NotifyStartSessionTask implements Runnable{
 				
 				if(receivedMsg.getSubtype().equals(SystemMessage.SystemMessageType.SR)) // session valid 
 				{
+					SessionData s = SerializationUtility.deserializeSessionData(receivedMsg.getContent());
+					
+					parentSession.setReceiverPort(s.getPort()) ; 
+					
 					System.out.println("NotifyStartSession session confirmed");
 					socket.close();
 					return ; 

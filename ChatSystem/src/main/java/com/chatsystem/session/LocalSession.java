@@ -64,7 +64,7 @@ final public class LocalSession extends Session{
 	@Override
 	public void notifyStartSessionResponse(Object packetReceived)
 	{
-		new NotifyStartSessionResponseTask((DatagramPacket)packetReceived) ; 
+		new NotifyStartSessionResponseTask((DatagramPacket)packetReceived,socket.getLocalPort()) ; 
 	}
 	
 	@Override

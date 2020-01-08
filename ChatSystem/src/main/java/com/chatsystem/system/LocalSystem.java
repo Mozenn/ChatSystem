@@ -293,7 +293,7 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 			} 
 		}
 
-		return Optional.of(user);
+		return Optional.ofNullable(user);
 
 	}
 	
@@ -364,10 +364,8 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	    
 		User newUser = new User(new UserId(id),ipAdd, username) ; 
 		
-		synchronized(user)
-		{
-			this.user = newUser ; 
-		}
+
+		this.user = newUser ; 
 		
 		File f = new File(LocalUserDirectoryPath) ; 
 		

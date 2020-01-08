@@ -93,6 +93,11 @@ public abstract class Session implements SessionModel{
 		return receiverPort;
 	}
 	
+	protected void setReceiverPort(int port)
+	{
+		this.receiverPort = port ; 
+	}
+	
 	public List<UserMessage> getMessages()
 	{
 		return this.messages; 
