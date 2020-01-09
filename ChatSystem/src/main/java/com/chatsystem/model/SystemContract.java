@@ -13,7 +13,7 @@ public interface SystemContract extends SystemModel{
 	
 	public boolean changeUname(String newName) ; 
 	
-	public boolean startLocalSession(User receiver) ; 
+	public boolean startSession(User receiver) ; 
 	
 	public void closeSession(User receiver) ; 
 	
@@ -26,5 +26,7 @@ public interface SystemContract extends SystemModel{
 	public void start();
 	
 	public void close();
+	
+	public boolean hasStarted() ; 
 
 }

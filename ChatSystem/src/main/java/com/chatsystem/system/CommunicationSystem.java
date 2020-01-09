@@ -21,6 +21,7 @@ import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
 import com.chatsystem.model.SystemContract;
 import com.chatsystem.model.SystemListener;
+import com.chatsystem.session.DistantSession;
 import com.chatsystem.session.LocalSession;
 import com.chatsystem.session.Session;
 import com.chatsystem.session.SessionData;
@@ -31,11 +32,12 @@ import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-final public class LocalSystem implements AutoCloseable , SystemContract{
+final public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	private HashMap<UserId,User> localUsers;
 	private HashMap<UserId,User> distantUsers;
 	private User user;
+	private boolean bRunning = false ; 
 	
 	private InetAddress centralSysIp;
 	private int centralSysPort;
@@ -46,12 +48,14 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	
 	private final EventListenerList listeners = new EventListenerList();
 	
-	private LocalCommunicationListener communicationListener ; 
-	public static final int LISTENING_PORT = 8888; 
+	private LocalCommunicationListener localCommunicationListener ; 
+	public static final int LOCAL_LISTENING_PORT = 8888; 
 	public static final String MULTICAST_ADDR = "228.228.228.228"; // TODO use a non routable multicast address between 224.0.0.0 to 224.0.0.255 
 	
+	private DistantCommunicationListener distantCommunicationListener; 
 	
-	public LocalSystem() throws IOException 
+	
+	public CommunicationSystem() throws IOException 
 	{
 		localUsers = new HashMap<UserId,User>();
 		distantUsers = new HashMap<UserId,User>();
@@ -61,27 +65,43 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	
 	public void start()
 	{
-		System.out.println("LocalSystem Started") ; 
+		System.out.println("CommunicationSystem Started") ; 
 		
 		try {
-			communicationListener = new LocalCommunicationListener(this);
+			localCommunicationListener = new LocalCommunicationListener(this);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+		try {
+			distantCommunicationListener = new DistantCommunicationListener(this) ;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
 		notifyLocalUsers(); 
 		
 		RequestDistantUser();
+		
+		bRunning = true ; 
+	}
+	
+	@Override
+	public boolean hasStarted() {
+		
+		return bRunning;
 	}
 	
 	public void close() 
 	{
+		bRunning = false  ; 
 		
 		new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 
 		
 		// TODO send Disconnection notify to central server
 		
-		communicationListener.stopRun();	
+		localCommunicationListener.stopRun();	
+		distantCommunicationListener.stopRun();
 	}
 	
 	// ---------- COMMUNICATION 
@@ -100,7 +120,7 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	
 	// SESSIONS 
 	
-	protected void createSessionResponse(DatagramPacket packet) throws IOException 
+	protected void createLocalSessionResponse(DatagramPacket packet) throws IOException 
 	{
 
 		SessionData s = SerializationUtility.deserializeSessionData(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
@@ -117,10 +137,27 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	}
 	
 	@Override
-	public boolean startLocalSession(User receiver) 
+	public boolean startSession(User receiver) 
 	{
 		if(sessions.containsKey(receiver.getId()))
 			return false ; 
+		
+		if(localUsers.containsKey(receiver.getId()))
+		{
+			return startLocalSession(receiver) ; 
+		}
+		else if(distantUsers.containsKey(receiver.getId()))
+		{
+			return startDistantSession(receiver) ; 
+		}
+		
+		return false ; 
+		
+	}
+	
+	
+	private boolean startLocalSession(User receiver) 
+	{
 		
 		LocalSession locSes = null;
 		try {
@@ -142,6 +179,26 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		
 	}
 	
+	private boolean startDistantSession(User receiver) 
+	{
+		
+		DistantSession distSes = null;
+
+		distSes = new DistantSession();
+
+		
+		distSes.notifyStartSession(); // notify receiver system of session started 
+		synchronized(sessions)
+		{
+			sessions.put(receiver.getId(),distSes); 
+			
+			fireSessionStarted(distSes); // notify view 
+		}
+		
+		return true ;
+		
+	}
+	
 	@Override
 	public void closeSessionNotified(User receiver) 
 	{
@@ -153,6 +210,7 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		}
 	}
 	
+	@Override
 	public void closeSession(User receiver) 
 	{
 		synchronized(sessions)
@@ -203,6 +261,43 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 			localUsers.remove(u.getId());
 		}
 		System.out.println("Local User removed " + u.getUsername()); 
+		
+		fireuserDisconnection(u);
+		
+		synchronized(sessions)
+		{
+			if(sessions.containsKey(u.getId()))
+			{
+				fireSessionClosed(sessions.get(u.getId())); 
+				
+				sessions.remove(u.getId());
+			}
+		}
+		
+
+	}
+	
+	protected void addDistantUser(User u) 
+	{
+		synchronized(distantUsers)
+		{
+			if(distantUsers.containsKey(u.getId()))
+				return ; 
+			
+			distantUsers.put(u.getId(),u);
+		}
+		System.out.println("Distant User added " + u.getUsername()); 
+		
+		fireuserConnection(u); // notify view 
+	}
+	
+	protected void removeDistantUser(User u)
+	{
+		synchronized(distantUsers)
+		{
+			distantUsers.remove(u.getId());
+		}
+		System.out.println("Distant User removed " + u.getUsername()); 
 		
 		fireuserDisconnection(u);
 		
@@ -351,43 +446,45 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	@Override
 	public Optional<User> createLocalUser(String username) 
 	{
-		
-		InetAddress ipAdd;
-		try {
-			ipAdd = NetworkUtility.getLocalIPAddress();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return Optional.of(user); 
-		} 
-		
-	    NetworkInterface ni;
-	    byte[] id ; 
-	    
-		try {
-			ni = NetworkInterface.getByInetAddress(ipAdd);
-			id = ni.getHardwareAddress();
-		} catch (SocketException e1) {
-			e1.printStackTrace();
-			return Optional.of(user); 
-		}
-	    
-	    
-		User newUser = new User(new UserId(id),ipAdd, username) ; 
-		
+		if(checkUsernameAvailability(username))
+		{
+			InetAddress ipAdd;
+			try {
+				ipAdd = NetworkUtility.getLocalIPAddress();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				return Optional.of(user); 
+			} 
+			
+		    NetworkInterface ni;
+		    byte[] id ; 
+		    
+			try {
+				ni = NetworkInterface.getByInetAddress(ipAdd);
+				id = ni.getHardwareAddress();
+			} catch (SocketException e1) {
+				e1.printStackTrace();
+				return Optional.of(user); 
+			}
+		    
+		    
+			User newUser = new User(new UserId(id),ipAdd, username) ; 
+			
 
-		this.user = newUser ; 
+			this.user = newUser ; 
+			
+			File f = new File(LocalUserDirectoryPath) ; 
+			
+			f.mkdir() ; 
+			
+			try {
+				saveLocalUser();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+		}
 		
-		File f = new File(LocalUserDirectoryPath) ; 
-		
-		f.mkdir() ; 
-		
-		try {
-			saveLocalUser();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		
-		return Optional.of(user); 
+		return Optional.ofNullable(user); 
 	}
 	
 	private void saveLocalUser() throws IOException 
@@ -421,14 +518,19 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 	@Override
 	public boolean changeUname(String newName) 
 	{
-		boolean res = false ; 
+		boolean res = checkUsernameAvailability(newName) ; 
 		
-		// TODO 
-		
-		// communicate to central system to check availability 
-		
+
+		if(!res)
+		{
+			return res ; 
+		}
+		else
+		{
+			user.setUsername(newName);
+		}
 		// if not available 
-			// notify view 
+			//return false ; 
 		
 		// if available 
 			// update localUser 
@@ -444,6 +546,17 @@ final public class LocalSystem implements AutoCloseable , SystemContract{
 		
 		return res ;
 	}
+	
+	private boolean checkUsernameAvailability(String username )
+	{
+		boolean res = true ; // TODO  Change to false 
+		
+		// TODO communicate to central system to check availability
+		
+		return res ;
+	}
+
+
 
 
 

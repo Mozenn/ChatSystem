@@ -6,13 +6,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
-import com.chatsystem.system.LocalSystem;
+import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,7 +56,7 @@ class NotifyStartSessionTask implements Runnable{
 		try {
 			
 			byte[] msgAsBytes = SerializationUtility.serializeMessage(msg);
-			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, LocalSystem.LISTENING_PORT));
+			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, CommunicationSystem.LOCAL_LISTENING_PORT));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ; 

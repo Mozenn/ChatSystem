@@ -18,5 +18,7 @@ public interface SessionModel {
 	public List<UserMessage> getMessages(); 
 	
 	public User getReceiver(); // TODO change this to UserModel ? 
+	
+	public User getEmitter();
 
 }

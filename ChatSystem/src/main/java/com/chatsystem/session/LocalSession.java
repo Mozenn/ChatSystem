@@ -1,26 +1,18 @@
 package com.chatsystem.session;
 
 import java.net.DatagramSocket;
-import java.net.SocketException;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 import com.chatsystem.dao.DAO;
 import com.chatsystem.dao.DAOSQLite;
-import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.SystemContract;
-import com.chatsystem.system.LocalSystem;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.NetworkUtility;
 
-import java.net.InetAddress;
 
 final public class LocalSession extends Session{
 	

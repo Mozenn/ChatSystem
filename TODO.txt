@@ -1,10 +1,9 @@
 ### Ongoing 
 
-- Test Local presence + local session communication
+- Test 
+	- Disconnection 
 - Distant session 
 - Presence server 
-- Create Profile window  
-- Add timestamp to message 
 
 - file message UI 
 - Settings Window 
@@ -15,16 +14,12 @@
 	- Polish 
 		- Rescale components when downsizing window 
 		- Use Icon for buttons (use labels & source folder)
-	- Create Profile window  
-		- limit size 
-		- limit character type 
-		- Check validity when button push 
 	- File message 
 		- Add button to embed file in message 
 		- Make JFileMessagePanel 
 		- Add implementation in JChatPanel 
 	- Message 
-		- add timestamp 
+		- polish displayed timestamp 
 	- Settings window (in edit menu)
 		- profil sub window 
 			- change username button 

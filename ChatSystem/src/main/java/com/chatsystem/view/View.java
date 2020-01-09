@@ -20,6 +20,7 @@ import com.chatsystem.user.User;
 public class View implements ActionListener, SystemListener, SessionListener{
 	
 	private MainWindow mainWindow ; 
+	private CreateUserWindow createUserWindow ; 
 	private ControllerContract controller ; 
 	private SystemModel systemModel ; 
 	
@@ -44,6 +45,21 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		mainWindow.getChatPanel().addActionListener(this);
 		mainWindow.getChatPanel().addActionListener(controller);
 
+	}
+	
+	public void openCreateUserWindow()
+	{
+		createUserWindow = new CreateUserWindow();
+		createUserWindow.addActionListener(controller) ; 
+		createUserWindow.setVisible(true);
+
+	}
+	
+	public void closeCreateUserWindow()
+	{
+		createUserWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE) ; 
+		createUserWindow.setVisible(false);
+		createUserWindow.dispose();
 	}
 
 	@Override
@@ -73,9 +89,9 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		{
 			JSessionPanel js = (JSessionPanel) e.getSource(); 
 			
-			if(!mainWindow.getChatPanel().getCurrentUser().equals(js.getSessionModel().getReceiver()))
+			if(!mainWindow.getChatPanel().getCurrentReceiver().equals(js.getSessionModel().getReceiver()))
 			{
-				mainWindow.getChatPanel().ChangeConversation(js.getSessionModel().getReceiver(), js.getSessionModel().getMessages()); 
+				mainWindow.getChatPanel().ChangeConversation(js.getSessionModel().getEmitter(),js.getSessionModel().getReceiver(), js.getSessionModel().getMessages()); 
 			}
 			
 			
@@ -120,7 +136,7 @@ public class View implements ActionListener, SystemListener, SessionListener{
 	@Override
 	public void sessionStarted(SessionModel sm) {
 		addSessionPanel(sm);
-		mainWindow.getChatPanel().ChangeConversation(sm.getReceiver(), sm.getMessages()); 
+		mainWindow.getChatPanel().ChangeConversation(sm.getEmitter(),sm.getReceiver(), sm.getMessages()); 
 		
 	}
 
@@ -180,7 +196,7 @@ public class View implements ActionListener, SystemListener, SessionListener{
 	@Override
 	public void messageAdded(UserMessage m) {
 		
-		if(mainWindow.getChatPanel().getCurrentUser().getId().equals(m.getReceiverId()) || mainWindow.getChatPanel().getCurrentUser().getId().equals(m.getSenderId()))
+		if(mainWindow.getChatPanel().getCurrentReceiver().getId().equals(m.getReceiverId()))
 		{
 			mainWindow.getChatPanel().UpdateConversation(m);
 		}

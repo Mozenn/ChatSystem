@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -15,18 +16,20 @@ import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-final class LocalCommunicationListener extends Thread {
+final class DistantCommunicationListener extends Thread {
 	
 	final private CommunicationSystem system ; 
-	private MulticastSocket socket;
+	private ServerSocket serverSocket;
 	private AtomicBoolean run;
 	
-	public LocalCommunicationListener(CommunicationSystem system) throws IOException 
+	public DistantCommunicationListener(CommunicationSystem system) throws IOException 
 	{
 		this.system = system;
+		/*
 		this.socket = new MulticastSocket(CommunicationSystem.LOCAL_LISTENING_PORT);
 		this.socket.joinGroup(InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR));
 		this.socket.setSoTimeout(1000);
+		*/
 		run = new AtomicBoolean(); 
 		run.set(true);
 		start();
@@ -35,9 +38,10 @@ final class LocalCommunicationListener extends Thread {
 	}
 	
 	public void run() 
-	{
+	{/*
 		while(run.get()) 
 		{
+			
 			byte[] buffer = new byte[Message.MAX_SIZE];
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			try {
@@ -154,23 +158,20 @@ final class LocalCommunicationListener extends Thread {
 		}
 		
 		socket.close();
+		*/
 	}
 	
 	public void stopRun() 
 	{
+		/*
 		System.out.println("LocalCommunicationListener Stop");
 		run.set(false);
 		try {
 			socket.leaveGroup(InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		//socket.close();
 	}
-
-	
-	
-	
-	
 
 }

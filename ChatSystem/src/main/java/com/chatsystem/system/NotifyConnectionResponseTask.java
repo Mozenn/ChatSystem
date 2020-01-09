@@ -13,11 +13,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 final class NotifyConnectionResponseTask implements Runnable {
 	
-	private LocalSystem localSystem ; 
+	private CommunicationSystem localSystem ; 
 	private Thread thread; 
 	InetAddress addr ;
 	
-	public NotifyConnectionResponseTask(LocalSystem localSystem,DatagramPacket packet) throws IOException, ClassNotFoundException
+	public NotifyConnectionResponseTask(CommunicationSystem localSystem,DatagramPacket packet) throws IOException, ClassNotFoundException
 	{
 		this.localSystem = localSystem ; 
 		
@@ -62,7 +62,7 @@ final class NotifyConnectionResponseTask implements Runnable {
 		try {
 			
 			byte[] msgAsBytes = SerializationUtility.serializeMessage(msg);
-			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, LocalSystem.LISTENING_PORT));
+			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, CommunicationSystem.LOCAL_LISTENING_PORT));
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("send failed") ; 

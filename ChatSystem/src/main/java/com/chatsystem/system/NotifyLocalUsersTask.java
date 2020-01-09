@@ -32,12 +32,12 @@ final class NotifyLocalUsersTask implements Runnable
 	    }
 	}
 
-	private LocalSystem localSystem ; 
+	private CommunicationSystem localSystem ; 
 	private Thread thread; 
 	private final LocalNotifyType type ;
 ;
 	
-	public NotifyLocalUsersTask(LocalSystem localSystem, LocalNotifyType type ) 
+	public NotifyLocalUsersTask(CommunicationSystem localSystem, LocalNotifyType type ) 
 	{
 		this.localSystem = localSystem ; 
 	
@@ -83,9 +83,9 @@ final class NotifyLocalUsersTask implements Runnable
 		{
 			try {
 				byte[] msgAsBytes = SerializationUtility.serializeMessage(msg); 
-				socket.joinGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
-				socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, InetAddress.getByName(LocalSystem.MULTICAST_ADDR), LocalSystem.LISTENING_PORT));
-				socket.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
+				socket.joinGroup(InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR));
+				socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR), CommunicationSystem.LOCAL_LISTENING_PORT));
+				socket.leaveGroup(InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR));
 				
 			} catch (UnknownHostException e) {
 				e.printStackTrace();

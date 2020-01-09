@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import javax.swing.border.LineBorder;
 
-public class JSessionPanel extends JPanel implements ActionListener, SessionListener {
+public class JSessionPanel extends JPanel implements ActionListener, SessionListener, ActionEmitter {
 	
 	public enum SessionPanelState
 	{
@@ -27,6 +27,22 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 	    private String type;
 
 	    SessionPanelState(String type) {
+	        this.type = type;
+	    }
+
+	    String getType() {
+	        return type;
+	    }
+	}
+	
+	public enum SessionPanelVisualState
+	{
+		ONSCREEN("ONSCREEN"),
+		OUTOFSCREEN("OUTOFSCREEN");
+		
+	    private String type;
+
+	    SessionPanelVisualState(String type) {
 	        this.type = type;
 	    }
 
@@ -47,6 +63,8 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 	
 	private final Color UNREAD_COLOR = new Color(255, 165, 0) ; 
 	private final Color READ_COLOR = new Color(211,211,211); 
+	
+	private SessionPanelVisualState visualState  ; 
 
 	/**
 	 * Create the panel.
@@ -72,6 +90,8 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 		
 		this.session = s ; 
 		session.addSessionListener(this);
+		
+		visualState = SessionPanelVisualState.ONSCREEN ; 
 
 	}
 	
@@ -99,7 +119,7 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 		else if(e.getActionCommand().equals(DISPLAY_ACTIONCOMMAND) && !actionListeners.isEmpty())
 		{
 			actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,DISPLAY_ACTIONCOMMAND)));
-			setState(SessionPanelState.READ); 
+			setReadState(SessionPanelState.READ); 
 		}
 			
 	}
@@ -107,10 +127,11 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 	@Override
 	public void messageAdded(UserMessage m) {
 		actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,MESSAGERECEIVED_ACTIONCOMMAND)));
-		setState(SessionPanelState.UNREAD); 
+		if(visualState == SessionPanelVisualState.OUTOFSCREEN)
+			setReadState(SessionPanelState.UNREAD); 
 	}
 	
-	private void setState(SessionPanelState state)
+	private void setReadState(SessionPanelState state)
 	{
 		switch(state)
 		{
@@ -125,6 +146,11 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 				break ; 
 			}
 		}
+	}
+	
+	private void setVisualState(SessionPanelVisualState state)
+	{
+		this.visualState = state ; 
 	}
 
 }

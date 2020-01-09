@@ -31,7 +31,7 @@ import java.awt.MenuBar;
 import java.awt.Frame;
 import javax.swing.ScrollPaneConstants;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ActionEmitter {
 
 
 
@@ -169,6 +169,9 @@ public class MainWindow extends JFrame {
 		gbc_chatPanel.gridx = 1;
 		gbc_chatPanel.gridy = 0;
 		contentPane.add(chatPanel, gbc_chatPanel);
+		
+		
+		actionListeners = new ArrayList<ActionListener>();
 		
 
 	}

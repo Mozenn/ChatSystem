@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JChatPanel extends JPanel implements ActionListener {
+public class JChatPanel extends JPanel implements ActionListener, ActionEmitter {
 	
 	public static final String SENDMESSAGE_ACTIONCOMMAND = "Send" ; 
 	
@@ -30,10 +30,15 @@ public class JChatPanel extends JPanel implements ActionListener {
 	private JTextArea textArea ; 
 	
 	private ArrayList<ActionListener> actionListeners ; 
-	private User currentUser; 
+	private User currentReceiver;
+	private User currentEmitter;
 
-	public User getCurrentUser() {
-		return currentUser;
+	public User getCurrentReceiver() {
+		return currentReceiver;
+	}
+	
+	public User getCurrentEmitter() {
+		return currentEmitter;
 	}
 
 	public JPanel getMessagePanel() {
@@ -130,13 +135,14 @@ public class JChatPanel extends JPanel implements ActionListener {
 		actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,SENDMESSAGE_ACTIONCOMMAND)));
 	}
 	
-	public void ChangeConversation(User newUser,List<UserMessage> messages)
+	public void ChangeConversation(User newSender, User newReceiver,List<UserMessage> messages)
 	{
 		clear();
 
 		sendButton.setEnabled(true);
 		
-		currentUser = newUser ; 
+		currentReceiver = newReceiver ; 
+		currentEmitter = newSender ; 
 		
 		for(UserMessage m : messages)
 		{
@@ -144,14 +150,17 @@ public class JChatPanel extends JPanel implements ActionListener {
 			{
 				case TX:
 				{
-					JMessagePanel mp = new JMessagePanel(new String(m.getContent()),m.getDate());
+
 					System.out.println("Message Added " + new String(m.getContent()));
-					if(m.getSenderId().equals(currentUser.getId()))
+					JMessagePanel mp ; 
+					if(m.getSenderId().equals(currentEmitter.getId()))
 					{
+						mp = new JMessagePanel(currentEmitter.getUsername(),new String(m.getContent()),m.getDate());
 						mp.setToEmitterColor();
 					}
 					else
 					{
+						mp = new JMessagePanel(currentReceiver.getUsername(),new String(m.getContent()),m.getDate());
 						mp.setToReceiverColor();
 					}
 					
@@ -172,13 +181,15 @@ public class JChatPanel extends JPanel implements ActionListener {
 	
 	public void UpdateConversation(UserMessage newMessage)
 	{
-		JMessagePanel mp = new JMessagePanel(new String(newMessage.getContent()),newMessage.getDate());
-		if(newMessage.getSenderId().equals(currentUser.getId()))
+		JMessagePanel mp ; 
+		if(newMessage.getSenderId().equals(currentEmitter.getId()))
 		{
+			mp = new JMessagePanel(currentEmitter.getUsername(),new String(newMessage.getContent()),newMessage.getDate());
 			mp.setToEmitterColor();
 		}
 		else
 		{
+			mp = new JMessagePanel(currentReceiver.getUsername(),new String(newMessage.getContent()),newMessage.getDate());
 			mp.setToReceiverColor();
 		}
 		

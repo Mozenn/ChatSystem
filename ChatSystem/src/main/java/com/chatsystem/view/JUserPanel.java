@@ -19,7 +19,7 @@ import com.chatsystem.user.User;
 
 import java.awt.Color;
 
-public class JUserPanel extends JPanel implements ActionListener{
+public class JUserPanel extends JPanel implements ActionListener, ActionEmitter{
 	
 	private User user ; 
 	private JButton startSessionButton ; 

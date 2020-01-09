@@ -10,7 +10,7 @@ import com.chatsystem.dao.DAOSQLite;
 import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
-import com.chatsystem.system.LocalSystem;
+import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;

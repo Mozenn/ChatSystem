@@ -8,8 +8,9 @@ import java.io.IOException;
 import javax.swing.JButton;
 
 import com.chatsystem.model.SystemContract;
-import com.chatsystem.system.LocalSystem;
+import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.user.User;
+import com.chatsystem.view.CreateUserWindow;
 import com.chatsystem.view.JChatPanel;
 import com.chatsystem.view.JSessionPanel;
 import com.chatsystem.view.JUserPanel;
@@ -23,7 +24,7 @@ public class Controller implements ControllerContract{
 	
 	public Controller() throws IOException
 	{	
-		this.model = new LocalSystem(); 
+		this.model = new CommunicationSystem(); 
 		
 		this.view = new View(this,model);
 		
@@ -31,12 +32,7 @@ public class Controller implements ControllerContract{
 		
 		if(user.isEmpty())
 		{
-			// TODO 
-			// Open user creation window 
-			// get username from user 
-			// createUser in model 
-			// open main window 
-			model.createLocalUser("Name") ; 
+			openCreateProfileWindow() ; 
 		}
 		else 
 			openMainWindow();
@@ -58,11 +54,13 @@ public class Controller implements ControllerContract{
     
     private void openCreateProfileWindow()
     {
-    	// TODO 
-    	// create window 
-    	// subscribe to ConfirmButton 
-    	// implementation on button push in actionperformed 
+    	this.view.openCreateUserWindow();
     	
+    }
+    
+    private void closeCreateUserWindow()
+    {
+    	this.view.closeCreateUserWindow() ; 
     }
     
     private void openMainWindow()
@@ -74,12 +72,12 @@ public class Controller implements ControllerContract{
 	
 	public void changeUsername(String newUsername)
 	{
-		model.changeUname(newUsername);
+		boolean res = model.changeUname(newUsername);
 	}
 	
 	public void startSession(User receiver)
 	{
-		model.startLocalSession(receiver); // TODO differentiate between local and distant 
+		model.startSession(receiver); // TODO differentiate between local and distant 
 	}
 	
 	public void closeSession(User receiver)
@@ -99,7 +97,13 @@ public class Controller implements ControllerContract{
 	
 	public void close()
 	{
-		// TODO close Model 
+		if(model.hasStarted())
+			model.close();
+	}
+	
+	private boolean createLocalUser(String username)
+	{
+		return model.createLocalUser(username).isPresent() ; 
 	}
 
 	@Override
@@ -119,20 +123,47 @@ public class Controller implements ControllerContract{
 		{
 			JChatPanel mp = (JChatPanel) e.getSource() ;
 			
-			if(mp.getCurrentUser() != null )
-				sendMessage(mp.getCurrentUser(),mp.getTextArea().getText()) ; 
+			if(mp.getCurrentReceiver() != null )
+				sendMessage(mp.getCurrentReceiver(),mp.getTextArea().getText()) ; 
 			
 			mp.getTextArea().setText("");
 			
 		}
-		else if(e.getActionCommand().equals(MainWindow.CLOSEMAINWINDOW_ACTIONCOMMAND)) 
+		else if(e.getActionCommand().equals(MainWindow.CLOSEMAINWINDOW_ACTIONCOMMAND) || e.getActionCommand().equals(CreateUserWindow.CLOSE_CREATEUSERWINDOW_ACTIONCOMMAND)) 
 		{
-			// TODO 
+			close();
 			
+		}
+		else if(e.getActionCommand().equals(CreateUserWindow.CHECK_CREATEUSERWINDOW_ACTIONCOMMAND)) 
+		{
+			CreateUserWindow cuw = (CreateUserWindow) e.getSource() ;
+			
+			String username = cuw.getTextField().getText() ; 
+			
+			if(username.length() <= User.MAX_NAME_SIZE && username.length() > 0 ) // TODO add other validation constraints ? 
+			{
+				if(createLocalUser(username))
+				{
+					closeCreateUserWindow();
+					openMainWindow() ; 
+				}
+				else
+				{
+					cuw.showUnavailableUsernameError();
+				}
+			}
+			else
+			{
+				if(username.equals(""))
+					cuw.showEmptyUsernameError();
+				else
+				{
+					cuw.showTooLongUsernameError();
+				}
+			}
 		}
 		// TODO CHANGEUNAME_ACTIONCOMMAND
 		// TODO SENDFILEMESSAGE_ACTIONCOMMAND 
-		// TODO CHECKPROFILE_ACTIONCOMMAND 
 		
 	}
 

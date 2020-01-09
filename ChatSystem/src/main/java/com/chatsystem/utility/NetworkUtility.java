@@ -9,7 +9,7 @@ import java.net.SocketException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.chatsystem.session.LocalSessionListener;
-import com.chatsystem.system.LocalSystem;
+import com.chatsystem.system.CommunicationSystem;
 
 public final class NetworkUtility {
 	
@@ -45,14 +45,14 @@ public final class NetworkUtility {
 		
 		MulticastSocket ms = new MulticastSocket(6666);
 		
-		ms.joinGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
-		ms.send(new DatagramPacket(data, 3, InetAddress.getByName(LocalSystem.MULTICAST_ADDR), 6666));
+		ms.joinGroup(InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR));
+		ms.send(new DatagramPacket(data, 3, InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR), 6666));
 		
 		DatagramPacket r = new DatagramPacket(buf, 3);
         
         ms.receive(r);
         
-        ms.leaveGroup(InetAddress.getByName(LocalSystem.MULTICAST_ADDR));
+        ms.leaveGroup(InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR));
         
         return r.getAddress();   
 	}
