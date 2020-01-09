@@ -14,17 +14,17 @@ import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-class NotifyStartSessionTask implements Runnable{
+class NotifyStartLocalSessionTask implements Runnable{
 	
 	private final Session parentSession ; 
 	private final int sessionPort ; 
 	
-	public NotifyStartSessionTask(Session parentSession, int sessionPort)
+	public NotifyStartLocalSessionTask(Session parentSession, int sessionPort)
 	{
 		this.parentSession = parentSession  ; 
 		this.sessionPort = sessionPort ; 
 		
-		Thread thread = new Thread(this,"NotifyStartSession") ; 
+		Thread thread = new Thread(this,"NotifyStartLocalSession") ; 
 		thread.start();
 	}
 

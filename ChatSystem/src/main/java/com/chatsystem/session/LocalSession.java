@@ -34,7 +34,7 @@ final public class LocalSession extends Session{
 	
 	
 	@Override
-	public void startSession() {
+	protected void startSession() {
 
 		socket = NetworkUtility.getUDPSocketWithRandomPort() ; 
 		
@@ -50,19 +50,19 @@ final public class LocalSession extends Session{
 	@Override
 	public void notifyStartSession() 
 	{
-		new NotifyStartSessionTask(this,socket.getLocalPort()) ; 
+		new NotifyStartLocalSessionTask(this,socket.getLocalPort()) ; 
 	}
 	
 	@Override
 	public void notifyStartSessionResponse(Object packetReceived)
 	{
-		new NotifyStartSessionResponseTask((DatagramPacket)packetReceived,socket.getLocalPort(),this) ; 
+		new NotifyStartLocalSessionResponseTask((DatagramPacket)packetReceived,socket.getLocalPort(),this) ; 
 	}
 	
 	@Override
 	public void notifyCloseSession() {
 
-		new NotifyCloseSessionTask(this); 
+		new NotifyCloseLocalSessionTask(this); 
 		listener.stopRun();
 	}
 	
@@ -88,7 +88,7 @@ final public class LocalSession extends Session{
 			return ; 
 		} 
 		
-		new SendMessageTask(this,socket,m);
+		new SendLocalMessageTask(this,socket,m);
 		
 		addMessage(m) ; 
 	}
@@ -105,7 +105,7 @@ final public class LocalSession extends Session{
 			return ; 
 		} 
 		
-		new SendMessageTask(this,socket,m);
+		new SendLocalMessageTask(this,socket,m);
 		
 		addMessage(m) ; 
 	}

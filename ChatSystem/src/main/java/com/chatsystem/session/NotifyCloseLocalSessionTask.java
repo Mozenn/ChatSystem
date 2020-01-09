@@ -10,11 +10,11 @@ import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 
 
-public class NotifyCloseSessionTask implements Runnable{
+public class NotifyCloseLocalSessionTask implements Runnable{
 	
 	private final Session parentSession ; 
 	
-	public NotifyCloseSessionTask(Session parentSession)
+	public NotifyCloseLocalSessionTask(Session parentSession)
 	{
 		this.parentSession = parentSession  ; 
 		

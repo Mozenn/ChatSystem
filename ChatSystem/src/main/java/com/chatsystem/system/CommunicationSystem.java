@@ -53,7 +53,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	public static final String MULTICAST_ADDR = "228.228.228.228"; // TODO use a non routable multicast address between 224.0.0.0 to 224.0.0.255 
 	
 	private DistantCommunicationListener distantCommunicationListener; 
-	
+	public static final int DISTANT_LISTENING_PORT = 8888; 
 	
 	public CommunicationSystem() throws IOException 
 	{
@@ -120,7 +120,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	
 	// SESSIONS 
 	
-	protected void createLocalSessionResponse(DatagramPacket packet) throws IOException 
+	protected void onLocalSessionRequest(DatagramPacket packet) throws IOException 
 	{
 
 		SessionData s = SerializationUtility.deserializeSessionData(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
@@ -128,12 +128,26 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		
 		session.notifyStartSessionResponse(packet);
 		
+		addSession(session) ; 
+	}
+	
+	protected void onDistantSessionRequest(SessionData s) throws IOException
+	{
+		DistantSession session = new DistantSession(user,s.getUser(),s.getPort(),this) ; 
+		
+		// TODO Session must connect to other one 
+		
+		addSession(session) ; 
+	}
+	
+	protected void addSession(Session session) throws IOException
+	{
+		
 		synchronized(sessions)
 		{
-			sessions.put(s.getUser().getId(), session);
+			sessions.put(session.getReceiver().getId(), session);
 			fireSessionStarted(session); // notify view 
 		}
-		
 	}
 	
 	@Override
@@ -184,10 +198,15 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		
 		DistantSession distSes = null;
 
-		distSes = new DistantSession();
+		try {
+			distSes = new DistantSession(user,receiver,this);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false ; 
+		}
 
 		
-		distSes.notifyStartSession(); // notify receiver system of session started 
+		distSes.notifyStartSession(); // notify receiver distant listener of session started 
 		synchronized(sessions)
 		{
 			sessions.put(receiver.getId(),distSes); 

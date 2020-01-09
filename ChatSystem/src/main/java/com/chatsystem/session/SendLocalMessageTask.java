@@ -8,13 +8,13 @@ import java.net.InetAddress;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.utility.SerializationUtility;
 
-public class SendMessageTask implements Runnable{
+public class SendLocalMessageTask implements Runnable{
 	
 	private final Session parentSession ; 
 	private final DatagramSocket sendingSocket ; 
 	private final UserMessage messageToSend ; 
 	
-	public SendMessageTask(Session parentSession, DatagramSocket sendingSocket, UserMessage message )
+	public SendLocalMessageTask(Session parentSession, DatagramSocket sendingSocket, UserMessage message )
 	{
 		this.parentSession = parentSession  ; 
 		this.sendingSocket = sendingSocket ; 

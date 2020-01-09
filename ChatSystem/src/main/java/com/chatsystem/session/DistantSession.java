@@ -1,19 +1,26 @@
 package com.chatsystem.session;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+
+import com.chatsystem.model.SystemContract;
+import com.chatsystem.user.User;
 
 public class DistantSession extends Session {
-
-	@Override
-	public void sendMessage(String s) {
-		// TODO Auto-generated method stub
-
+	
+	private ServerSocket socket ; 
+	
+	public DistantSession(User emitter, User receiver, SystemContract system) throws IOException
+	{
+		super(emitter,receiver,system) ; 
+		startSession() ; 
 	}
-
-	@Override
-	public void sendMessage(File f) {
-		// TODO Auto-generated method stub
-
+	
+	public DistantSession(User emitter, User receiver, int receiverPort , SystemContract system) throws IOException
+	{
+		super(emitter,receiver,receiverPort,system) ; 
+		startSession() ; 
 	}
 
 	@Override
@@ -42,6 +49,18 @@ public class DistantSession extends Session {
 
 	@Override
 	protected void closeSession() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	@Override
+	public void sendMessage(String s) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendMessage(File f) {
 		// TODO Auto-generated method stub
 
 	}

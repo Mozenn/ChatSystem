@@ -82,7 +82,7 @@ final class LocalCommunicationListener extends Thread {
 				case SS: // session started with current local user of localSystem  
 				{
 					try {
-						system.createLocalSessionResponse(packet); // TODO implement observer pattern 
+						system.onLocalSessionRequest(packet); // TODO implement observer pattern 
 					} catch (IOException e) {
 						e.printStackTrace();
 						continue ; 

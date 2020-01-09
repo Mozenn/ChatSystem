@@ -9,13 +9,13 @@ import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-public class NotifyStartSessionResponseTask implements Runnable {
+public class NotifyStartLocalSessionResponseTask implements Runnable {
 	
 	private DatagramPacket packetReceived ; 
 	private final int sessionPort ; 
 	private final Session parentSession ; 
 	
-	public NotifyStartSessionResponseTask(DatagramPacket packetReceived,int sessionPort, Session parentSession)
+	public NotifyStartLocalSessionResponseTask(DatagramPacket packetReceived,int sessionPort, Session parentSession)
 	{
 		this.packetReceived = packetReceived  ; 
 		this.sessionPort = sessionPort ; 

@@ -127,7 +127,7 @@ public abstract class Session implements SessionModel{
 	public abstract void notifyStartSession() ;
 	
 	// Call on responding session 
-	public abstract void notifyStartSessionResponse(Object packetReceived) ;
+	public abstract void notifyStartSessionResponse(Object packetReceived) ; // TODO specific to localSession only ? 
 	
 	// Notify session to send closeSession message 
 	public abstract void notifyCloseSession() ;

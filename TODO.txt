@@ -41,6 +41,7 @@
 - Presence server 
 	- see tomcat 
 	- see servlet & REST 
+	- Presence server send Userconnection/Deconnection ? 
 
 - Session 
 	- TCP 
