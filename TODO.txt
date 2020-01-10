@@ -73,6 +73,7 @@
 		- clean 
 		- use try with when using resources 
 	- add synchronization statement 
+	- Write global variables in config files 
 
 -Pattern 
 	- Static factory method 

@@ -1,4 +1,4 @@
-package com.chatsystem.session;
+package com.chatsystem.session.local;
 
 import java.net.DatagramSocket;
 import java.net.SocketException;

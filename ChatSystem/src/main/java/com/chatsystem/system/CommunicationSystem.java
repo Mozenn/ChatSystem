@@ -2,6 +2,7 @@ package com.chatsystem.system;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.io.File;
@@ -21,10 +22,10 @@ import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
 import com.chatsystem.model.SystemContract;
 import com.chatsystem.model.SystemListener;
-import com.chatsystem.session.DistantSession;
-import com.chatsystem.session.LocalSession;
 import com.chatsystem.session.Session;
 import com.chatsystem.session.SessionData;
+import com.chatsystem.session.distant.DistantSession;
+import com.chatsystem.session.local.LocalSession;
 import com.chatsystem.system.NotifyLocalUsersTask.LocalNotifyType;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
@@ -126,16 +127,14 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		SessionData s = SerializationUtility.deserializeSessionData(SerializationUtility.deserializeSystemMessage(packet.getData()).getContent());
 		LocalSession session = new LocalSession(user, s.getUser(), s.getPort(),this) ; 
 		
-		session.notifyStartSessionResponse(packet);
+		session.StartSessionResponse(packet.getAddress(),packet.getPort());
 		
 		addSession(session) ; 
 	}
 	
-	protected void onDistantSessionRequest(SessionData s) throws IOException
+	protected void onDistantSessionRequest(User user, Socket clientSocket) throws IOException
 	{
-		DistantSession session = new DistantSession(user,s.getUser(),s.getPort(),this) ; 
-		
-		// TODO Session must connect to other one 
+		DistantSession session = new DistantSession(this.user,user,clientSocket,this) ; 
 		
 		addSession(session) ; 
 	}

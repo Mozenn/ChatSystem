@@ -8,7 +8,7 @@ import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.chatsystem.session.LocalSessionListener;
+import com.chatsystem.session.local.LocalSessionListener;
 import com.chatsystem.system.CommunicationSystem;
 
 public final class NetworkUtility {

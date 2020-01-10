@@ -1,23 +1,28 @@
-package com.chatsystem.session;
+package com.chatsystem.session.local;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 import com.chatsystem.message.SystemMessage;
+import com.chatsystem.session.Session;
+import com.chatsystem.session.SessionData;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class NotifyStartLocalSessionResponseTask implements Runnable {
 	
-	private DatagramPacket packetReceived ; 
+	private InetAddress targetAddress ; 
+	private int targetPort ; 
 	private final int sessionPort ; 
 	private final Session parentSession ; 
 	
-	public NotifyStartLocalSessionResponseTask(DatagramPacket packetReceived,int sessionPort, Session parentSession)
+	public NotifyStartLocalSessionResponseTask(InetAddress targetAddress, int targetPort, int sessionPort, Session parentSession)
 	{
-		this.packetReceived = packetReceived  ; 
+		this.targetAddress = targetAddress  ; 
+		this.targetPort = targetPort  ; 
 		this.sessionPort = sessionPort ; 
 		this.parentSession = parentSession ; 
 		
@@ -51,7 +56,7 @@ public class NotifyStartLocalSessionResponseTask implements Runnable {
 		try {
 			
 			byte[] msgAsBytes = SerializationUtility.serializeMessage(msg);
-			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, packetReceived.getAddress(), packetReceived.getPort()));
+			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, targetAddress, targetPort));
 		} catch (IOException e) {
 			e.printStackTrace();
 			socket.close();

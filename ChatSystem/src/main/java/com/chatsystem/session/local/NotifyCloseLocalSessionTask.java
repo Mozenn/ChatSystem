@@ -1,4 +1,4 @@
-package com.chatsystem.session;
+package com.chatsystem.session.local;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -12,9 +12,9 @@ import com.chatsystem.utility.SerializationUtility;
 
 public class NotifyCloseLocalSessionTask implements Runnable{
 	
-	private final Session parentSession ; 
+	private final LocalSession parentSession ; 
 	
-	public NotifyCloseLocalSessionTask(Session parentSession)
+	public NotifyCloseLocalSessionTask(LocalSession parentSession)
 	{
 		this.parentSession = parentSession  ; 
 		

@@ -1,4 +1,4 @@
-package com.chatsystem.session;
+package com.chatsystem.session.local;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -10,11 +10,11 @@ import com.chatsystem.utility.SerializationUtility;
 
 public class SendLocalMessageTask implements Runnable{
 	
-	private final Session parentSession ; 
+	private final LocalSession parentSession ; 
 	private final DatagramSocket sendingSocket ; 
 	private final UserMessage messageToSend ; 
 	
-	public SendLocalMessageTask(Session parentSession, DatagramSocket sendingSocket, UserMessage message )
+	public SendLocalMessageTask(LocalSession parentSession, DatagramSocket sendingSocket, UserMessage message )
 	{
 		this.parentSession = parentSession  ; 
 		this.sendingSocket = sendingSocket ; 

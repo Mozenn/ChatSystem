@@ -1,6 +1,7 @@
-package com.chatsystem.session;
+package com.chatsystem.session.local;
 
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -10,6 +11,7 @@ import com.chatsystem.dao.DAO;
 import com.chatsystem.dao.DAOSQLite;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.SystemContract;
+import com.chatsystem.session.Session;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.NetworkUtility;
 
@@ -18,6 +20,7 @@ final public class LocalSession extends Session{
 	
 	private DatagramSocket socket;
 	private LocalSessionListener listener;
+	private int receiverPort ; 
 
 
 	public LocalSession(User e, User r, SystemContract system) throws IOException 
@@ -28,8 +31,18 @@ final public class LocalSession extends Session{
 	
 	public LocalSession(User e, User r, int receiverPort, SystemContract system) throws IOException 
 	{
-		super(e,r,receiverPort,system);
-		startSession();
+		super(e,r,system);
+		this.receiverPort = receiverPort ; 
+ 		startSession();
+	}
+	
+	public int getReceiverPort() {
+		return receiverPort;
+	}
+	
+	protected void setReceiverPort(int port)
+	{
+		this.receiverPort = port ; 
 	}
 	
 	
@@ -53,10 +66,10 @@ final public class LocalSession extends Session{
 		new NotifyStartLocalSessionTask(this,socket.getLocalPort()) ; 
 	}
 	
-	@Override
-	public void notifyStartSessionResponse(Object packetReceived)
+	
+	public void StartSessionResponse(InetAddress address, int port)
 	{
-		new NotifyStartLocalSessionResponseTask((DatagramPacket)packetReceived,socket.getLocalPort(),this) ; 
+		new NotifyStartLocalSessionResponseTask(address,port,socket.getLocalPort(),this) ; 
 	}
 	
 	@Override

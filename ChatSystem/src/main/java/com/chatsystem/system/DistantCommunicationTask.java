@@ -29,7 +29,7 @@ final class DistantCommunicationTask implements Runnable {
 			SystemMessage msg ; 
 			try
 			{
-				msg = SerializationUtility.deserializeSystemMessage(dIn.readAllBytes()); 
+				msg = SerializationUtility.deserializeSystemMessage(dIn.readAllBytes());
 			}
 			catch(ClassCastException | IOException e) // not a system message 
 			{
@@ -69,9 +69,9 @@ final class DistantCommunicationTask implements Runnable {
 				}
 				case SS:
 				{
-					SessionData s = SerializationUtility.deserializeSessionData(msg.getContent());
+					User u = SerializationUtility.deserializeUser(msg.getContent());
 					
-					system.onDistantSessionRequest(s);
+					system.onDistantSessionRequest(u, clientSocket);
 				}
 				default:
 					break;

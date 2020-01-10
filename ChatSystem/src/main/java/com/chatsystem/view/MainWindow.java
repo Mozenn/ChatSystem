@@ -15,7 +15,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import com.chatsystem.session.LocalSession;
+import com.chatsystem.session.local.LocalSession;
 import com.chatsystem.user.User;
 
 import javax.swing.JToolBar;

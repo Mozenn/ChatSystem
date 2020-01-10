@@ -2,6 +2,7 @@ package com.chatsystem.session;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,6 @@ public abstract class Session implements SessionModel{
 	protected User emitter;
 	protected User receiver;
 	protected ArrayList<UserMessage> messages;
-	protected int receiverPort ; 
 	protected SystemContract system ; 
 	
 	private final EventListenerList listeners = new EventListenerList();
@@ -35,15 +35,6 @@ public abstract class Session implements SessionModel{
 	{
 		emitter = e;
 		receiver = r;
-		messages = new ArrayList<UserMessage>();
-		this.system = system ; 
-	}
-	
-	public Session(User e, User r, int receiverPort,SystemContract system) throws IOException 
-	{
-		emitter = e;
-		receiver = r;
-		this.receiverPort = receiverPort ; 
 		messages = new ArrayList<UserMessage>();
 		this.system = system ; 
 	}
@@ -89,15 +80,6 @@ public abstract class Session implements SessionModel{
 		return receiver;
 	}
 	
-	public int getReceiverPort() {
-		return receiverPort;
-	}
-	
-	protected void setReceiverPort(int port)
-	{
-		this.receiverPort = port ; 
-	}
-	
 	public List<UserMessage> getMessages()
 	{
 		return this.messages; 
@@ -125,9 +107,6 @@ public abstract class Session implements SessionModel{
 	
 	// Call on initiator session  
 	public abstract void notifyStartSession() ;
-	
-	// Call on responding session 
-	public abstract void notifyStartSessionResponse(Object packetReceived) ; // TODO specific to localSession only ? 
 	
 	// Notify session to send closeSession message 
 	public abstract void notifyCloseSession() ;

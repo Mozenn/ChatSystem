@@ -1,4 +1,4 @@
-package com.chatsystem.session;
+package com.chatsystem.session.local;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -9,6 +9,7 @@ import java.net.SocketTimeoutException;
 
 import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
+import com.chatsystem.session.SessionData;
 import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
@@ -16,10 +17,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 class NotifyStartLocalSessionTask implements Runnable{
 	
-	private final Session parentSession ; 
+	private final LocalSession parentSession ; 
 	private final int sessionPort ; 
 	
-	public NotifyStartLocalSessionTask(Session parentSession, int sessionPort)
+	public NotifyStartLocalSessionTask(LocalSession parentSession, int sessionPort)
 	{
 		this.parentSession = parentSession  ; 
 		this.sessionPort = sessionPort ; 
