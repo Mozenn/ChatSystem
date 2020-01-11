@@ -39,23 +39,36 @@
 	- see mysql 
 
 - Presence server 
-	- see tomcat 
-	- see servlet & REST 
-	- Presence server send Userconnection/Deconnection ? 
+	- Create dynamic web project then convert it to maven project 
+	- Use cookies 
+	- Use Javabean for User 
+	- Make UserBean class & UserBeanAdaoter to convert from User to UserBean ? 
+	- Client request online user every x sec (pool) ? or server notify clients when new events trhough callback (webservice necessary in client) ? ##
+	- Embedded DB ? ##
+	- Use context param to save db url 
+	- Possible to load Servlet OnStartup with loadOnStartup  
+	- Use 1 servlet only ?  
+	- Client - Server Communication 
+		- Use Json  
+			- use json node and get() or path()
+		- Use HttpUrlConnection or java 11 http client or apache http client (see more)
+		- See jersey 
+	- session-config file 
+		- setup sesison timeout 
+	- Use sessionListener ? 
+	- MVC 
+		- View 
+			- Client Application via HTTP 
+		- Controller 
+			- Servlet 
+		- Model 
+			- Presence Server with list of UserBean,Cookies,State, ... 
+			- DB Interaction 
+	- Polish 
+		- use SLF4J for log 
+		
 
 - Session 
-	- TCP 
-		- DistantSession has serverSocket || Socket 
-	- DistantCommListener => Use ThreadPool to handle all connection (see Server5.java)
-	- Make distant Communication 
-		- Use tcp socket 
-		- Make distantCommunicationListener 
-			- StartDistantsession called by controller 
-			- System create distant session and call notifystartSession on created session 
-				- Session create notifystartSessionTask that send SS to distantcommunicationListener port of receiveripaddress with sessionData(serverSocket port) in messageContent, via TCP 
-			- DistantCommListener receive SS, create new DistantSession and call notify startSessionResponse
-				- created distant session try to connect to first distantSession using Socket class 
-			- firstDistantSession 
 	- Make factory for session ( calling specific method depending on type of session ... )
 
 - Clean code 
@@ -74,6 +87,9 @@
 		- use try with when using resources 
 	- add synchronization statement 
 	- Write global variables in config files 
+		- db url 
+		- port 
+		- webserver url 
 
 -Pattern 
 	- Static factory method 
