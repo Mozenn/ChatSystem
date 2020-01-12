@@ -86,10 +86,12 @@
 		- clean 
 		- use try with when using resources 
 	- add synchronization statement 
-	- Write global variables in config files 
+	- Write global variables in config files (conf.properties) & use Properties class 
 		- db url 
 		- port 
 		- webserver url 
+	- Check method parameter 
+		- not null, value ect 
 
 -Pattern 
 	- Static factory method 
@@ -110,7 +112,17 @@
 		- CentralSys withstand 100 000 users 
 		- CentralSys memory footprint <= 100Mo 
 		- CPU use <= 1% in 5s range measure 
+
+
+- Android 
+	- Use android Studio 
+	- see what can be kept 
 # Deploy
+
+- CLient 
+	- How to deploy desktop app ? 
+- PresenceService 
+	- Use tomcat 
 
 
 # Polish 
