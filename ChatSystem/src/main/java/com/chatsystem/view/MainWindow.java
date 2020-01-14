@@ -15,6 +15,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.chatsystem.controller.ControllerContract;
 import com.chatsystem.session.local.LocalSession;
 import com.chatsystem.user.User;
 
@@ -61,6 +62,7 @@ public class MainWindow extends JFrame implements ActionEmitter {
 	private ArrayList<ActionListener> actionListeners ; 
 	
 	public static final String CLOSEMAINWINDOW_ACTIONCOMMAND = "CloseMainWindow" ; 
+	public static final String CHANGEUNAME_ACTIONCOMMAND = "ChangeUname" ; 
 	
 	public void addActionListener(ActionListener l)
 	{

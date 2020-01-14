@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -11,6 +12,7 @@ import javax.swing.JButton;
 import com.chatsystem.model.SystemContract;
 import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.user.User;
+import com.chatsystem.user.UserId;
 import com.chatsystem.view.CreateUserWindow;
 import com.chatsystem.view.JChatPanel;
 import com.chatsystem.view.JSessionPanel;
@@ -96,6 +98,11 @@ public class Controller implements ControllerContract{
 		model.sendFileMessage(receiver, filePath);
 	}
 	
+	public void downloadFile(UserId senderId, Timestamp date)
+	{
+		model.downloadFile(senderId, date) ; 
+	}
+	
 	public void close()
 	{
 		if(model.hasStarted())
@@ -120,35 +127,6 @@ public class Controller implements ControllerContract{
 			JUserPanel u = (JUserPanel) e.getSource() ;
 			startSession(u.getUser());
 		}
-		else if(e.getActionCommand().equals(JChatPanel.SENDMESSAGE_ACTIONCOMMAND)) 
-		{
-			JChatPanel mp = (JChatPanel) e.getSource() ;
-			
-			if(mp.getCurrentReceiver() != null )
-				sendMessage(mp.getCurrentReceiver(),mp.getTextArea().getText()) ; 
-			
-			mp.getTextArea().setText("");
-			
-		}
-		else if(e.getActionCommand().equals(JChatPanel.SENDFILEMESSAGE_ACTIONCOMMAND)) 
-		{
-			JChatPanel mp = (JChatPanel) e.getSource() ;
-			
-			if(mp.getCurrentReceiver() != null )
-			{
-				var model = (DefaultListModel<String>)mp.getFileList().getModel() ; 
-				
-		        for(int i = 0; i< model.getSize();i++){
-		            String path = model.getElementAt(i) ; 
-		            sendFileMessage(mp.getCurrentReceiver(),path) ;  
-		        }
-				
-		        model.removeAllElements();
-				
-			}
-
-			
-		}
 		else if(e.getActionCommand().equals(MainWindow.CLOSEMAINWINDOW_ACTIONCOMMAND) || e.getActionCommand().equals(CreateUserWindow.CLOSE_CREATEUSERWINDOW_ACTIONCOMMAND)) 
 		{
 			close();
@@ -160,7 +138,7 @@ public class Controller implements ControllerContract{
 			
 			String username = cuw.getTextField().getText() ; 
 			
-			if(username.length() <= User.MAX_NAME_SIZE && username.length() > 0 ) // TODO add other validation constraints ? 
+			if(username.length() <= User.MAX_NAME_SIZE && username.length() > 0 ) 
 			{
 				if(createLocalUser(username))
 				{
@@ -182,7 +160,34 @@ public class Controller implements ControllerContract{
 				}
 			}
 		}
-		// TODO CHANGEUNAME_ACTIONCOMMAND
+		else if(e.getActionCommand().equals(MainWindow.CHANGEUNAME_ACTIONCOMMAND)) 
+		{
+			view.openCreateUserWindow() ; 
+			// TODO 
+			
+		}
+		
+	}
+
+	@Override
+	public void fileDownloaded(UserId sender, Timestamp receiptDate) {
+		
+		downloadFile(sender, receiptDate);
+	}
+
+	@Override
+	public void messageSent(User currentReceiver, String text) {
+		sendMessage(currentReceiver, text) ; 
+		
+	}
+
+	@Override
+	public void fileMessageSent(User currentReceiver, DefaultListModel<String> pathList) {
+		
+        for(int i = 0; i< pathList.getSize();i++){
+            String path = pathList.getElementAt(i) ; 
+            sendFileMessage(currentReceiver,path) ;  
+        }
 		
 	}
 

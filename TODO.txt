@@ -5,8 +5,8 @@
 	- File message 
 - Presence server 
 
-- file message UI 
-- Settings Window 
+- change Username 
+- Settings window 
 
 # Implementation 
 
@@ -14,11 +14,7 @@
 	- Polish 
 		- Use Icon for buttons (use labels & source folder)
 	- File message 
-		- Make JFileMessagePanel 
-		- Add implementation in JChatPanel 
-		- Adapt code to fileWrapper 
-		- Download file implementation (using jfilechooser, ect )
-		- Where to store fileWrapper ? 
+		- join file implementation (using jfilechooser, ect )
 	- Message 
 		- polish displayed timestamp 
 	- Settings window (in edit menu)
@@ -126,7 +122,9 @@
 
 
 # Polish 
-	- Produce javadoc with comments (see resources)
+	- Produce javadoc with comments 
+		- see resources
+		- see effective Java 
 	- Review effective Java items 
 		- item 10 to 14 
 	- Add documentation 

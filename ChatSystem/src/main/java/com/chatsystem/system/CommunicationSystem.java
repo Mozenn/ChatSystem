@@ -5,6 +5,7 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,7 +33,9 @@ import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 final public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
@@ -45,6 +48,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	private int centralSysPort;
 	private final String LocalUserFilePath = "data/localuser" ; 
 	private final String LocalUserDirectoryPath = "data/" ; 
+	private String downloadPath  ; 
 	
 	private HashMap<UserId,Session> sessions;
 	
@@ -62,6 +66,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		localUsers = new HashMap<UserId,User>();
 		distantUsers = new HashMap<UserId,User>();
 		sessions = new HashMap<UserId,Session>() ;	
+		downloadPath = System.getProperty("java.io.tmpdir") ; 
 		
 	}
 	
@@ -275,6 +280,50 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		}
 		
 
+	}
+	
+	@Override
+	public void downloadFile(UserId senderId, Timestamp date) 
+	{
+		Optional<UserMessage> m ; 
+		synchronized(sessions)
+		{
+			m = sessions.get(senderId).getMessage(date) ; 
+		}
+		
+		if(m.isPresent())
+		{
+			FileWrapper fw = null ; 
+			try {
+				fw = SerializationUtility.deserializeFileWrapper(m.get().getContent()) ;
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+				return ; 
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+				return ; 
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ; 
+			} 
+			
+			File downloadedFile = new File(downloadPath+"/" + fw.getFileName()) ; 
+			
+			try {
+				downloadedFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ; 
+			} 
+			
+			try (FileOutputStream stream = new FileOutputStream(downloadedFile)) {
+			    stream.write(fw.getFileContent());
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ; 
+			}
+		}
+		
 	}
 	
 	// USERS 

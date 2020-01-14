@@ -2,7 +2,10 @@ package com.chatsystem.view;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -13,13 +16,23 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-public class JFileMessagePanel extends JPanel {
+public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionListener {
+	
+	public static final String DOWNLOADFILE_ACTIONCOMMAND = "DownloadFile" ; 
 	
 	private JLabel fileNameLabel ; 
 	private JButton fileIconButton ; 
+	private Timestamp date ; 
+	
+	private ArrayList<ActionListener> actionListeners ; 
 
 	public JLabel getMessagePane() {
 		return fileNameLabel;
+	}
+	
+	public Timestamp getTimestamp()
+	{
+		return this.date ; 
 	}
 	
 	public JButton getFileIconButton()
@@ -43,6 +56,8 @@ public class JFileMessagePanel extends JPanel {
 	 * Create the panel.
 	 */
 	public JFileMessagePanel(String username, String fileName,Timestamp date) {
+		
+		this.date = date ; 
 		
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		setBackground(Color.WHITE);
@@ -73,7 +88,8 @@ public class JFileMessagePanel extends JPanel {
 		add(contentPanel);
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 		
-		fileIconButton = new JButton(new ImageIcon("resource/fileIcon.png")); // TODO put icon path in config.propertie file 
+		fileIconButton = new JButton("Download"/*new ImageIcon("resource/fileIcon.png")*/); // TODO put icon path in config.propertie file 
+		fileIconButton.addActionListener(this);
 		contentPanel.add(fileIconButton);
 		
 		fileNameLabel = new JLabel(fileName);
@@ -82,6 +98,25 @@ public class JFileMessagePanel extends JPanel {
 		fileNameLabel.repaint();
 		contentPanel.add(fileNameLabel);
 
+	}
+
+	@Override
+	public void removeActionListener(ActionListener l) {
+		actionListeners.remove(l) ;
+		
+	}
+
+	@Override
+	public void addActionListener(ActionListener l) {
+		if(!actionListeners.contains(l))
+			actionListeners.add(l); 
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,DOWNLOADFILE_ACTIONCOMMAND)));
+		
 	}
 
 }

@@ -1,9 +1,11 @@
 package com.chatsystem.model;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.Optional;
 
 import com.chatsystem.user.User;
+import com.chatsystem.user.UserId;
 
 public interface SystemContract extends SystemModel{
 	
@@ -22,6 +24,8 @@ public interface SystemContract extends SystemModel{
 	public void sendMessage(User receiver, String Text) ; 
 	
 	public void sendFileMessage(User receiver, String filePath) ; 
+	
+	public void downloadFile(UserId senderId, Timestamp date) ; 
 	
 	public void start();
 	

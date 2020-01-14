@@ -3,13 +3,17 @@ package com.chatsystem.view;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.EventListenerList;
+import javax.swing.filechooser.FileSystemView;
 
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
+import com.chatsystem.model.SessionListener;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -22,11 +26,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.CardLayout;
 
-public class JChatPanel extends JPanel implements ActionListener, ActionEmitter {
+public class JChatPanel extends JPanel implements ActionListener, ActionEmitter, ChatEmitter {
 	
 	private enum DisplayedCard
 	{
@@ -44,9 +49,8 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 	    }
 	}
 	
-	public static final String SENDMESSAGE_ACTIONCOMMAND = "Send" ; 
-	public static final String SENDFILEMESSAGE_ACTIONCOMMAND = "SendFile" ; 
-	public static final String DOWNLOADFILE_ACTIONCOMMAND = "Download" ; // TODO 
+	private static final String SENDMESSAGE_ACTIONCOMMAND = "Send" ; 
+	private static final String SENDFILEMESSAGE_ACTIONCOMMAND = "SendFile" ; 
 	private static final String SWITCH_ACTIONCOMMAND = "Switch" ; 
 	
 	private JPanel cardPanel;
@@ -76,6 +80,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 	private ArrayList<ActionListener> actionListeners ; 
 	private User currentReceiver;
 	private User currentEmitter;
+	private final EventListenerList listeners = new EventListenerList();
 
 
 
@@ -207,8 +212,22 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 				var model = (DefaultListModel<String>)fileList.getModel() ; 
 				
 				// TODO use jFileChooser 
+				JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 				
-				model.addElement("resources/fileIcon.png");
+				int r = j.showDialog(null, "Select") ; 
+				
+	            if (r == JFileChooser.APPROVE_OPTION) { 
+	                // get the selelcted files 
+	                File file = j.getSelectedFile() ; 
+	                
+	                model.addElement(file.getAbsolutePath());
+
+	            } 
+	            // if the user cancelled the operation 
+	            else
+	                return ; 
+				
+				
 				
 			}});
 		fileListButtonPanel.add(joinFileButton);
@@ -258,12 +277,30 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getActionCommand().equals(SENDMESSAGE_ACTIONCOMMAND) && !actionListeners.isEmpty())
-			actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,SENDMESSAGE_ACTIONCOMMAND)));
-		else if(e.getActionCommand().equals(SENDFILEMESSAGE_ACTIONCOMMAND) && !actionListeners.isEmpty())
-			actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,SENDFILEMESSAGE_ACTIONCOMMAND)));
-		else if(e.getActionCommand().equals(SWITCH_ACTIONCOMMAND) && !actionListeners.isEmpty())
+		if(e.getActionCommand().equals(SENDMESSAGE_ACTIONCOMMAND))
+		{	
+			fireMessageSent(textArea.getText());
+			
+			textArea.setText("");
+			
+		}
+			
+		else if(e.getActionCommand().equals(SENDFILEMESSAGE_ACTIONCOMMAND) )
+		{
+			var model = (DefaultListModel<String>)fileList.getModel();
+			fireFileMessageSent(model);
+
+			model.removeAllElements();
+					
+		}
+		else if(e.getActionCommand().equals(SWITCH_ACTIONCOMMAND))
 			cardLayout.next(cardPanel);
+		else if(e.getActionCommand().equals(JFileMessagePanel.DOWNLOADFILE_ACTIONCOMMAND))
+		{
+			JFileMessagePanel fmp = (JFileMessagePanel)e.getSource() ; 
+			
+			fireFileDownloaded(fmp.getTimestamp()) ; // notify controller of file download 
+		}
 	}
 	
 	public void ChangeConversation(User newSender, User newReceiver,List<UserMessage> messages)
@@ -306,7 +343,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 					
 					FileWrapper fw = null; // TODO use FileWrapperModel class to hide serialization from view 
 					try {
-						fw = SerializationUtility.deserializeFileWrapper(m.getContent()); // TODO where to store this file wrapper 
+						fw = SerializationUtility.deserializeFileWrapper(m.getContent()); 
 					} catch (JsonParseException e) {
 						e.printStackTrace();
 						return ; 
@@ -320,12 +357,14 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 					if(m.getSenderId().equals(currentEmitter.getId())) 
 					{
 						mp = new JFileMessagePanel(currentEmitter.getUsername(),fw.getFileName(),m.getDate());
+						mp.addActionListener(this);
 						mp.setToEmitterColor(); 
 					}
 					else
 					{
 						
 						mp = new JFileMessagePanel(currentReceiver.getUsername(),fw.getFileName(),m.getDate());
+						mp.addActionListener(this);
 						mp.setToReceiverColor(); 
 					}
 					
@@ -361,7 +400,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 		}
 		else
 		{
-			JFileMessagePanel mp ; 
+			JFileMessagePanel mp ;
 			
 			FileWrapper fw = null ; 
 			
@@ -378,11 +417,13 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 			if(newMessage.getSenderId().equals(currentEmitter.getId()))
 			{
 				mp = new JFileMessagePanel(currentEmitter.getUsername(),fw.getFileName(),newMessage.getDate());
+				mp.addActionListener(this);
 				mp.setToEmitterColor();
 			}
 			else
 			{
 				mp = new JFileMessagePanel(currentReceiver.getUsername(),fw.getFileName(),newMessage.getDate());
+				mp.addActionListener(this);
 				mp.setToReceiverColor();
 			}
 			
@@ -403,6 +444,58 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 
 		sendTextButton.setEnabled(false);
 		sendFileButton.setEnabled(false);
+	}
+
+	@Override
+	public void addChatListener(ChatListener cl) {
+		listeners.add(ChatListener.class, cl);
+		
+	}
+
+	@Override
+	public void removeChatListener(ChatListener cl) {
+		
+		listeners.remove(ChatListener.class, cl);
+		
+	}
+
+	@Override
+	public ChatListener[] getChatListeners() {
+
+		return listeners.getListeners(ChatListener.class); 
+	}
+
+	@Override
+	public void clearChatListeners() {
+
+		for(var cl : getChatListeners())
+		{
+			listeners.remove(ChatListener.class, cl);
+		}
+	}
+	
+	protected void fireFileDownloaded(Timestamp date)
+	{
+		for(ChatListener cl : getChatListeners())
+		{
+			cl.fileDownloaded(currentReceiver.getId(), date);
+		}
+	}
+	
+	protected void fireMessageSent(String text)
+	{
+		for(ChatListener cl : getChatListeners())
+		{
+			cl.messageSent(currentReceiver, text);
+		}
+	}
+	
+	protected void fireFileMessageSent(DefaultListModel<String> model)
+	{
+		for(ChatListener cl : getChatListeners())
+		{
+			cl.fileMessageSent(currentReceiver,model) ; 
+		}
 	}
 
 }

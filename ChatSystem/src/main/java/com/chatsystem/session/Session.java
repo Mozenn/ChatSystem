@@ -3,8 +3,10 @@ package com.chatsystem.session;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.event.EventListenerList;
 
@@ -98,6 +100,13 @@ public abstract class Session implements SessionModel{
 		dao.addMessage(m);
 		
 		fireMessageAdded(m);
+	}
+	
+	public Optional<UserMessage> getMessage(Timestamp date) 
+	{
+		return messages.stream()
+				.filter(message -> message.getDate().equals(date))
+				.findAny() ; 
 	}
 	
 	public abstract void sendMessage(String s);

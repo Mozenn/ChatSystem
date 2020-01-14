@@ -42,7 +42,7 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		mainWindow.addActionListener(controller) ; 
 		mainWindow.setVisible(true);
 		mainWindow.getChatPanel().addActionListener(this);
-		mainWindow.getChatPanel().addActionListener(controller);
+		mainWindow.getChatPanel().addChatListener(controller);
 
 	}
 	
@@ -101,10 +101,6 @@ public class View implements ActionListener, SystemListener, SessionListener{
 			
 			up.makeInactive();
 			
-		}
-		else if(e.getActionCommand().equals(JSessionPanel.MESSAGERECEIVED_ACTIONCOMMAND)) 
-		{
-			//
 		}
 			
 		
