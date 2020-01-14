@@ -137,6 +137,16 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		addSessionPanel(sm);
 		mainWindow.getChatPanel().ChangeConversation(sm.getEmitter(),sm.getReceiver(), sm.getMessages()); 
 		
+		//TODO make user start session button inactive 
+		for (Component c : mainWindow.getConnectedUserPannel().getComponents()) {
+		    if (c instanceof JUserPanel ) { 
+		       JUserPanel up = (JUserPanel)c ; 
+		       if(up.getUser().equals(sm.getReceiver()))
+		       {
+		    	   up.makeInactive();
+		       }
+		    }
+		}
 	}
 
 	@Override
@@ -194,9 +204,9 @@ public class View implements ActionListener, SystemListener, SessionListener{
 
 	@Override
 	public void messageAdded(UserMessage m) {
-		
-		if(mainWindow.getChatPanel().getCurrentReceiver().getId().equals(m.getReceiverId()))
+		if(mainWindow.getChatPanel().getCurrentReceiver().getId().equals(m.getSenderId()) || mainWindow.getChatPanel().getCurrentReceiver().getId().equals(m.getReceiverId()))
 		{
+			System.out.println("View Message Received");
 			mainWindow.getChatPanel().UpdateConversation(m);
 		}
 	}

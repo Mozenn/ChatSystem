@@ -51,6 +51,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 	
 	private JPanel cardPanel;
 	private CardLayout cardLayout ; 
+	private JScrollPane messageScrollPane ; 
 	
 	// Text Panel card widgets 
 	
@@ -123,7 +124,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 		// Messages Panel 		
 		messagePanel = new JPanel();
 		
-		JScrollPane messageScrollPane = new JScrollPane(messagePanel);
+		messageScrollPane = new JScrollPane(messagePanel);
 		messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
 		messageScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -336,6 +337,8 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 		
 		messagePanel.validate();
 		messagePanel.repaint();
+		messageScrollPane.validate();
+		messageScrollPane.repaint();
 	}
 	
 	public void UpdateConversation(UserMessage newMessage)

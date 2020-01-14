@@ -35,6 +35,11 @@ final class NotifyLocalUsersTask implements Runnable
 	private CommunicationSystem localSystem ; 
 	private Thread thread; 
 	private final LocalNotifyType type ;
+	
+	public Thread getThread()
+	{
+		return this.thread ; 
+	}
 ;
 	
 	public NotifyLocalUsersTask(CommunicationSystem localSystem, LocalNotifyType type ) 

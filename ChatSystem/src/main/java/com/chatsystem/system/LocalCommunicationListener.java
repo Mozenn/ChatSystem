@@ -41,7 +41,7 @@ final class LocalCommunicationListener extends Thread {
 			byte[] buffer = new byte[Message.MAX_SIZE];
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			try {
-				System.out.println("LocalCommunicationListener wait receive");
+				//System.out.println("LocalCommunicationListener wait receive");
 				socket.receive(packet);
 				System.out.println("LocalCommunicationListener receive done");
 			} catch(SocketTimeoutException e)

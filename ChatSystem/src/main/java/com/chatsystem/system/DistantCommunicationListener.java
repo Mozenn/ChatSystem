@@ -39,7 +39,7 @@ final class DistantCommunicationListener extends Thread {
 		{
 
 			try {
-				System.out.println("DistantCommunicationListener wait receive");
+				//System.out.println("DistantCommunicationListener wait receive");
 				Socket clientSocket = serverSocket.accept();
 				System.out.println("DistantCommunicationListener receive done");
 				

@@ -98,9 +98,13 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	{
 		bRunning = false  ; 
 		
-		new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 
+		var t = new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 
 		
-		// TODO send Disconnection notify to central server
+		try {
+			t.getThread().join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} ; 
 		
 		localCommunicationListener.stopRun();	
 		distantCommunicationListener.stopRun();
