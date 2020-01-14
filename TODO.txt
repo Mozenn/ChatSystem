@@ -1,7 +1,6 @@
 ### Ongoing 
 
 - Test 
-	- Disconnection 
 	- Distant Session 
 	- File message 
 - Presence server 
@@ -13,13 +12,13 @@
 
 - UI
 	- Polish 
-		- Rescale components when downsizing window 
 		- Use Icon for buttons (use labels & source folder)
 	- File message 
 		- Make JFileMessagePanel 
 		- Add implementation in JChatPanel 
 		- Adapt code to fileWrapper 
 		- Download file implementation (using jfilechooser, ect )
+		- Where to store fileWrapper ? 
 	- Message 
 		- polish displayed timestamp 
 	- Settings window (in edit menu)
