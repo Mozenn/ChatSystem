@@ -256,6 +256,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	public void sendFileMessage(User receiver, String filePath) {
 		
 		File file = new File(filePath) ; 
+		System.out.println(filePath) ; 
 
 		if(file.exists() && file.isFile())
 		{
@@ -268,7 +269,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			} 
 			
 			synchronized(sessions)
-			{
+			{ 
 				sessions.get(receiver.getId()).sendMessage(fileWrapper);
 			}
 		}

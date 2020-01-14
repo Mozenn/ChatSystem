@@ -122,6 +122,7 @@ final public class LocalSession extends Session{
 		new SendLocalMessageTask(this,socket,m);
 		
 		addMessage(m) ; 
+		
 	}
 
 

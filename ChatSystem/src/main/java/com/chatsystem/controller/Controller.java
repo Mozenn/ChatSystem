@@ -140,7 +140,7 @@ public class Controller implements ControllerContract{
 				
 		        for(int i = 0; i< model.getSize();i++){
 		            String path = model.getElementAt(i) ; 
-		            sendFileMessage(mp.getCurrentReceiver(),path) ; 
+		            sendFileMessage(mp.getCurrentReceiver(),path) ;  
 		        }
 				
 		        model.removeAllElements();

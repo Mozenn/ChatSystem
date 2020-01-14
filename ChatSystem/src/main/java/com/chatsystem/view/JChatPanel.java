@@ -208,7 +208,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 				
 				// TODO use jFileChooser 
 				
-				model.addElement("file");
+				model.addElement("resources/fileIcon.png");
 				
 			}});
 		fileListButtonPanel.add(joinFileButton);
@@ -343,19 +343,53 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 	
 	public void UpdateConversation(UserMessage newMessage)
 	{
-		JMessagePanel mp ; 
-		if(newMessage.getSenderId().equals(currentEmitter.getId()))
+		if(newMessage.getSubtype().equals(UserMessage.UserMessageType.TX))
 		{
-			mp = new JMessagePanel(currentEmitter.getUsername(),new String(newMessage.getContent()),newMessage.getDate());
-			mp.setToEmitterColor();
+			JMessagePanel mp ; 
+			if(newMessage.getSenderId().equals(currentEmitter.getId()))
+			{
+				mp = new JMessagePanel(currentEmitter.getUsername(),new String(newMessage.getContent()),newMessage.getDate());
+				mp.setToEmitterColor();
+			}
+			else
+			{
+				mp = new JMessagePanel(currentReceiver.getUsername(),new String(newMessage.getContent()),newMessage.getDate());
+				mp.setToReceiverColor();
+			}
+			
+			messagePanel.add(mp);
 		}
 		else
 		{
-			mp = new JMessagePanel(currentReceiver.getUsername(),new String(newMessage.getContent()),newMessage.getDate());
-			mp.setToReceiverColor();
+			JFileMessagePanel mp ; 
+			
+			FileWrapper fw = null ; 
+			
+			try {
+				fw = SerializationUtility.deserializeFileWrapper(newMessage.getContent()) ;
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+			
+			if(newMessage.getSenderId().equals(currentEmitter.getId()))
+			{
+				mp = new JFileMessagePanel(currentEmitter.getUsername(),fw.getFileName(),newMessage.getDate());
+				mp.setToEmitterColor();
+			}
+			else
+			{
+				mp = new JFileMessagePanel(currentReceiver.getUsername(),fw.getFileName(),newMessage.getDate());
+				mp.setToReceiverColor();
+			}
+			
+			messagePanel.add(mp);
 		}
+
 		
-		messagePanel.add(mp);
 		messagePanel.validate();
 		messagePanel.repaint();
 		

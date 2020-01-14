@@ -62,6 +62,7 @@ public class UserMessage extends Message{
 		super(SerializationUtility.serializeFileWrapper(f));
 		subtype = UserMessageType.FL;
 		this.receiverId = receiverId ; 
+		this.senderId = senderId ;
 	}
 	
 	public UserMessageType getSubtype() {
