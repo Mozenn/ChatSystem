@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.FileWrapper;
 import com.chatsystem.session.SessionData;
 import com.chatsystem.user.User;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -27,6 +28,19 @@ final public class SerializationUtility {
 	{
 	      ObjectMapper o = new ObjectMapper () ; 
 	      return  o.readValue(userAsByte, User.class); 
+	}
+	
+	public static byte[] serializeFileWrapper(FileWrapper fw) throws JsonProcessingException
+	{
+		// Serialization to Json 
+		ObjectMapper fwJson = new ObjectMapper();
+		return fwJson.writeValueAsString(fw).getBytes(); 
+	}
+	
+	public static FileWrapper deserializeFileWrapper(byte[] fileWrapperAsByte) throws JsonParseException, JsonMappingException, IOException
+	{
+	      ObjectMapper o = new ObjectMapper () ; 
+	      return  o.readValue(fileWrapperAsByte, FileWrapper.class); 
 	}
 	
 	public static byte[] serializeSessionData(SessionData s) throws JsonProcessingException

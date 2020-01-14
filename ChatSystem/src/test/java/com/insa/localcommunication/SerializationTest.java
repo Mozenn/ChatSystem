@@ -2,13 +2,17 @@ package com.insa.localcommunication;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.Test;
 
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.FileWrapper;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
@@ -136,6 +140,44 @@ public class SerializationTest {
 
 		
 		User user = SerializationUtility.deserializeUser(content) ;
+
+	}
+	
+	@Test 
+	public void ValidFileWrapperSerialization() throws JsonParseException, JsonMappingException, IOException
+	{
+		String s = "fileName" ; 
+		File f = new File("resources/fileIcon.png"); 
+		
+		FileWrapper fileWrapperBefore = new FileWrapper(s,f) ; 
+		
+		ObjectMapper o = new ObjectMapper() ;
+		
+		var content = o.writeValueAsString(fileWrapperBefore).getBytes() ; 
+		
+		FileWrapper fileWrapperAfter = SerializationUtility.deserializeFileWrapper(content) ;
+		
+		assertEquals(fileWrapperAfter.getFileName(),fileWrapperBefore.getFileName()); 
+		assertTrue(Arrays.equals(fileWrapperAfter.getFileContent(), fileWrapperBefore.getFileContent())); 
+		
+	     
+	}
+	
+	@Test (expected = MismatchedInputException.class)
+	public void InvalidFileWrapperSerialization() throws IOException
+	{
+
+		String s = "hey" ; 
+		
+
+		ObjectMapper o = new ObjectMapper() ;
+		
+		byte[] content;
+
+		content = o.writeValueAsString(s).getBytes();
+
+		
+		FileWrapper fileWrapperAfter = SerializationUtility.deserializeFileWrapper(content) ;
 
 	}
 

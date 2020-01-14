@@ -12,6 +12,7 @@ import com.chatsystem.dao.DAO;
 import com.chatsystem.dao.DAOSQLite;
 import com.chatsystem.message.Message;
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
 import com.chatsystem.model.SystemContract;
@@ -101,7 +102,7 @@ public abstract class Session implements SessionModel{
 	
 	public abstract void sendMessage(String s);
 	
-	public abstract void sendMessage(File f);
+	public abstract void sendMessage(FileWrapper f);
 	
 	protected abstract void startSession();
 	

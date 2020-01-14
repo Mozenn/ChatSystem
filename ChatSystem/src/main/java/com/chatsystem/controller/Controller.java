@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 
 import com.chatsystem.model.SystemContract;
@@ -77,7 +78,7 @@ public class Controller implements ControllerContract{
 	
 	public void startSession(User receiver)
 	{
-		model.startSession(receiver); // TODO differentiate between local and distant 
+		model.startSession(receiver); 
 	}
 	
 	public void closeSession(User receiver)
@@ -90,9 +91,9 @@ public class Controller implements ControllerContract{
 		model.sendMessage(receiver, text);
 	}
 	
-	public void sendMessage(User receiver, File file)
+	public void sendFileMessage(User receiver, String filePath)
 	{
-		model.sendFileMessage(receiver, file);
+		model.sendFileMessage(receiver, filePath);
 	}
 	
 	public void close()
@@ -129,6 +130,25 @@ public class Controller implements ControllerContract{
 			mp.getTextArea().setText("");
 			
 		}
+		else if(e.getActionCommand().equals(JChatPanel.SENDFILEMESSAGE_ACTIONCOMMAND)) 
+		{
+			JChatPanel mp = (JChatPanel) e.getSource() ;
+			
+			if(mp.getCurrentReceiver() != null )
+			{
+				var model = (DefaultListModel<String>)mp.getFileList().getModel() ; 
+				
+		        for(int i = 0; i< model.getSize();i++){
+		            String path = model.getElementAt(i) ; 
+		            sendFileMessage(mp.getCurrentReceiver(),path) ; 
+		        }
+				
+		        model.removeAllElements();
+				
+			}
+
+			
+		}
 		else if(e.getActionCommand().equals(MainWindow.CLOSEMAINWINDOW_ACTIONCOMMAND) || e.getActionCommand().equals(CreateUserWindow.CLOSE_CREATEUSERWINDOW_ACTIONCOMMAND)) 
 		{
 			close();
@@ -163,7 +183,6 @@ public class Controller implements ControllerContract{
 			}
 		}
 		// TODO CHANGEUNAME_ACTIONCOMMAND
-		// TODO SENDFILEMESSAGE_ACTIONCOMMAND 
 		
 	}
 

@@ -2,7 +2,8 @@
 
 - Test 
 	- Disconnection 
-- Distant session 
+	- Distant Session 
+	- File message 
 - Presence server 
 
 - file message UI 
@@ -15,9 +16,10 @@
 		- Rescale components when downsizing window 
 		- Use Icon for buttons (use labels & source folder)
 	- File message 
-		- Add button to embed file in message 
 		- Make JFileMessagePanel 
 		- Add implementation in JChatPanel 
+		- Adapt code to fileWrapper 
+		- Download file implementation (using jfilechooser, ect )
 	- Message 
 		- polish displayed timestamp 
 	- Settings window (in edit menu)
@@ -39,7 +41,6 @@
 	- see mysql 
 
 - Presence server 
-	- Create dynamic web project then convert it to maven project 
 	- Use cookies 
 	- Use Javabean for User 
 	- Make UserBean class & UserBeanAdaoter to convert from User to UserBean ? 
@@ -132,3 +133,4 @@
 	- Add documentation 
 		- readMe
 	- Redo UML 
+		- search eplise plug in to generate diagrams 

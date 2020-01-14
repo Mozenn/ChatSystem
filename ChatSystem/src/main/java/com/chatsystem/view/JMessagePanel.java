@@ -23,14 +23,14 @@ public class JMessagePanel extends JPanel {
 	
 	public void setToEmitterColor()
 	{
-		messageLabel.setBackground(new Color(240, 248, 255));
-		messageLabel.repaint();
+		setBackground(new Color(240, 248, 255));
+		repaint();
 	}
 	
 	public void setToReceiverColor()
 	{
-		messageLabel.setBackground(new Color(255, 239, 213));
-		messageLabel.repaint();
+		setBackground(new Color(255, 239, 213));
+		repaint();
 	}
 
 	/**

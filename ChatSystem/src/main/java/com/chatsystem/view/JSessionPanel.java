@@ -19,7 +19,7 @@ import javax.swing.border.LineBorder;
 
 public class JSessionPanel extends JPanel implements ActionListener, SessionListener, ActionEmitter {
 	
-	public enum SessionPanelState
+	protected enum SessionPanelState
 	{
 		UNREAD("UNREAD"),
 		READ("READ");
@@ -35,7 +35,7 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 	    }
 	}
 	
-	public enum SessionPanelVisualState
+	protected enum SessionPanelVisualState
 	{
 		ONSCREEN("ONSCREEN"),
 		OUTOFSCREEN("OUTOFSCREEN");

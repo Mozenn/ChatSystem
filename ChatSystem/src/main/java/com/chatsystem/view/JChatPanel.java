@@ -1,37 +1,83 @@
 package com.chatsystem.view;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JMenuBar;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.FileWrapper;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.SerializationUtility;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.CardLayout;
 
 public class JChatPanel extends JPanel implements ActionListener, ActionEmitter {
 	
+	private enum DisplayedCard
+	{
+		TEXT("TEXT"),
+		FILE("REFILEAD");
+		
+	    private String type;
+
+	    DisplayedCard(String type) {
+	        this.type = type;
+	    }
+
+	    String getType() {
+	        return type;
+	    }
+	}
+	
 	public static final String SENDMESSAGE_ACTIONCOMMAND = "Send" ; 
+	public static final String SENDFILEMESSAGE_ACTIONCOMMAND = "SendFile" ; 
+	public static final String DOWNLOADFILE_ACTIONCOMMAND = "Download" ; // TODO 
+	private static final String SWITCH_ACTIONCOMMAND = "Switch" ; 
+	
+	private JPanel cardPanel;
+	private CardLayout cardLayout ; 
+	
+	// Text Panel card widgets 
 	
 	private JPanel messagePanel ;
 	private JPanel textPannel ; 
-	private JButton sendButton ; 
+	private JPanel buttonInTextPanel;
+	private JButton sendTextButton ; 
+	private JButton switchInTextButton;
 	private JTextArea textArea ; 
+	
+	// File Panel card widgets 
+	
+	private JPanel filePannel ; 
+	private JPanel buttonInFilePanel;
+	private JPanel fileListButtonPanel;
+	private JButton sendFileButton ; 
+	private JButton joinFileButton ; 
+	private JButton removeFileButton ;
+	private JButton switchInFileButton;
+	private JList<String> fileList ; 
 	
 	private ArrayList<ActionListener> actionListeners ; 
 	private User currentReceiver;
 	private User currentEmitter;
+
+
+
 
 	public User getCurrentReceiver() {
 		return currentReceiver;
@@ -46,11 +92,20 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 	}
 
 	public JButton getSendButton() {
-		return sendButton;
+		return sendTextButton;
+	}
+	
+	public JButton getSendFileButton() {
+		return sendFileButton;
 	}
 
 	public JTextArea getTextArea() {
 		return textArea;
+	}
+	
+	public JList<String> getFileList()
+	{
+		return fileList ; 
 	}
 
 	/**
@@ -72,8 +127,8 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 		messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
 		messageScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.weighty = 4.0;
-		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
+		gbc_scrollPane.weighty = 5.0;
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.anchor = GridBagConstraints.SOUTH;
 		gbc_scrollPane.gridx = 0;
@@ -82,37 +137,108 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 		add(messageScrollPane, gbc_scrollPane);
 		
 		
-		// Text Panel 
+		cardPanel = new JPanel();
+		GridBagConstraints gbc_cardPanel = new GridBagConstraints();
+		gbc_cardPanel.weighty = 1.0;
+		gbc_cardPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_cardPanel.anchor = GridBagConstraints.SOUTH;
+		gbc_cardPanel.fill = GridBagConstraints.BOTH;
+		gbc_cardPanel.gridx = 0;
+		gbc_cardPanel.gridy = 1;
+		gbc_cardPanel.weightx = 1.0;
+		add(cardPanel, gbc_cardPanel);
+		cardLayout = new CardLayout(0, 0) ; 
+		cardPanel.setLayout(cardLayout);
+		
+		// =============  Text Panel =============== 
 		
 		textPannel = new JPanel();
-		
-		GridBagConstraints gbc_textPannel = new GridBagConstraints();
-		gbc_textPannel.weighty = 1.0;
-		gbc_textPannel.insets = new Insets(0, 0, 5, 5);
-		gbc_textPannel.anchor = GridBagConstraints.SOUTH;
-		gbc_textPannel.fill = GridBagConstraints.BOTH;
-		gbc_textPannel.gridx = 0;
-		gbc_textPannel.gridy = 1;
-		gbc_textPannel.weightx = 1.0;
-		add(textPannel, gbc_textPannel);
 		textPannel.setLayout(new BoxLayout(textPannel, BoxLayout.X_AXIS));
-		
+		cardPanel.add(textPannel, DisplayedCard.TEXT.getType());
 
 		
 		textArea = new JTextArea();
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 		textArea.setRows(2);
+
 		
 		JScrollPane textScrollPane = new JScrollPane(textArea);
 		textScrollPane.getVerticalScrollBar().setUnitIncrement(15);
-
 		textPannel.add(textScrollPane);
 		
-		sendButton = new JButton("Send");
-		sendButton.addActionListener(this);
-		sendButton.setEnabled(false);
-		textPannel.add(sendButton);
+		buttonInTextPanel = new JPanel();
+		textPannel.add(buttonInTextPanel);
+		buttonInTextPanel.setLayout(new BoxLayout(buttonInTextPanel, BoxLayout.Y_AXIS));
+		
+		sendTextButton = new JButton("Send");
+		sendTextButton.addActionListener(this);
+		sendTextButton.setActionCommand(SENDMESSAGE_ACTIONCOMMAND);
+		sendTextButton.setEnabled(false);
+		buttonInTextPanel.add(sendTextButton) ; 
+		
+		switchInTextButton = new JButton("Switch");
+		switchInTextButton.addActionListener(this);
+		switchInTextButton.setActionCommand(SWITCH_ACTIONCOMMAND);
+		buttonInTextPanel.add(switchInTextButton) ; 
+		
+		// =============  File Panel =============== 
+		
+		filePannel = new JPanel();
+		filePannel.setLayout(new BoxLayout(filePannel, BoxLayout.X_AXIS));
+		cardPanel.add(filePannel, DisplayedCard.FILE.getType());
+		
+		fileList = new JList<String>(new DefaultListModel<String>()) ; 
+		
+		JScrollPane fileListScrollPane = new JScrollPane(fileList);
+		fileListScrollPane.getVerticalScrollBar().setUnitIncrement(15);
+		filePannel.add(fileListScrollPane) ; 
+		
+		fileListButtonPanel = new JPanel();
+		filePannel.add(fileListButtonPanel);
+		fileListButtonPanel.setLayout(new BoxLayout(fileListButtonPanel, BoxLayout.Y_AXIS));
+		
+		joinFileButton = new JButton("Join");
+		joinFileButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				var model = (DefaultListModel<String>)fileList.getModel() ; 
+				
+				// TODO use jFileChooser 
+				
+				model.addElement("file");
+				
+			}});
+		fileListButtonPanel.add(joinFileButton);
+		
+		removeFileButton = new JButton("Remove");
+		removeFileButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				var model = (DefaultListModel<String>)fileList.getModel() ; 
+				while(fileList.getSelectedIndex() != -1)
+				{
+					model.remove(fileList.getSelectedIndex());
+				}
+			}});
+		fileListButtonPanel.add(removeFileButton);
+		
+		buttonInFilePanel = new JPanel();
+		filePannel.add(buttonInFilePanel);
+		buttonInFilePanel.setLayout(new BoxLayout(buttonInFilePanel, BoxLayout.Y_AXIS));
+		
+		sendFileButton = new JButton("Send");
+		sendFileButton.addActionListener(this);
+		sendFileButton.setActionCommand(SENDFILEMESSAGE_ACTIONCOMMAND);
+		sendFileButton.setEnabled(false);
+		buttonInFilePanel.add(sendFileButton);
+		
+		switchInFileButton = new JButton("Switch");
+		switchInFileButton.addActionListener(this);
+		switchInFileButton.setActionCommand(SWITCH_ACTIONCOMMAND);
+		buttonInFilePanel.add(switchInFileButton) ; 
 		
 		actionListeners = new ArrayList<ActionListener>();
 
@@ -131,15 +257,20 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
-		actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,SENDMESSAGE_ACTIONCOMMAND)));
+		if(e.getActionCommand().equals(SENDMESSAGE_ACTIONCOMMAND) && !actionListeners.isEmpty())
+			actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,SENDMESSAGE_ACTIONCOMMAND)));
+		else if(e.getActionCommand().equals(SENDFILEMESSAGE_ACTIONCOMMAND) && !actionListeners.isEmpty())
+			actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,SENDFILEMESSAGE_ACTIONCOMMAND)));
+		else if(e.getActionCommand().equals(SWITCH_ACTIONCOMMAND) && !actionListeners.isEmpty())
+			cardLayout.next(cardPanel);
 	}
 	
 	public void ChangeConversation(User newSender, User newReceiver,List<UserMessage> messages)
 	{
 		clear();
 
-		sendButton.setEnabled(true);
+		sendTextButton.setEnabled(true);
+		sendFileButton.setEnabled(true);
 		
 		currentReceiver = newReceiver ; 
 		currentEmitter = newSender ; 
@@ -151,7 +282,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 				case TX:
 				{
 
-					System.out.println("Message Added " + new String(m.getContent()));
+					System.out.println("Text Message Added " + new String(m.getContent()));
 					JMessagePanel mp ; 
 					if(m.getSenderId().equals(currentEmitter.getId()))
 					{
@@ -169,7 +300,35 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 				}
 				case FL:
 				{
-					// TODO 
+					System.out.println("Text Message Added to UI" + new String(m.getContent()));
+					JFileMessagePanel mp ; 
+					
+					FileWrapper fw = null; // TODO use FileWrapperModel class to hide serialization from view 
+					try {
+						fw = SerializationUtility.deserializeFileWrapper(m.getContent()); // TODO where to store this file wrapper 
+					} catch (JsonParseException e) {
+						e.printStackTrace();
+						return ; 
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+						return ; 
+					} catch (IOException e) {
+						e.printStackTrace();
+						return ; 
+					}  
+					if(m.getSenderId().equals(currentEmitter.getId())) 
+					{
+						mp = new JFileMessagePanel(currentEmitter.getUsername(),fw.getFileName(),m.getDate());
+						mp.setToEmitterColor(); 
+					}
+					else
+					{
+						
+						mp = new JFileMessagePanel(currentReceiver.getUsername(),fw.getFileName(),m.getDate());
+						mp.setToReceiverColor(); 
+					}
+					
+					messagePanel.add(mp);
 					break ; 
 				}
 			}
@@ -204,7 +363,9 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter 
 		messagePanel.removeAll();
 		messagePanel.validate();
 		messagePanel.repaint();
-		sendButton.setEnabled(false);
+
+		sendTextButton.setEnabled(false);
+		sendFileButton.setEnabled(false);
 	}
 
 }

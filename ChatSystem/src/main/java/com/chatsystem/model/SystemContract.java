@@ -21,7 +21,7 @@ public interface SystemContract extends SystemModel{
 	
 	public void sendMessage(User receiver, String Text) ; 
 	
-	public void sendFileMessage(User receiver, File file) ; 
+	public void sendFileMessage(User receiver, String filePath) ; 
 	
 	public void start();
 	

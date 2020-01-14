@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import com.chatsystem.dao.DAO;
 import com.chatsystem.dao.DAOSQLite;
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SystemContract;
 import com.chatsystem.session.Session;
 import com.chatsystem.user.User;
@@ -107,7 +108,7 @@ final public class LocalSession extends Session{
 	}
 
 	@Override
-	public void sendMessage(File f) {
+	public void sendMessage(FileWrapper f) {
 		
 		UserMessage m;
 		

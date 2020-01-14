@@ -4,7 +4,9 @@ import java.nio.file.Files;
 import java.util.Arrays;
 
 import com.chatsystem.message.SystemMessage.SystemMessageType;
+import com.chatsystem.model.FileWrapper;
 import com.chatsystem.user.UserId;
+import com.chatsystem.utility.SerializationUtility;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,9 +57,9 @@ public class UserMessage extends Message{
 		this.senderId = senderId ; 
 	} 
 	
-	public UserMessage(File f, UserId receiverId, UserId senderId) throws IOException 
+	public UserMessage(FileWrapper f, UserId receiverId, UserId senderId) throws IOException 
 	{
-		super(Files.readAllBytes(f.toPath()) );
+		super(SerializationUtility.serializeFileWrapper(f));
 		subtype = UserMessageType.FL;
 		this.receiverId = receiverId ; 
 	}

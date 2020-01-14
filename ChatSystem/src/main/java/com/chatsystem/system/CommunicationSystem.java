@@ -18,6 +18,7 @@ import java.util.Optional;
 import javax.swing.event.EventListenerList;
 
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
 import com.chatsystem.model.SystemContract;
@@ -248,12 +249,27 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	}
 
 	@Override
-	public void sendFileMessage(User receiver, File file) {
+	public void sendFileMessage(User receiver, String filePath) {
 		
-		synchronized(sessions)
+		File file = new File(filePath) ; 
+
+		if(file.exists() && file.isFile())
 		{
-			sessions.get(receiver.getId()).sendMessage(file);
+			FileWrapper fileWrapper;
+			try {
+				fileWrapper = new FileWrapper(file.getName(),file);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ; 
+			} 
+			
+			synchronized(sessions)
+			{
+				sessions.get(receiver.getId()).sendMessage(fileWrapper);
+			}
 		}
+		
+
 	}
 	
 	// USERS 
