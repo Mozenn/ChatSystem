@@ -58,6 +58,7 @@ public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionLi
 	public JFileMessagePanel(String username, String fileName,Timestamp date) {
 		
 		this.date = date ; 
+		actionListeners = new ArrayList<ActionListener>() ; 
 		
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		setBackground(Color.WHITE);
