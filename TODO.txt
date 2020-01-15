@@ -13,8 +13,6 @@
 - UI
 	- Polish 
 		- Use Icon for buttons (use labels & source folder)
-	- File message 
-		- join file implementation (using jfilechooser, ect )
 	- Message 
 		- polish displayed timestamp 
 	- Settings window (in edit menu)
@@ -22,6 +20,8 @@
 			- change username button 
 		- other sub window 
 			- download path 
+	- changeUsername 
+		- Reuse createProfileWindow 
 	
 
 - LocalCommunication 
@@ -36,25 +36,22 @@
 	- see mysql 
 
 - Presence server 
-	- Use cookies 
-	- Use Javabean for User 
-	- Make UserBean class & UserBeanAdaoter to convert from User to UserBean ? 
-	- Client request online user every x sec (pool) ? or server notify clients when new events trhough callback (webservice necessary in client) ? ##
-	- Embedded DB ? ##
-	- Use context param to save db url 
-	- Possible to load Servlet OnStartup with loadOnStartup  
-	- Use 1 servlet only ?  
+	- Tracking 
+		- Use to see if client already marked online 
+		- Use cookies ? or sessions ? 
 	- Client - Server Communication 
 		- Use Json  
 			- use json node and get() or path()
 		- Use HttpUrlConnection or java 11 http client or apache http client (see more)
+		- DistantUserFetcher
+			- every x sec 
+			- multithread 
 		- See jersey 
+		- Use POST to notify connection to server with user as data 
+		- Use HEAD to see if new users , and use GET if new user ? 
 	- session-config file 
 		- setup sesison timeout 
-	- Use sessionListener ? 
 	- MVC 
-		- View 
-			- Client Application via HTTP 
 		- Controller 
 			- Servlet 
 		- Model 
@@ -62,6 +59,12 @@
 			- DB Interaction 
 	- Polish 
 		- use SLF4J for log 
+		- Use JPA & Hibernate 
+		- use propertie file to save db url & other param 
+	- Optional 
+		- Make UserBean class & UserBeanAdaoter to convert from User to UserBean ? 
+		- Use Javabean for User 
+		- Use sessionListener ? 
 		
 
 - Session 
