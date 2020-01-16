@@ -211,7 +211,6 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 			public void actionPerformed(ActionEvent e) {
 				var model = (DefaultListModel<String>)fileList.getModel() ; 
 				
-				// TODO use jFileChooser 
 				JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 				
 				int r = j.showDialog(null, "Select") ; 

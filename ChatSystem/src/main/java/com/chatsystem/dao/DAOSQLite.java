@@ -11,17 +11,47 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.user.UserId;
+import com.chatsystem.utility.PropertiesUtility;
 
 public class DAOSQLite implements DAO {
 	
-	private static final String DB_URL = "jdbc:sqlite:data/data.db" ;
-
-	@Override
-	public void addMessage(UserMessage message)  {
+	private static String DB_URL ;
+	
+	public DAOSQLite() throws IOException
+	{
+		loadDatabaseURL() ; 
 		
+		createMessagesTable() ;
+		
+		Properties appProps = PropertiesUtility.getAppProperties() ; 
+		
+		String driver = appProps.getProperty("driverClassName") ; 
+		
+		try {
+			Class.forName(driver);
+		} catch (ClassNotFoundException e1) {
+			throw new DAOConfigurationException("Driver not Found", e1) ; 
+		}
+	}
+	
+	protected void loadDatabaseURL() throws IOException
+	{
+		Properties appProps = PropertiesUtility.getAppProperties() ; 
+		
+		DB_URL = appProps.getProperty("dbURL") ; 
+	}
+	
+	protected String getDatabaseURL() 
+	{
+		return DB_URL ; 
+	}
+	
+	private void createMessagesTable() throws IOException
+	{
 		
 		String createStmt = "CREATE TABLE IF NOT EXISTS messages (\n"
                 + "    id integer PRIMARY KEY AUTOINCREMENT,\n"
@@ -32,15 +62,26 @@ public class DAOSQLite implements DAO {
                 + "    content BLOB\n"
                 + ");";  
 		
+		try (Connection conn = DriverManager.getConnection(getDatabaseURL());
+		        Statement stmt = conn.createStatement()) {
+			
+		    // create a new table if not exist 
+		    stmt.execute(createStmt);
+		    
+		} catch (SQLException e) {
+			throw new DAOException(e) ; 
+		} 
+	}
+
+	@Override
+	public void addMessage(UserMessage message)  {
+		
+
+		
 		String insertStmt = "INSERT INTO messages(receiverid,senderid,timestamp,type,content) VALUES(?,?,?,?,?)" ; 
 	
-	try (Connection conn = DriverManager.getConnection(DB_URL);
-	        Statement stmt = conn.createStatement()) {
-		
-	    // create a new table if not exist 
-	    stmt.execute(createStmt);
-	    
-	    try(PreparedStatement pstmt = conn.prepareStatement(insertStmt))
+	    try(Connection conn = DriverManager.getConnection(getDatabaseURL());
+	    		PreparedStatement pstmt = conn.prepareStatement(insertStmt))
 	    {
 	        pstmt.setBytes(1, message.getReceiverId().getId());
 	        pstmt.setBytes(2, message.getSenderId().getId());
@@ -48,11 +89,9 @@ public class DAOSQLite implements DAO {
 	        pstmt.setString(4, message.getSubtype().toString());
 	        pstmt.setBytes(5, message.getContent());
 	        pstmt.executeUpdate();
-	    }
-	    
-	} catch (SQLException e) {
-	    System.out.println(e.getMessage());
-	}
+	    }catch (SQLException e) {
+	    	throw new DAOException("Message Insertion failed", e) ; 
+		}
 		
 	}
 
@@ -65,7 +104,7 @@ public class DAOSQLite implements DAO {
 		
 		String query = "SELECT receiverid, senderid, timestamp, type, content FROM messages WHERE receiverid = ? or senderid = ?" ;  
 		
-       try (Connection conn = DriverManager.getConnection(DB_URL);
+       try (Connection conn = DriverManager.getConnection(getDatabaseURL());
     		   PreparedStatement pstmt = conn.prepareStatement(query)){
     	   pstmt.setBytes(1,receiverId.getId()); 
     	   pstmt.setBytes(2,receiverId.getId()); 
@@ -87,10 +126,8 @@ public class DAOSQLite implements DAO {
             	  messages.add(messageToAdd);
               }
           } catch (SQLException e) {
-              e.printStackTrace();
-          } catch (IOException e) {
-			e.printStackTrace();
-		}
+        	  throw new DAOException("Query failed", e) ; 
+          } 
 		
 		
 		// sort messages using timestamp 
@@ -106,15 +143,14 @@ public class DAOSQLite implements DAO {
 		
 		String deleteStmt = "DELETE FROM messages" ; 
 	
-	try (Connection conn = DriverManager.getConnection(DB_URL);
+	try (Connection conn = DriverManager.getConnection(getDatabaseURL());
 	        Statement stmt = conn.createStatement()) {
 		
-	    // create a new table if not exist 
 	    stmt.execute(deleteStmt);
 	    
 	    
 	} catch (SQLException e) {
-	    System.out.println(e.getMessage());
+		throw new DAOException("Clear Message Table failed", e) ; 
 	}
 	
 	}

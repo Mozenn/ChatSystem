@@ -56,7 +56,13 @@ final public class LocalSession extends Session{
 		
 		System.out.println("LocalSession Started");
 		
-		DAO dao = new DAOSQLite() ; 
+		DAO dao;
+		try {
+			dao = new DAOSQLite();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ; 
+		} 
 		
 		messages = (ArrayList<UserMessage>) dao.getHistory(receiver.getId()) ; 
 	}
@@ -93,14 +99,8 @@ final public class LocalSession extends Session{
 	@Override
 	public void sendMessage(String s){
 		
-		UserMessage m;
-		
-		try {
-			m = new UserMessage(s, receiver.getId(), emitter.getId());
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return ; 
-		} 
+		UserMessage m = new UserMessage(s, receiver.getId(), emitter.getId());
+	
 		
 		new SendLocalMessageTask(this,socket,m);
 		

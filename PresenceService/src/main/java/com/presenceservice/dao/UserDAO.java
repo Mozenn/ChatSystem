@@ -1,5 +1,6 @@
 package com.presenceservice.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.presenceservice.model.User;
@@ -9,8 +10,16 @@ public interface UserDAO {
 	
 	public Optional<User> getUser(UserId id) ; 
 	
-	public void addUser(User user) ; 
+	public List<User> getAllUsers() ; 
+	
+	public void addUser(User user) ;
+	
+	public void removeUser(User u) ; 
+	
+	public void clearUser() ; 
 	
 	public void updateUser(User user) ; 
+	
+	public boolean isUsernameAvailable(String username) ; 
 
 }

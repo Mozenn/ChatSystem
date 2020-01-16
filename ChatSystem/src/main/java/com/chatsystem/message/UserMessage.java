@@ -41,7 +41,7 @@ public class UserMessage extends Message{
 		this.senderId = new UserId(); 
 	}
 	
-	public UserMessage(String text, UserId receiverId, UserId senderId ) throws IOException 
+	public UserMessage(String text, UserId receiverId, UserId senderId ) 
 	{
 		super(text.getBytes());
 		this.receiverId = receiverId ; 
@@ -49,7 +49,7 @@ public class UserMessage extends Message{
 		subtype = UserMessageType.TX;
 	}
 	
-	public UserMessage(byte[] content,UserMessageType type, UserId receiverId, UserId senderId) throws IOException 
+	public UserMessage(byte[] content,UserMessageType type, UserId receiverId, UserId senderId)
 	{
 		super(content);
 		subtype = type;

@@ -89,7 +89,7 @@ public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionLi
 		add(contentPanel);
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 		
-		fileIconButton = new JButton("Download"/*new ImageIcon("resource/fileIcon.png")*/); // TODO put icon path in config.propertie file 
+		fileIconButton = new JButton("Download"); 
 		fileIconButton.addActionListener(this);
 		contentPanel.add(fileIconButton);
 		

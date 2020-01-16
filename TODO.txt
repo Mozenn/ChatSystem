@@ -2,7 +2,9 @@
 
 - Test 
 	- Distant Session 
-	- File message 
+	- Presence Server 
+		- Local 
+		- Deploy on INSA server 
 - Presence server 
 
 - change Username 
@@ -31,14 +33,7 @@
 	- observer between localsystem and listener 
 	- observer between localsystem and sessions ? 
 
-- DB
-	- ask mysql credentials
-	- see mysql 
-
 - Presence server 
-	- Tracking 
-		- Use to see if client already marked online 
-		- Use cookies ? or sessions ? 
 	- Client - Server Communication 
 		- Use Json  
 			- use json node and get() or path()
@@ -49,14 +44,7 @@
 		- See jersey 
 		- Use POST to notify connection to server with user as data 
 		- Use HEAD to see if new users , and use GET if new user ? 
-	- session-config file 
-		- setup sesison timeout 
-	- MVC 
-		- Controller 
-			- Servlet 
-		- Model 
-			- Presence Server with list of UserBean,Cookies,State, ... 
-			- DB Interaction 
+	- DAO Exception in presence server 
 	- Polish 
 		- use SLF4J for log 
 		- Use JPA & Hibernate 
@@ -65,6 +53,11 @@
 		- Make UserBean class & UserBeanAdaoter to convert from User to UserBean ? 
 		- Use Javabean for User 
 		- Use sessionListener ? 
+		- Tracking 
+			- Use to see if client already marked online 
+			- Use cookies ? or sessions ? 
+		- session-config file 
+			- setup sesison timeout 
 		
 
 - Session 
@@ -88,7 +81,7 @@
 	- Write global variables in config files (conf.properties) & use Properties class 
 		- db url 
 		- port 
-		- webserver url 
+		- webservice url 
 	- Check method parameter 
 		- not null, value ect 
 

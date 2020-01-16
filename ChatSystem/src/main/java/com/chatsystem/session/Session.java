@@ -95,7 +95,13 @@ public abstract class Session implements SessionModel{
 			messages.add(m);
 		}
 
-		DAO dao = new DAOSQLite() ; 
+		DAO dao;
+		try {
+			dao = new DAOSQLite();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ; 
+		} 
 		
 		dao.addMessage(m);
 		

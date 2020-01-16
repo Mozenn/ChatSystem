@@ -1,4 +1,4 @@
-package com.insa.localcommunication;
+package com.chatsystem.system;
 
 
 import static org.junit.Assert.assertEquals;

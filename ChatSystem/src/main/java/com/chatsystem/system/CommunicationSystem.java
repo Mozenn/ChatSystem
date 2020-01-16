@@ -4,23 +4,20 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Properties;
 
 import javax.swing.event.EventListenerList;
 
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
-import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
 import com.chatsystem.model.SystemContract;
 import com.chatsystem.model.SystemListener;
@@ -32,6 +29,7 @@ import com.chatsystem.system.NotifyLocalUsersTask.LocalNotifyType;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
+import com.chatsystem.utility.PropertiesUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,10 +42,6 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	private User user;
 	private boolean bRunning = false ; 
 	
-	private InetAddress centralSysIp;
-	private int centralSysPort;
-	private final String LocalUserFilePath = "data/localuser" ; 
-	private final String LocalUserDirectoryPath = "data/" ; 
 	private String downloadPath  ; 
 	
 	private HashMap<UserId,Session> sessions;
@@ -61,13 +55,21 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	private DistantCommunicationListener distantCommunicationListener; 
 	public static final int DISTANT_LISTENING_PORT = 8888; 
 	
+	public final String PRESENCESERVICE_URL ; 
+	private DistantUsersFetcher distantUsersFetcher ; 
+	
 	public CommunicationSystem() throws IOException 
 	{
 		localUsers = new HashMap<UserId,User>();
 		distantUsers = new HashMap<UserId,User>();
 		sessions = new HashMap<UserId,Session>() ;	
-		downloadPath = System.getProperty("java.io.tmpdir") ; 
 		
+		Properties properties = PropertiesUtility.getAppProperties() ; 
+		
+		PRESENCESERVICE_URL = properties.getProperty("presenceServiceURL") ; 
+		downloadPath = properties.getProperty("downloadPath") ; 
+		if(downloadPath.equals("null"))
+			downloadPath = System.getProperty("java.io.tmpdir") ; 
 	}
 	
 	public void start()
@@ -88,7 +90,9 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		
 		notifyLocalUsers(); 
 		
-		RequestDistantUser();
+		notifyWebService();
+		
+		distantUsersFetcher = new DistantUsersFetcher(this) ; 
 		
 		bRunning = true ; 
 	}
@@ -113,6 +117,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		
 		localCommunicationListener.stopRun();	
 		distantCommunicationListener.stopRun();
+		distantUsersFetcher.stopRun() ; 
 	}
 	
 	// ---------- COMMUNICATION 
@@ -402,12 +407,13 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 
 	}
 	
-	private void RequestDistantUser()
+	private void notifyWebService()
 	{
-		// TODO send request to central server as a runnable task 
+		// TODO send POST request to presence service as a runnable task 
 		
 		// if reception succeed, notify view 
 	}
+
 	
 	// --------- LISTENERS 
 	
@@ -494,40 +500,19 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	{
 		boolean result = false ; 
 		
-		File localUserFile = new File(LocalUserFilePath) ; 
+		Properties props = PropertiesUtility.getAppProperties() ; 
 		
-		if(localUserFile.exists())
-		{
-			FileInputStream in = null ; 
+		String userAsJsonString = props.getProperty("localUser")  ;
+		
+		if(!userAsJsonString.equals("null"))
+		{	 
 			
-		      try {
-		    	  in = new FileInputStream(LocalUserFilePath);
-		          
-		    	  byte[] userAsBytes = new byte[(int) localUserFile.length()] ; 
-		    			  
-		    	  in.read(userAsBytes) ; 
-		    	  
-		    	  this.user = SerializationUtility.deserializeUser(userAsBytes) ; 
-		    	  
-		    	  result = true ; 
-
-		       }
-		      catch(Exception e)
-		      {
-		    	  result = false ; 
-		      }
-		      finally {
-		    	   
-		          if (in != null) {
-		        	  in.close();
-		          }
-		       }
-		      
-		      
+		    this.user = SerializationUtility.deserializeUser(userAsJsonString.getBytes()) ; 
+		    	 
+		    result = true ; 
 		}
-	
+		      
 		return result ; 
-		
 		
 	}
 	
@@ -561,10 +546,6 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 
 			this.user = newUser ; 
 			
-			File f = new File(LocalUserDirectoryPath) ; 
-			
-			f.mkdir() ; 
-			
 			try {
 				saveLocalUser();
 			} catch (IOException e) {
@@ -577,6 +558,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	
 	private void saveLocalUser() throws IOException 
 	{
+		Properties props = PropertiesUtility.getAppProperties() ; 
+		
 		byte[] userAsBytes;
 		try {
 			userAsBytes = SerializationUtility.serializeUser(this.user);
@@ -585,22 +568,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			return ; 
 		} 
 		
-		// Write user to file 
-		
-		FileOutputStream out = null;
-		
-	      try {
-	          out = new FileOutputStream(LocalUserFilePath);
-	          
-             out.write(userAsBytes);
-
-	       } 
-	      finally {
-	    	   
-	          if (out != null) {
-	             out.close();
-	          }
-	       }
+		props.setProperty("localUser", new String(userAsBytes))  ;
+		PropertiesUtility.saveAppProperties(props);
 	}
 	
 	@Override

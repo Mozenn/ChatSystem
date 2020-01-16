@@ -165,7 +165,6 @@ final class LocalCommunicationListener extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//socket.close();
 	}
 
 	

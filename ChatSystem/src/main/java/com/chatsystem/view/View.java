@@ -133,7 +133,6 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		addSessionPanel(sm);
 		mainWindow.getChatPanel().ChangeConversation(sm.getEmitter(),sm.getReceiver(), sm.getMessages()); 
 		
-		//TODO make user start session button inactive 
 		for (Component c : mainWindow.getConnectedUserPannel().getComponents()) {
 		    if (c instanceof JUserPanel ) { 
 		       JUserPanel up = (JUserPanel)c ; 
