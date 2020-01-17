@@ -11,23 +11,35 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 import com.presenceservice.model.User;
 import com.presenceservice.model.UserId;
+import com.presenceservice.utility.ConfigUtility;
 
 public class UserDAOSQLite implements UserDAO {
 	
-	private static final String DB_URL = "jdbc:sqlite:data.db" ;
+	private static String DB_URL;
 
-	public UserDAOSQLite()
+	public UserDAOSQLite() throws IOException 
 	{
-		try {
-			Class.forName("org.sqlite.JDBC");
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		}
-		
+		setupDatabase() ; 
+	
 		createUsersTable()  ; 
+	}
+	 
+	protected void setupDatabase() throws IOException
+	{
+		Properties configProps = ConfigUtility.getConfigProperties() ; 
+		
+		DB_URL = configProps.getProperty("dbStartURL") + ConfigUtility.getConfigPath() + configProps.getProperty("dbName") ; 
+		
+		try {
+			String driver = ConfigUtility.getConfigProperties().getProperty("driverClassName") ; 
+			Class.forName(driver);
+		} catch (ClassNotFoundException e) {
+			throw new DAOConfigException("Driver not found", e) ; 
+		} 
 	}
 	
 	protected String getDatabaseURL() 
@@ -35,7 +47,7 @@ public class UserDAOSQLite implements UserDAO {
 		return DB_URL ; 
 	}
 	
-	private void createUsersTable() 
+	protected void createUsersTable() 
 	{
 		String createStmt = "CREATE TABLE IF NOT EXISTS users (\n"
                 + "    userid BLOB NOT NULL,\n"
@@ -50,7 +62,7 @@ public class UserDAOSQLite implements UserDAO {
 		    stmt.execute(createStmt);
 		    
 		} catch (SQLException e) {
-		    System.out.println(e.getMessage());
+		   throw new DAOException("User table creation failed", e) ; 
 		}
 	}
 	
@@ -68,7 +80,7 @@ public class UserDAOSQLite implements UserDAO {
 	        pstmt.setString(3, u.getUsername());
 	        pstmt.executeUpdate();
 	    } catch (SQLException e) {
-			e.printStackTrace();
+	    	 throw new DAOException("User insertion failed", e) ; 
 		}
 
 	}
@@ -83,8 +95,7 @@ public class UserDAOSQLite implements UserDAO {
 	        pstmt.setBytes(1, u.getId().getId());
 	        pstmt.executeUpdate();
 	    } catch (SQLException e) {
-			e.printStackTrace();
-			return ; 
+	    	 throw new DAOException("User removal failed", e) ; 
 		}
 	}
 	
@@ -100,8 +111,7 @@ public class UserDAOSQLite implements UserDAO {
 	        pstmt.setBytes(3, u.getId().getId());
 	        pstmt.executeUpdate();
 	    } catch (SQLException e) {
-			e.printStackTrace();
-			return ; 
+	    	 throw new DAOException("User update failed", e) ; 
 		}
 	}
 	
@@ -118,7 +128,7 @@ public class UserDAOSQLite implements UserDAO {
 	    
 	    
 	} catch (SQLException e) {
-	    System.out.println(e.getMessage());
+		 throw new DAOException("User table clear failed", e) ; 
 	}
 	
 	}
@@ -145,9 +155,9 @@ public class UserDAOSQLite implements UserDAO {
         	  userToAdd = Optional.ofNullable(u) ; 
               }
           } catch (SQLException e) {
-              e.printStackTrace();
+        	  throw new DAOException("Selection failed", e) ; 
           } catch (IOException e) {
-			e.printStackTrace();
+        	  throw new DAOException("invalid InetAddress", e) ; 
 		}
        
        
@@ -176,9 +186,9 @@ public class UserDAOSQLite implements UserDAO {
               }
            
           } catch (SQLException e) {
-              e.printStackTrace();
+        	  throw new DAOException("Selection failed", e) ; 
           } catch (IOException e) {
-			e.printStackTrace();
+        	  throw new DAOException("invalid InetAddress", e) ; 
 		}
        
        
@@ -205,8 +215,7 @@ public class UserDAOSQLite implements UserDAO {
         	   return true ; 
            }
        } catch (SQLException e) {
-		e.printStackTrace();
-		return false ; 
+    	   throw new DAOException("Selection failed", e) ; 
 	}
 
 	}

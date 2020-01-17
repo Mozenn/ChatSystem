@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.presenceservice.model.*;
+import com.presenceservice.utility.ConfigUtility;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,12 +48,12 @@ public class ManageUsers extends HttpServlet {
     public void init() throws ServletException {
     	super.init();
     	
-    	/*
-    	File f = new File(".") ; 
-    	System.out.println(f.getAbsolutePath()) ;
-    	*/
-    	
-    	UserDAO dao = new UserDAOSQLite() ; 
+    	UserDAO dao = null;
+		try {
+			dao = new UserDAOSQLite();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} 
     	
     	List<User> usersResult = dao.getAllUsers();
     	
@@ -74,23 +76,11 @@ public class ManageUsers extends HttpServlet {
 		this.lastModificationDate = new Timestamp(d.getTime());
 		
 		System.out.println("Server Started ! ") ;
+		
+		String path = ConfigUtility.getConfigPath();
+		System.out.println(path) ; 
     }
     
-	protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { 
-		
-		String tsString = request.getParameter("timestamp") ; 
-		
-		if(tsString != null)
-		{
-			Timestamp ts = Timestamp.valueOf(tsString) ; 
-			
-			if(lastModificationDate.after(ts))
-			{
-				doGet(request,response) ; 
-			}
-		}
-		
-	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -99,9 +89,48 @@ public class ManageUsers extends HttpServlet {
 		
 		System.out.println("get") ;
 		
+		String tsString = request.getHeader("IF_MODIFIED_SINCE") ; 
+		
+		if(tsString != null)
+		{
+			Timestamp ts = Timestamp.valueOf(tsString) ; 
+			
+			System.out.println("Time received " + ts.toString()) ; 
+			System.out.println("Last Modification Time : " + lastModificationDate.toString()) ; 
+			
+			if(lastModificationDate.before(ts))
+			{
+				response.setStatus(420);
+				System.out.println("not modified") ;
+			}
+			else
+			{
+				writeUsers(response) ; 
+			}
+				
+		}
+		else
+		{
+			writeUsers(response) ; 
+		}
+ 
+	}
+	
+	protected void writeUsers(HttpServletResponse response) throws IOException 
+	{
+		System.out.println("writing users") ;
+		
+		List<User> onlineUsers = new ArrayList<User>();
+		
+		for(User u : users.keySet())
+		{
+			if(users.get(u))
+				onlineUsers.add(u) ; 
+		}
+		
 		ObjectMapper uJson = new ObjectMapper();
 		
-		String usersJsonString = uJson.writeValueAsString(users) ; 
+		String usersJsonString = uJson.writeValueAsString(onlineUsers) ; 
 		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");

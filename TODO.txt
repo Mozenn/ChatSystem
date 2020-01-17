@@ -1,14 +1,28 @@
 ### Ongoing 
 
-- Test 
+- Test Home 
+	- Deploy Client 
+- Test INSA
+	- .jar client 
 	- Distant Session 
 	- Presence Server 
 		- Local 
 		- Deploy on INSA server 
+	
 - Presence server 
+- Fixe Database 
+	- use context path 
 
 - change Username 
 - Settings window 
+
+
+# Deploy
+
+- CLient 
+	- test .jar 
+- PresenceService 
+	- test at home and at INSA 
 
 # Implementation 
 
@@ -34,17 +48,8 @@
 	- observer between localsystem and sessions ? 
 
 - Presence server 
-	- Client - Server Communication 
-		- Use Json  
-			- use json node and get() or path()
-		- Use HttpUrlConnection or java 11 http client or apache http client (see more)
-		- DistantUserFetcher
-			- every x sec 
-			- multithread 
-		- See jersey 
-		- Use POST to notify connection to server with user as data 
-		- Use HEAD to see if new users , and use GET if new user ? 
-	- DAO Exception in presence server 
+	- dao	
+		- make dao factory 
 	- Polish 
 		- use SLF4J for log 
 		- Use JPA & Hibernate 
@@ -90,6 +95,10 @@
 	- Abstract factory 
 	- Observer 	
 
+- Android 
+	- Use android Studio 
+	- see what can be kept 
+
 
 # Perf 
 	- Multithread dao 
@@ -105,16 +114,10 @@
 		- CentralSys memory footprint <= 100Mo 
 		- CPU use <= 1% in 5s range measure 
 
-
-- Android 
-	- Use android Studio 
-	- see what can be kept 
-# Deploy
-
-- CLient 
-	- How to deploy desktop app ? 
-- PresenceService 
-	- Use tomcat 
+# Documentation 
+- Explain choices 
+- How to 
+- Test made 
 
 
 # Polish 

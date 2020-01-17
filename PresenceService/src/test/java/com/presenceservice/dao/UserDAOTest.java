@@ -2,6 +2,7 @@ package com.presenceservice.dao;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -13,7 +14,7 @@ import com.presenceservice.model.UserId;
 public class UserDAOTest {
 	
 	@Test 
-	public void StoreUserTest() 
+	public void StoreUserTest() throws IOException 
 	{
 		UserId uId1 = new UserId("id1".getBytes()) ;
 		UserId uId2 = new UserId("id2".getBytes()) ;

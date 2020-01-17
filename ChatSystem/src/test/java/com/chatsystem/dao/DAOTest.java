@@ -3,15 +3,11 @@ package com.chatsystem.dao;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import org.junit.Test;
 
 import com.chatsystem.dao.DAO;
-import com.chatsystem.dao.DAOSQLiteTest;
 import com.chatsystem.message.UserMessage;
-import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 
 public class DAOTest {
@@ -22,7 +18,7 @@ public class DAOTest {
 		UserMessage m1 = new UserMessage("data",new UserId("u1".getBytes()), new UserId("u2".getBytes())) ; 
 		UserMessage m2 = new UserMessage("data",new UserId("u2".getBytes()), new UserId("u1".getBytes())) ; 
 		
-		DAO dao = new DAOSQLiteTest() ; 
+		DAO dao = new DAOSQLite() ; 
 		
 		dao.clearHistory(); 
 		

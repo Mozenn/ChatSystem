@@ -1,6 +1,7 @@
 package com.chatsystem.utility;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
@@ -10,6 +11,7 @@ import com.chatsystem.session.SessionData;
 import com.chatsystem.user.User;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,6 +30,13 @@ final public class SerializationUtility {
 	{
 	      ObjectMapper o = new ObjectMapper () ; 
 	      return  o.readValue(userAsByte, User.class); 
+	}
+	
+	public static List<User> deserializeUsers(byte[] usersAsByte) throws JsonParseException, JsonMappingException, IOException
+	{
+	      ObjectMapper o = new ObjectMapper () ; 
+	      
+	      return  o.readValue(usersAsByte, new TypeReference<List<User>>() {}); 
 	}
 	
 	public static byte[] serializeFileWrapper(FileWrapper fw) throws JsonProcessingException

@@ -21,13 +21,11 @@ public class DAOSQLite implements DAO {
 	
 	private static String DB_URL ;
 	
-	public DAOSQLite() throws IOException
+	public DAOSQLite() throws IOException 
 	{
-		loadDatabaseURL() ; 
-		
-		createMessagesTable() ;
-		
 		Properties appProps = PropertiesUtility.getAppProperties() ; 
+		
+		DB_URL = appProps.getProperty("dbURL") ; 
 		
 		String driver = appProps.getProperty("driverClassName") ; 
 		
@@ -36,18 +34,8 @@ public class DAOSQLite implements DAO {
 		} catch (ClassNotFoundException e1) {
 			throw new DAOConfigurationException("Driver not Found", e1) ; 
 		}
-	}
-	
-	protected void loadDatabaseURL() throws IOException
-	{
-		Properties appProps = PropertiesUtility.getAppProperties() ; 
 		
-		DB_URL = appProps.getProperty("dbURL") ; 
-	}
-	
-	protected String getDatabaseURL() 
-	{
-		return DB_URL ; 
+		createMessagesTable();
 	}
 	
 	private void createMessagesTable() throws IOException
@@ -62,7 +50,7 @@ public class DAOSQLite implements DAO {
                 + "    content BLOB\n"
                 + ");";  
 		
-		try (Connection conn = DriverManager.getConnection(getDatabaseURL());
+		try (Connection conn = DriverManager.getConnection(DB_URL);
 		        Statement stmt = conn.createStatement()) {
 			
 		    // create a new table if not exist 
@@ -80,7 +68,7 @@ public class DAOSQLite implements DAO {
 		
 		String insertStmt = "INSERT INTO messages(receiverid,senderid,timestamp,type,content) VALUES(?,?,?,?,?)" ; 
 	
-	    try(Connection conn = DriverManager.getConnection(getDatabaseURL());
+	    try(Connection conn = DriverManager.getConnection(DB_URL);
 	    		PreparedStatement pstmt = conn.prepareStatement(insertStmt))
 	    {
 	        pstmt.setBytes(1, message.getReceiverId().getId());
@@ -104,7 +92,7 @@ public class DAOSQLite implements DAO {
 		
 		String query = "SELECT receiverid, senderid, timestamp, type, content FROM messages WHERE receiverid = ? or senderid = ?" ;  
 		
-       try (Connection conn = DriverManager.getConnection(getDatabaseURL());
+       try (Connection conn = DriverManager.getConnection(DB_URL);
     		   PreparedStatement pstmt = conn.prepareStatement(query)){
     	   pstmt.setBytes(1,receiverId.getId()); 
     	   pstmt.setBytes(2,receiverId.getId()); 
@@ -143,7 +131,7 @@ public class DAOSQLite implements DAO {
 		
 		String deleteStmt = "DELETE FROM messages" ; 
 	
-	try (Connection conn = DriverManager.getConnection(getDatabaseURL());
+	try (Connection conn = DriverManager.getConnection(DB_URL);
 	        Statement stmt = conn.createStatement()) {
 		
 	    stmt.execute(deleteStmt);

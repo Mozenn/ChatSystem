@@ -4,6 +4,11 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.sql.Timestamp;
 import java.io.File;
 
@@ -11,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -34,6 +40,7 @@ import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 final public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
@@ -92,7 +99,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		
 		notifyWebService();
 		
-		distantUsersFetcher = new DistantUsersFetcher(this) ; 
+		//distantUsersFetcher = new DistantUsersFetcher(this) ; 
 		
 		bRunning = true ; 
 	}
@@ -108,6 +115,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		bRunning = false  ; 
 		
 		var t = new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 
+		
+		// TODO make post request to presence service to indicate Disconnection 
 		
 		try {
 			t.getThread().join();
@@ -374,7 +383,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	{
 		synchronized(distantUsers)
 		{
-			if(distantUsers.containsKey(u.getId()))
+			if(distantUsers.containsKey(u.getId()) || u.getId().equals(this.user.getId()))
 				return ; 
 			
 			distantUsers.put(u.getId(),u);
@@ -409,9 +418,43 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	
 	private void notifyWebService()
 	{
-		// TODO send POST request to presence service as a runnable task 
 		
-		// if reception succeed, notify view 
+		HttpClient httpClient = HttpClient.newBuilder()
+	            .version(HttpClient.Version.HTTP_2)
+	            .build();
+		
+		String userAsString;
+		try {
+			userAsString = new String(SerializationUtility.serializeUser(this.user));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return ; 
+		}  
+		
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(userAsString))
+                .uri(URI.create(PRESENCESERVICE_URL))
+                .header("Content-Type", "application/json")
+                .build();
+        
+        try {
+			HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+			
+			if(response.statusCode() == 200)
+			{
+				List<User> users = SerializationUtility.deserializeUsers(response.body().getBytes()) ; 
+				
+				for(User u : users)
+				{
+					addDistantUser(u);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        
 	}
 
 	
@@ -585,14 +628,12 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		else
 		{
 			user.setUsername(newName);
-		}
-		// if not available 
-			//return false ; 
-		
-		// if available 
-			// update localUser 
-			// multicast notify change to all local users 
+			
+			// TODO multicast notify change to all local users 
 			// notify view 
+		}
+
+
 		
 		
 		try {
@@ -608,7 +649,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	{
 		boolean res = true ; // TODO  Change to false 
 		
-		// TODO communicate to central system to check availability
+		// TODO Make post request and check response 
 		
 		return res ;
 	}

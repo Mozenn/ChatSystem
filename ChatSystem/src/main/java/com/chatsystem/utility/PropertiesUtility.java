@@ -28,5 +28,11 @@ public final class PropertiesUtility {
 		FileOutputStream out = new FileOutputStream(path);
 		newProperties.store(out, null);
 	}
+	
+	public static String getConfigPath() 
+	{
+		String path = Thread.currentThread().getContextClassLoader().getResource("").getPath() ;
+		return path ; 
+	}
 
 }
