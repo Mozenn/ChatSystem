@@ -30,8 +30,8 @@ public class UserDAOTest {
 			return ; 
 		} 
 		
-		UserDAO dao = new UserDAOSQLiteTest() ; 
-		System.out.println("User Table created") ; 
+		UserDAO dao = new UserDAOSQLite() ; 
+		
 		
 		dao.clearUser();
 		

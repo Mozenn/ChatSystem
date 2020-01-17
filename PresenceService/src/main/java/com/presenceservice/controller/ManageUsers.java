@@ -124,6 +124,7 @@ public class ManageUsers extends HttpServlet {
 		
 		for(User u : users.keySet())
 		{
+			System.out.println(u.getUsername() + users.get(u)) ; 
 			if(users.get(u))
 				onlineUsers.add(u) ; 
 		}
@@ -147,45 +148,109 @@ public class ManageUsers extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String userJsonString = request.getReader().readLine() ; 
+		System.out.println("Post") ;
 		
-		if(userJsonString == null) 
+		String type = request.getHeader("COMMUNICATION") ; 
+		
+		if(type == null) 
 			return ; 
 		
-		ObjectMapper uJson = new ObjectMapper();
-		
-		User u = null ; 
-		
-		try {
-			u = uJson.readValue(userJsonString, User.class) ; 
-		} catch(JsonMappingException | JsonParseException e)
+		if(type.equals("CO")) // connection notify  
 		{
-			e.printStackTrace();
-			return ; 
-		}
-		
-		
-		if(users.containsKey(u))
-		{
-			Boolean isOnline = users.get(u) ; 
-			if(!isOnline)
+			System.out.println("CO") ;
+			
+			String userJsonString = request.getReader().readLine() ; 
+			
+			if(userJsonString == null) 
+				return ; 
+			
+			ObjectMapper uJson = new ObjectMapper();
+			
+			User u = null ; 
+			
+			try {
+				u = uJson.readValue(userJsonString, User.class) ; 
+			} catch(JsonMappingException | JsonParseException e)
 			{
-				isOnline = true ; 
+				e.printStackTrace();
+				return ; 
+			}
+			
+			
+			if(users.containsKey(u))
+			{
+				Boolean isOnline = users.get(u) ; 
+				if(!isOnline)
+				{
+					isOnline = true ; 
+					lastModificationDate.setTime(new Date().getTime()); 
+				}
+			}
+			else
+			{
+				users.put(u,true) ; 
+				System.out.println("User added : " + u) ; 
+				lastModificationDate.setTime(new Date().getTime()); 
+				
+				UserDAO dao = new UserDAOSQLite() ; 
+				
+				dao.addUser(u);
+			}
+			
+			
+			doGet(request, response);
+		}
+		else if(type.equals("DC"))  // disconnection notify 
+		{
+			System.out.println("DC") ;
+			
+			String userJsonString = request.getReader().readLine() ; 
+			
+			if(userJsonString == null) 
+				return ; 
+			
+			ObjectMapper uJson = new ObjectMapper();
+			
+			User u = null ; 
+			
+			try {
+				u = uJson.readValue(userJsonString, User.class) ; 
+			} catch(JsonMappingException | JsonParseException e)
+			{
+				e.printStackTrace();
+				return ; 
+			}
+			
+			
+			if(users.containsKey(u))
+			{
+				Boolean isOnline = users.get(u) ; 
+				if(!isOnline)
+				{
+					isOnline = false ; 
+					lastModificationDate.setTime(new Date().getTime()); 
+				}
 			}
 		}
-		else
+		else if(type.equals("CU")) // checkusername request 
 		{
-			users.put(u,true) ; 
-			System.out.println("User added : " + u) ; 
-			lastModificationDate.setTime(new Date().getTime()); 
+			System.out.println("CU") ;
 			
-			UserDAO dao = new UserDAOSQLite() ; 
+			String username = request.getReader().readLine() ; 
 			
-			dao.addUser(u);
+			boolean isAvailable = true ; 
+			
+			for(User u : users.keySet())
+			{
+				if(u.getUsername().equals(username))
+					isAvailable = false ;
+			}
+			
+			if(!isAvailable)
+				response.setStatus(400);
 		}
 		
-		
-		doGet(request, response);
+
 	}
 
 }

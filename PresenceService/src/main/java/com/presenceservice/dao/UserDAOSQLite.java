@@ -42,12 +42,7 @@ public class UserDAOSQLite implements UserDAO {
 		} 
 	}
 	
-	protected String getDatabaseURL() 
-	{
-		return DB_URL ; 
-	}
-	
-	protected void createUsersTable() 
+	private void createUsersTable() 
 	{
 		String createStmt = "CREATE TABLE IF NOT EXISTS users (\n"
                 + "    userid BLOB NOT NULL,\n"
@@ -55,7 +50,7 @@ public class UserDAOSQLite implements UserDAO {
                 + "    username text NOT NULL\n"
                 + ");";  
 		
-		try (Connection conn = DriverManager.getConnection(getDatabaseURL() );
+		try (Connection conn = DriverManager.getConnection(DB_URL );
 		        Statement stmt = conn.createStatement()) {
 			
 		    // create a new table if not exist 
@@ -72,7 +67,7 @@ public class UserDAOSQLite implements UserDAO {
 		String insertStmt = "INSERT INTO users(userid,inetaddress,username) VALUES(?,?,?)" ; 
 
 	    
-	    try(Connection conn = DriverManager.getConnection(getDatabaseURL() ); 
+	    try(Connection conn = DriverManager.getConnection(DB_URL ); 
 	    		PreparedStatement pstmt = conn.prepareStatement(insertStmt))
 	    {
 	        pstmt.setBytes(1, u.getId().getId());
@@ -89,7 +84,7 @@ public class UserDAOSQLite implements UserDAO {
 	{
 		String deleteStmt = "DELETE FROM users where userid = ?" ;
 		 
-	    try(Connection conn = DriverManager.getConnection(getDatabaseURL() );
+	    try(Connection conn = DriverManager.getConnection(DB_URL );
 	    		PreparedStatement pstmt = conn.prepareStatement(deleteStmt))
 	    {
 	        pstmt.setBytes(1, u.getId().getId());
@@ -103,7 +98,7 @@ public class UserDAOSQLite implements UserDAO {
 	{
 		String updateStmt = "UPDATE users SET inetaddress = ?, username = ? WHERE userid = ?" ;
 		 
-	    try(Connection conn = DriverManager.getConnection(getDatabaseURL() );
+	    try(Connection conn = DriverManager.getConnection(DB_URL );
 	    		PreparedStatement pstmt = conn.prepareStatement(updateStmt))
 	    {
 	        pstmt.setBytes(1, u.getIpAddress().getAddress());
@@ -121,7 +116,7 @@ public class UserDAOSQLite implements UserDAO {
 		
 		String deleteStmt = "DELETE FROM users" ; 
 	
-	try (Connection conn = DriverManager.getConnection(getDatabaseURL() );
+	try (Connection conn = DriverManager.getConnection(DB_URL );
 	        Statement stmt = conn.createStatement()) {
 		
 	    stmt.execute(deleteStmt);
@@ -140,7 +135,7 @@ public class UserDAOSQLite implements UserDAO {
 		
 		Optional<User> userToAdd = null ; 
 		
-       try (Connection conn = DriverManager.getConnection(getDatabaseURL() );
+       try (Connection conn = DriverManager.getConnection(DB_URL );
     		   PreparedStatement pstmt = conn.prepareStatement(query)){
     	   pstmt.setBytes(1,id.getId());  
     	   ResultSet rs = pstmt.executeQuery();
@@ -171,7 +166,7 @@ public class UserDAOSQLite implements UserDAO {
 		
 		ArrayList<User> res = new ArrayList<User>() ; 
 		
-       try (Connection conn = DriverManager.getConnection(getDatabaseURL() );
+       try (Connection conn = DriverManager.getConnection(DB_URL );
     		   Statement stmt = conn.createStatement()){
 
     	   ResultSet rs = stmt.executeQuery(query);
@@ -200,9 +195,7 @@ public class UserDAOSQLite implements UserDAO {
 		
 		String query = "SELECT * FROM users WHERE username = ?" ;  
 		
-		Optional<User> userToAdd = null ; 
-		
-       try (Connection conn = DriverManager.getConnection(getDatabaseURL() );
+       try (Connection conn = DriverManager.getConnection(DB_URL );
     		   PreparedStatement pstmt = conn.prepareStatement(query)){
     	   pstmt.setString(1,username);  
     	   ResultSet rs = pstmt.executeQuery();

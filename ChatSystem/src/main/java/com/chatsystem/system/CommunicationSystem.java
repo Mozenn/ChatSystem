@@ -97,9 +97,9 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		
 		notifyLocalUsers(); 
 		
-		notifyWebService();
+		notifyStartWebService();
 		
-		//distantUsersFetcher = new DistantUsersFetcher(this) ; 
+		distantUsersFetcher = new DistantUsersFetcher(this) ; 
 		
 		bRunning = true ; 
 	}
@@ -116,7 +116,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		
 		var t = new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 
 		
-		// TODO make post request to presence service to indicate Disconnection 
+		notifyCloseWebService() ; 
 		
 		try {
 			t.getThread().join();
@@ -416,7 +416,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 
 	}
 	
-	private void notifyWebService()
+	private void notifyStartWebService()
 	{
 		
 		HttpClient httpClient = HttpClient.newBuilder()
@@ -435,6 +435,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
                 .POST(HttpRequest.BodyPublishers.ofString(userAsString))
                 .uri(URI.create(PRESENCESERVICE_URL))
                 .header("Content-Type", "application/json")
+                .setHeader("COMMUNICATION", "CO")
                 .build();
         
         try {
@@ -454,6 +455,39 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+        
+	}
+	
+	private void notifyCloseWebService()
+	{
+		
+		HttpClient httpClient = HttpClient.newBuilder()
+	            .version(HttpClient.Version.HTTP_2)
+	            .build();
+		
+		String userAsString;
+		try {
+			userAsString = new String(SerializationUtility.serializeUser(this.user));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return ; 
+		}  
+		
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(userAsString))
+                .uri(URI.create(PRESENCESERVICE_URL))
+                .header("Content-Type", "application/json")
+                .setHeader("COMMUNICATION", "DC")
+                .build();
+        
+        try {
+			httpClient.send(request, BodyHandlers.ofString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        
         
 	}
 
@@ -647,10 +681,31 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	
 	private boolean checkUsernameAvailability(String username )
 	{
-		boolean res = true ; // TODO  Change to false 
+		boolean res = false ; 
 		
-		// TODO Make post request and check response 
+		HttpClient httpClient = HttpClient.newBuilder()
+	            .version(HttpClient.Version.HTTP_2)
+	            .build();
 		
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(username))
+                .uri(URI.create(PRESENCESERVICE_URL))
+                .header("Content-Type", "text/plain")
+                .setHeader("COMMUNICATION", "CU")
+                .build();
+        
+
+			HttpResponse<String> response;
+			
+			try {
+				response = httpClient.send(request, BodyHandlers.ofString());
+				
+				res = response.statusCode() == 200 ; 
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
+				
+			}
+			
 		return res ;
 	}
 

@@ -10,8 +10,6 @@
 		- Deploy on INSA server 
 	
 - Presence server 
-- Fixe Database 
-	- use context path 
 
 - change Username 
 - Settings window 
@@ -48,8 +46,6 @@
 	- observer between localsystem and sessions ? 
 
 - Presence server 
-	- dao	
-		- make dao factory 
 	- Polish 
 		- use SLF4J for log 
 		- Use JPA & Hibernate 
@@ -99,6 +95,7 @@
 	- Use android Studio 
 	- see what can be kept 
 
+{"id"\:{"id"\:"CgAnAAAa"},"ipAddress"\:"192.168.56.1","username"\:"name"}
 
 # Perf 
 	- Multithread dao 

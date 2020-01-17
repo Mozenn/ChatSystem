@@ -25,7 +25,7 @@ public class DAOSQLite implements DAO {
 	{
 		Properties appProps = PropertiesUtility.getAppProperties() ; 
 		
-		DB_URL = appProps.getProperty("dbURL") ; 
+		DB_URL = appProps.getProperty("dbStartURL") + PropertiesUtility.getConfigPath() + appProps.getProperty("dbName") ; 
 		
 		String driver = appProps.getProperty("driverClassName") ; 
 		
