@@ -14,6 +14,8 @@ public interface SystemModel {
 	
 	public void clearSystemListeners() ; 
 	
-	Optional<User> getUser(); 
+	public Optional<User> getUser(); 
+	
+	public String getDownloadPath() ; 
 
 }

@@ -2,17 +2,17 @@
 
 - Test Home 
 	- Deploy Client 
+	- deploy .war on localhost (see tuto) 
 - Test INSA
 	- .jar client 
 	- Distant Session 
+	- changeUsername
+	- File download 
 	- Presence Server 
 		- Local 
 		- Deploy on INSA server 
 	
 - Presence server 
-
-- change Username 
-- Settings window 
 
 
 # Deploy
@@ -29,13 +29,6 @@
 		- Use Icon for buttons (use labels & source folder)
 	- Message 
 		- polish displayed timestamp 
-	- Settings window (in edit menu)
-		- profil sub window 
-			- change username button 
-		- other sub window 
-			- download path 
-	- changeUsername 
-		- Reuse createProfileWindow 
 	
 
 - LocalCommunication 

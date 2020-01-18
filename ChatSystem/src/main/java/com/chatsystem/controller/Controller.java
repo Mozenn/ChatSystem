@@ -13,11 +13,13 @@ import com.chatsystem.model.SystemContract;
 import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
+import com.chatsystem.view.ChangeUsernameWindow;
 import com.chatsystem.view.CreateUserWindow;
 import com.chatsystem.view.JChatPanel;
 import com.chatsystem.view.JSessionPanel;
 import com.chatsystem.view.JUserPanel;
 import com.chatsystem.view.MainWindow;
+import com.chatsystem.view.SettingsWindow;
 import com.chatsystem.view.View;
 
 public class Controller implements ControllerContract{
@@ -73,9 +75,14 @@ public class Controller implements ControllerContract{
         model.start();
     }
 	
-	public void changeUsername(String newUsername)
+	public boolean changeUsername(String newUsername)
 	{
-		boolean res = model.changeUname(newUsername);
+		return model.changeUname(newUsername);
+	}
+	
+	public void changeDownloadPath(String newPath)
+	{
+		model.changeDownloadPath(newPath);
 	}
 	
 	public void startSession(User receiver)
@@ -143,7 +150,6 @@ public class Controller implements ControllerContract{
 				if(createLocalUser(username))
 				{
 					closeCreateUserWindow();
-					openMainWindow() ; 
 				}
 				else
 				{
@@ -162,8 +168,41 @@ public class Controller implements ControllerContract{
 		}
 		else if(e.getActionCommand().equals(MainWindow.CHANGEUNAME_ACTIONCOMMAND)) 
 		{
-			view.openCreateUserWindow() ; 
-			// TODO 
+			view.openChangeUsernameWindow() ; 
+			
+		}
+		else if(e.getActionCommand().equals(ChangeUsernameWindow.CHECK_CHANGEUSERNAME_ACTIONCOMMAND)) 
+		{
+			ChangeUsernameWindow cuw = (ChangeUsernameWindow) e.getSource() ;
+			
+			String username = cuw.getTextField().getText() ; 
+			
+			if(username.length() <= User.MAX_NAME_SIZE && username.length() > 0 ) 
+			{
+				if(createLocalUser(username))
+				{
+					view.closeChangeUsernameWindow() ; 
+				}
+				else
+				{
+					cuw.showUnavailableUsernameError();
+				}
+			}
+			else
+			{
+				if(username.equals(""))
+					cuw.showEmptyUsernameError();
+				else
+				{
+					cuw.showTooLongUsernameError();
+				}
+			}
+		}
+		else if(e.getActionCommand().equals(SettingsWindow.CHANGE_DOWNLOADPATH_ACTIONCOMMAND)) 
+		{
+			SettingsWindow sw = (SettingsWindow) e.getSource() ;
+			
+			changeDownloadPath(sw.getDownloadPath());
 			
 		}
 		

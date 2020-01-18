@@ -13,6 +13,7 @@ import com.chatsystem.controller.ControllerContract;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
+import com.chatsystem.model.SystemContract;
 import com.chatsystem.model.SystemListener;
 import com.chatsystem.model.SystemModel;
 import com.chatsystem.user.User;
@@ -20,7 +21,8 @@ import com.chatsystem.user.User;
 public class View implements ActionListener, SystemListener, SessionListener{
 	
 	private MainWindow mainWindow ; 
-	private CreateUserWindow createUserWindow ; 
+	private CreateUserWindow createUserWindow ;
+	private ChangeUsernameWindow changeUsernameWindow ; 
 	private ControllerContract controller ; 
 	private SystemModel systemModel ; 
 	
@@ -40,6 +42,7 @@ public class View implements ActionListener, SystemListener, SessionListener{
 	{
 		mainWindow = new MainWindow();
 		mainWindow.addActionListener(controller) ; 
+		mainWindow.addActionListener(this);
 		mainWindow.setVisible(true);
 		mainWindow.getChatPanel().addActionListener(this);
 		mainWindow.getChatPanel().addChatListener(controller);
@@ -59,7 +62,36 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		createUserWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE) ; 
 		createUserWindow.setVisible(false);
 		createUserWindow.dispose();
+		createUserWindow = null ; 
 	}
+	
+	public void openChangeUsernameWindow()
+	{
+		changeUsernameWindow = new ChangeUsernameWindow();
+		changeUsernameWindow.addActionListener(controller) ; 
+		changeUsernameWindow.setVisible(true);
+
+	}
+	
+	public void closeChangeUsernameWindow()
+	{
+		changeUsernameWindow.setVisible(false);
+		changeUsernameWindow.dispose();
+		changeUsernameWindow = null ; 
+	}
+	
+	public void openSettingsWindow()
+	{
+		if(systemModel.getUser().isPresent())
+		{
+			SettingsWindow settingsWindow = new SettingsWindow(systemModel.getUser().get().getUsername(),systemModel.getDownloadPath());
+			settingsWindow.addActionListener(controller) ; 
+			settingsWindow.setVisible(true);
+		}
+
+
+	}
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -100,6 +132,11 @@ public class View implements ActionListener, SystemListener, SessionListener{
 			JUserPanel up = (JUserPanel) e.getSource(); 
 			
 			up.makeInactive();
+			
+		}
+		else if(e.getActionCommand().equals(MainWindow.OPENSETTINGS_ACTIONCOMMAND)) 
+		{
+			openSettingsWindow() ; 
 			
 		}
 			

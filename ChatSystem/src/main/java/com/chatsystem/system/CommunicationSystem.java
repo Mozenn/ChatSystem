@@ -10,10 +10,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.io.File;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.DatagramPacket;
 import java.util.HashMap;
 import java.util.List;
@@ -129,7 +131,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		distantUsersFetcher.stopRun() ; 
 	}
 	
-	// ---------- COMMUNICATION 
+	// ===================  COMMUNICATION ==============================
 	
 	// CONNECTION 
 	
@@ -143,7 +145,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		new NotifyConnectionResponseTask(this,packet);
 	}
 	
-	// SESSIONS 
+	/// ===================  SESSIONS ==============================
 	
 	protected void onLocalSessionRequest(DatagramPacket packet) throws IOException 
 	{
@@ -296,6 +298,9 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 
 	}
 	
+	
+	// ===================  DOWNLOAD ==============================
+	
 	@Override
 	public void downloadFile(UserId senderId, Timestamp date) 
 	{
@@ -340,7 +345,39 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		
 	}
 	
-	// USERS 
+	@Override
+	public void changeDownloadPath(String newPath)
+	{
+		this.downloadPath = newPath ; 
+		
+		Properties properties ; 
+		
+		try {
+			properties = PropertiesUtility.getAppProperties() ;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ; 
+		} 
+		
+		properties.setProperty("downloadPath", newPath) ; 
+		
+		try {
+			PropertiesUtility.saveAppProperties(properties) ;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
+		System.out.println("CommunicationSystem DownloadPath Changed") ; 
+		
+	}
+	
+	@Override 
+	public String getDownloadPath()
+	{
+		return this.downloadPath ; 
+	}
+	
+	// ===================  USERS ==============================
 	
 	protected void addLocalUser(User u) 
 	{
@@ -476,6 +513,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(userAsString))
                 .uri(URI.create(PRESENCESERVICE_URL))
+                .timeout(Duration.ofSeconds(2)) 
                 .header("Content-Type", "application/json")
                 .setHeader("COMMUNICATION", "DC")
                 .build();
@@ -492,7 +530,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	}
 
 	
-	// --------- LISTENERS 
+	// ===================  LISTENER ==============================
 	
 	@Override
 	public void addSystemListener(SystemListener sl) {
@@ -554,7 +592,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		}
 	}
 	
-	//---------- LOCAL USER 
+	// ===================  LOCAL USER ==============================
 	
 	@Override
 	public Optional<User> getUser() 
@@ -701,7 +739,10 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 				response = httpClient.send(request, BodyHandlers.ofString());
 				
 				res = response.statusCode() == 200 ; 
-			} catch (IOException | InterruptedException e) {
+			} catch (ConnectException e){
+				res = true ; 
+			}
+			catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 				
 			}

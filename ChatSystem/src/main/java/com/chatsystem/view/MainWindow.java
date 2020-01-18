@@ -63,6 +63,7 @@ public class MainWindow extends JFrame implements ActionEmitter {
 	
 	public static final String CLOSEMAINWINDOW_ACTIONCOMMAND = "CloseMainWindow" ; 
 	public static final String CHANGEUNAME_ACTIONCOMMAND = "ChangeUname" ; 
+	public static final String OPENSETTINGS_ACTIONCOMMAND = "OpenSettings" ; 
 	
 	public void addActionListener(ActionListener l)
 	{
@@ -108,13 +109,44 @@ public class MainWindow extends JFrame implements ActionEmitter {
 		var fileMenu = new JMenu("File") ; 
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		var exitMenuItem = new JMenuItem("Exit");
+		exitMenuItem.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,CLOSEMAINWINDOW_ACTIONCOMMAND)));
+				dispose();
+				setVisible(false);
+				
+			} });
 		fileMenu.add(exitMenuItem);
 		mainMenuBar.add(fileMenu); 
 		
 		var editMenu = new JMenu("Edit") ; 
 		editMenu.setMnemonic(KeyEvent.VK_E);
 		var ChangeUsernameItem = new JMenuItem("Change Username");
+		ChangeUsernameItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,CHANGEUNAME_ACTIONCOMMAND)));
+				
+			}
+			
+		});
 		editMenu.add(ChangeUsernameItem);
+		
+		var SettingsItem = new JMenuItem("Settings");
+		SettingsItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,OPENSETTINGS_ACTIONCOMMAND)));
+				
+			}
+			
+		});
+		editMenu.add(SettingsItem);
+		
 		mainMenuBar.add(editMenu); 
 		
 		setJMenuBar(mainMenuBar);
@@ -124,7 +156,7 @@ public class MainWindow extends JFrame implements ActionEmitter {
 		ongoingSessionPannel = new JPanel();
 				
 		JScrollPane sessionScrollPane = new JScrollPane(ongoingSessionPannel);
-		sessionScrollPane.setMinimumSize(new Dimension(100, 500));
+		sessionScrollPane.setMinimumSize(new Dimension(300, 500));
 		sessionScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 		GridBagConstraints gbc_sessionScrollPane = new GridBagConstraints();
 		gbc_sessionScrollPane.gridheight = 1;
@@ -144,7 +176,7 @@ public class MainWindow extends JFrame implements ActionEmitter {
 		
 		JScrollPane connectedUserScrollPane = new JScrollPane(connectedUserPannel);
 		connectedUserScrollPane.getVerticalScrollBar().setUnitIncrement(20);
-		connectedUserScrollPane.setMinimumSize(new Dimension(100, 500));
+		connectedUserScrollPane.setMinimumSize(new Dimension(300, 500));
 		GridBagConstraints gbc_connectedUserScrollPane = new GridBagConstraints();
 		gbc_connectedUserScrollPane.insets = new Insets(0, 0, 5, 0);
 		gbc_connectedUserScrollPane.gridheight = 1;

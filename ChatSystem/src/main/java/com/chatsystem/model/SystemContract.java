@@ -27,6 +27,8 @@ public interface SystemContract extends SystemModel{
 	
 	public void downloadFile(UserId senderId, Timestamp date) ; 
 	
+	public void changeDownloadPath(String newPath) ; 
+	
 	public void start();
 	
 	public void close();

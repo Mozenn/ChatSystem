@@ -14,7 +14,6 @@ public final class PropertiesUtility {
 	{
 		Properties properties = new Properties();
 		String path = Thread.currentThread().getContextClassLoader().getResource("").getPath() + "app.properties";
-		System.out.println("PATH BEGIN "+ path) ; 
 		FileInputStream in = new FileInputStream(path);
 		properties.load(in);
 		
@@ -24,7 +23,6 @@ public final class PropertiesUtility {
 	public static void saveAppProperties(Properties newProperties) throws IOException
 	{
 		String path = Thread.currentThread().getContextClassLoader().getResource("").getPath() + "app.properties";
-		System.out.println("PATH "+ path) ; 
 		FileOutputStream out = new FileOutputStream(path);
 		newProperties.store(out, null);
 	}

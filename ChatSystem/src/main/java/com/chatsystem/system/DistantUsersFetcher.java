@@ -18,6 +18,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.net.ConnectException;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.io.OutputStream;
@@ -68,11 +69,14 @@ public class DistantUsersFetcher extends Thread{
 						system.addDistantUser(u);
 					}
 				}
+			}  catch(ConnectException e ){
+				e.addSuppressed(e);
 			} catch (IOException e) {
+	        
 				e.printStackTrace();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			} 
 			
 			lastTimestamp.setTime(new Date().getTime());
 			
