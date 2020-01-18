@@ -9,10 +9,9 @@ public class SystemMessage extends Message{
 		CO("CO"), // connection
 		CR("CR"), // connectionResponse
 		DC("DC"), // disconnection 
-		GU("GU"), // getDistantUsers
-		CV("CV"), // checkUsernameValidity
 		SS("SS"),  // startSession	
 		SR("SR"),  // startSessionResponse
+		CU("CU"),   // changeUsername
 		CS("CS");  // closeSession 
 		
 	    private String type;

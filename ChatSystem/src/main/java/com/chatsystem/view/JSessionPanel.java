@@ -55,6 +55,7 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 	
 	private JButton closeButton ; 
 	private JButton displayButton ; 
+	private JLabel usernameLabel ; 
 	private ArrayList<ActionListener> actionListeners ; 
 	
 	public static final String CLOSE_ACTIONCOMMAND = "Close" ; 
@@ -73,7 +74,7 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 		setBackground(new Color(211,211,211));
 		setBorder(new LineBorder(new Color(105, 105, 105), 1, true));
 		
-		JLabel usernameLabel = new JLabel(s.getReceiver().getUsername());
+		usernameLabel = new JLabel(s.getReceiver().getUsername());
 		add(usernameLabel);
 		
 		displayButton = new JButton("Display");
@@ -151,6 +152,13 @@ public class JSessionPanel extends JPanel implements ActionListener, SessionList
 	private void setVisualState(SessionPanelVisualState state)
 	{
 		this.visualState = state ; 
+	}
+	
+	public void SetUsernameLabelText(String newText)
+	{
+		usernameLabel.setText(newText);
+		usernameLabel.repaint(); 
+		usernameLabel.validate();
 	}
 
 }

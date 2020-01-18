@@ -13,4 +13,6 @@ public interface SystemListener extends EventListener{
 	public void userConnection(User u); 
 	
 	public void userDisconnection(User u); 
+	
+	public void usernameChanged(User u) ; 
 }

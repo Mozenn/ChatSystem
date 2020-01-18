@@ -46,7 +46,7 @@ final class DistantCommunicationTask implements Runnable {
 						User u = SerializationUtility.deserializeUser(msg.getContent()) ; 
 						
 						System.out.println("DistantCommunicationListener CO received ");
-						system.addDistantUser(u); // TODO implement observer pattern 
+						system.addDistantUser(u);
 						
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -60,7 +60,7 @@ final class DistantCommunicationTask implements Runnable {
 						User u = SerializationUtility.deserializeUser(msg.getContent()) ; 
 						
 						System.out.println("DistantCommunicationListener DC received ");
-						system.removeDistantUser(u); // TODO implement observer pattern 
+						system.removeDistantUser(u); 
 						
 					} catch (IOException e) {
 						e.printStackTrace();

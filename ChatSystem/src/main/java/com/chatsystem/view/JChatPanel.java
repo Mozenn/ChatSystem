@@ -304,6 +304,9 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 	
 	public void ChangeConversation(User newSender, User newReceiver,List<UserMessage> messages)
 	{
+		if(currentReceiver.equals(newReceiver))
+			return ; 
+		
 		clear();
 
 		sendTextButton.setEnabled(true);
@@ -379,7 +382,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 		messageScrollPane.repaint();
 	}
 	
-	public void UpdateConversation(UserMessage newMessage)
+	public void addMessage(UserMessage newMessage)
 	{
 		if(newMessage.getSubtype().equals(UserMessage.UserMessageType.TX))
 		{

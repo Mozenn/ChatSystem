@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -207,6 +208,85 @@ public class MainWindow extends JFrame implements ActionEmitter {
 		
 		actionListeners = new ArrayList<ActionListener>();
 		
+
+	}
+	
+	
+	public Optional<JUserPanel> getUserPanel(User u)
+	{
+		boolean isFound = false ; 
+		int index = 0 ; 
+		Optional<JUserPanel> panel = Optional.ofNullable(null); 
+		
+		JUserPanel[] components = (JUserPanel[]) connectedUserPannel.getComponents() ;
+		
+		while(index < components.length && !isFound)
+		{
+			if(components[index].getUser().equals(u))
+			{
+				panel = Optional.of(components[index]) ; 
+				isFound = true ; 
+			}
+			
+			index++ ; 
+		}
+		
+		return panel ; 
+	}
+	
+	public Optional<JSessionPanel> getSessionPanel(User receiver)
+	{
+		boolean isFound = false ; 
+		int index = 0 ; 
+		Optional<JSessionPanel> panel = Optional.ofNullable(null); 
+		
+		JSessionPanel[] components = (JSessionPanel[]) ongoingSessionPannel.getComponents() ;
+		
+		while(index < components.length && !isFound)
+		{
+			if(components[index].getSessionModel().getReceiver().equals(receiver))
+			{
+				panel = Optional.of(components[index]) ; 
+				isFound = true ; 
+			}
+			
+			index++ ; 
+		}
+		
+		return panel ;  
+	}
+	
+	
+	public void removeUserPanel(User u)
+	{
+		var uPanel = getUserPanel(u) ; 
+		
+		if(uPanel.isPresent())
+		{
+			connectedUserPannel.remove(uPanel.get());
+			connectedUserPannel.repaint();
+			connectedUserPannel.validate();
+		}
+	}
+	
+	public void removeSessionPanel(User receiver)
+	{
+		var sPanel = getSessionPanel(receiver) ; 
+		
+		if(sPanel.isPresent())
+		{
+			ongoingSessionPannel.remove(sPanel.get());
+			ongoingSessionPannel.repaint();
+			ongoingSessionPannel.validate();
+		}
+	}
+	
+	public void removeSessionPanel(JSessionPanel jsp)
+	{
+
+		ongoingSessionPannel.remove(jsp);
+		ongoingSessionPannel.repaint();
+		ongoingSessionPannel.validate();
 
 	}
 

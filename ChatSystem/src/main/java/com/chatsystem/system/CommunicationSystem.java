@@ -383,7 +383,11 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	{
 		synchronized(localUsers)
 		{
-			if(localUsers.containsKey(u.getId()))
+			
+			if( u.getId().equals(this.user.getId()))
+				return ; 
+			
+			if(localUsers.containsKey(u.getId()) && localUsers.get(u.getId()).getUsername().equals(u.getUsername()))
 				return ; 
 			
 			localUsers.put(u.getId(),u);
@@ -420,7 +424,10 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	{
 		synchronized(distantUsers)
 		{
-			if(distantUsers.containsKey(u.getId()) || u.getId().equals(this.user.getId()))
+			if( u.getId().equals(this.user.getId()))
+				return ; 
+			
+			if(distantUsers.containsKey(u.getId()) && distantUsers.get(u.getId()).getUsername().equals(u.getUsername())) // if user already contained && username has not changed 
 				return ; 
 			
 			distantUsers.put(u.getId(),u);
@@ -701,8 +708,13 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		{
 			user.setUsername(newName);
 			
-			// TODO multicast notify change to all local users 
-			// notify view 
+			
+			// multicast username change 
+			new NotifyChangeUsernameTask(this) ; 
+			
+			
+			//TODO notify view 
+			
 		}
 
 

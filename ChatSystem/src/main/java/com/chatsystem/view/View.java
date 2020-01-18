@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -101,29 +102,18 @@ public class View implements ActionListener, SystemListener, SessionListener{
 			JSessionPanel js = (JSessionPanel) e.getSource(); 
 			
 			
-			for (Component c : mainWindow.getConnectedUserPannel().getComponents()) {
-			    if (c instanceof JUserPanel ) { 
-			       JUserPanel up = (JUserPanel)c ; 
-			       if(up.getUser().equals(js.getSessionModel().getReceiver()))
-			       {
-			    	   up.makeActive();
-			       }
-			    }
-			}
+			Optional<JUserPanel> uPanel = mainWindow.getUserPanel(js.getSessionModel().getReceiver()) ;  
 			
-			mainWindow.getOngoingSessionPannel().remove(js);
-	    	mainWindow.getOngoingSessionPannel().validate();
-	    	mainWindow.getOngoingSessionPannel().repaint();
-	    	mainWindow.getChatPanel().clear(); 
+			if(uPanel.isPresent())
+				uPanel.get().makeActive();
+			
+			mainWindow.removeSessionPanel(js);
 		}
 		else if(e.getActionCommand().equals(JSessionPanel.DISPLAY_ACTIONCOMMAND)) 
 		{
 			JSessionPanel js = (JSessionPanel) e.getSource(); 
 			
-			if(!mainWindow.getChatPanel().getCurrentReceiver().equals(js.getSessionModel().getReceiver()))
-			{
-				mainWindow.getChatPanel().ChangeConversation(js.getSessionModel().getEmitter(),js.getSessionModel().getReceiver(), js.getSessionModel().getMessages()); 
-			}
+			mainWindow.getChatPanel().ChangeConversation(js.getSessionModel().getEmitter(),js.getSessionModel().getReceiver(), js.getSessionModel().getMessages()); 
 			
 			
 		}
@@ -167,70 +157,66 @@ public class View implements ActionListener, SystemListener, SessionListener{
 
 	@Override
 	public void sessionStarted(SessionModel sm) {
+		
 		addSessionPanel(sm);
+		
 		mainWindow.getChatPanel().ChangeConversation(sm.getEmitter(),sm.getReceiver(), sm.getMessages()); 
 		
-		for (Component c : mainWindow.getConnectedUserPannel().getComponents()) {
-		    if (c instanceof JUserPanel ) { 
-		       JUserPanel up = (JUserPanel)c ; 
-		       if(up.getUser().equals(sm.getReceiver()))
-		       {
-		    	   up.makeInactive();
-		       }
-		    }
+		var uPanel = mainWindow.getUserPanel(sm.getReceiver()) ; 
+		
+		if(uPanel.isPresent())
+		{
+			uPanel.get().makeInactive();
 		}
 	}
 
 	@Override
 	public void sessionClosed(SessionModel sm) {
 		
-		for (Component c : mainWindow.getOngoingSessionPannel().getComponents()) {
-		    if (c instanceof JSessionPanel ) { 
-		    	JSessionPanel sp = (JSessionPanel)c ; 
-		       if(sp.getSessionModel().getReceiver().equals(sm.getReceiver()))
-		       {
-		    	   sp.getSessionModel().clearSessionListeners();
-		    	   mainWindow.getOngoingSessionPannel().remove(sp) ; 
-		    	   mainWindow.getOngoingSessionPannel().validate();
-		    	   mainWindow.getOngoingSessionPannel().repaint();
-				
-		       }
-		    }
+		Optional<JSessionPanel> sPanel = mainWindow.getSessionPanel(sm.getReceiver()) ; 
+		
+		if(sPanel.isPresent())
+		{
+			sPanel.get().getSessionModel().clearSessionListeners();
+			 mainWindow.getOngoingSessionPannel().remove(sPanel.get()) ;  
 		}
 		
-		for (Component c2 : mainWindow.getConnectedUserPannel().getComponents()) {
-		    if (c2 instanceof JUserPanel ) { 
-		       JUserPanel up = (JUserPanel)c2 ; 
-		       if(up.getUser().equals(sm.getReceiver()))
-		       {
-		    	   up.makeActive();
-		       }
-		    }
-		}
+		Optional<JUserPanel> uPanel = mainWindow.getUserPanel(sm.getReceiver()) ;  
+		
+		if(uPanel.isPresent())
+			uPanel.get().makeActive();
 		
 		mainWindow.getChatPanel().clear() ; 
 	}
 
 	@Override
 	public void userConnection(User u) {
-		addConnectedUserPanel(u);
+		
+		var uPanel = mainWindow.getUserPanel(u) ;
+		
+		if(uPanel.isPresent())
+		{
+			uPanel.get().setUsernameLabelText(u.getUsername()) ; 
+			
+			var sPanel = mainWindow.getSessionPanel(u) ; 
+			
+			if(sPanel.isPresent())
+			{
+				sPanel.get().SetUsernameLabelText(u.getUsername());
+			}
+		}
+		else
+		{
+			addConnectedUserPanel(u);
+		}
+		
 		
 	}
 
 	@Override
 	public void userDisconnection(User u) {
 		
-		for (Component c : mainWindow.getConnectedUserPannel().getComponents()) {
-		    if (c instanceof JUserPanel ) { 
-		       JUserPanel up = (JUserPanel)c ; 
-		       if(up.getUser().equals(u))
-		       {
-		    	   mainWindow.getConnectedUserPannel().remove(up);
-			       mainWindow.getConnectedUserPannel().validate();
-			       mainWindow.getConnectedUserPannel().repaint();
-		       }
-		    }
-		}
+		mainWindow.removeUserPanel(u);
 		
 	}
 
@@ -239,8 +225,14 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		if(mainWindow.getChatPanel().getCurrentReceiver().getId().equals(m.getSenderId()) || mainWindow.getChatPanel().getCurrentReceiver().getId().equals(m.getReceiverId()))
 		{
 			System.out.println("View Message Received");
-			mainWindow.getChatPanel().UpdateConversation(m);
+			mainWindow.getChatPanel().addMessage(m);
 		}
+	}
+
+	@Override
+	public void usernameChanged(User u) {
+		// TODO update JChatPanel 
+		
 	}
     
 }

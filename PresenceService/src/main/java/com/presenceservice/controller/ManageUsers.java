@@ -248,6 +248,12 @@ public class ManageUsers extends HttpServlet {
 			
 			if(!isAvailable)
 				response.setStatus(400);
+			else
+			{
+				// TODO modify username in database + in hashmap 
+				
+				lastModificationDate.setTime(new Date().getTime()); 
+			}
 		}
 		
 

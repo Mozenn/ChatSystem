@@ -69,7 +69,7 @@ final class DistantSessionListener extends Thread {
 						if(sMsg.getSubtype().equals(SystemMessage.SystemMessageType.CS))
 						{
 							System.out.println("DistantSessionListener close Session received") ; 
-							session.closeSession(); // TODO Use ObserverPattern 
+							session.closeSession(); 
 							return ; 
 						}
 					}
@@ -87,7 +87,7 @@ final class DistantSessionListener extends Thread {
 				}
 
 				System.out.println("DistantSession Message Received");
-				session.addMessage(msg);	// TODO implement observer 	
+				session.addMessage(msg);	
 				
 			} catch (IOException e1) {
 				e1.printStackTrace();

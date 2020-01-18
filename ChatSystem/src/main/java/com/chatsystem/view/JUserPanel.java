@@ -23,10 +23,24 @@ public class JUserPanel extends JPanel implements ActionListener, ActionEmitter{
 	
 	private User user ; 
 	private JButton startSessionButton ; 
+	private JLabel usernameLabel ; 
 	private ArrayList<ActionListener> actionListeners ; 
 	
 	public static final String STARTSESSION_ACTIONCOMMAND = "StartSession" ; 
 
+	
+	public JLabel getUsernameLabel()
+	{
+		return this.usernameLabel ; 
+	}
+	
+	public void setUsernameLabelText(String newText)
+	{
+		usernameLabel.setText(newText);
+		usernameLabel.repaint(); 
+		usernameLabel.validate();
+	}
+	
 	/**
 	 * Create the panel.
 	 */
@@ -54,15 +68,15 @@ public class JUserPanel extends JPanel implements ActionListener, ActionEmitter{
 		gbc_userButton.gridy = 1;
 		add(startSessionButton, gbc_userButton);
 		
-		JLabel lblNewLabel = new JLabel(user.getUsername());
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel usernameLabel = new JLabel(user.getUsername());
+		usernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.weighty = 1.0;
 		gbc_lblNewLabel.weightx = 1.0;
 		gbc_lblNewLabel.fill = GridBagConstraints.BOTH;
 		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 0;
-		add(lblNewLabel, gbc_lblNewLabel);
+		add(usernameLabel, gbc_lblNewLabel);
 		
 		actionListeners = new ArrayList<ActionListener>();
 

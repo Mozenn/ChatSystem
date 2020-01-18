@@ -82,7 +82,7 @@ public class LocalSessionListener extends Thread{
 					if(sMsg.getSubtype().equals(SystemMessage.SystemMessageType.CS))
 					{
 						System.out.println("LocalSessionListener close Session received") ; 
-						session.closeSession(); // TODO Use ObserverPattern 
+						session.closeSession();
 						return ; 
 					}
 				}
@@ -100,7 +100,7 @@ public class LocalSessionListener extends Thread{
 			}
 
 			System.out.println("LocalSession Message Received");
-			session.addMessage(msg);	// TODO implement observer 		
+			session.addMessage(msg);
 		}
 		
 		socket.close(); 

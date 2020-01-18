@@ -82,7 +82,7 @@ final class LocalCommunicationListener extends Thread {
 				case SS: // session started with current local user of localSystem  
 				{
 					try {
-						system.onLocalSessionRequest(packet); // TODO implement observer pattern 
+						system.onLocalSessionRequest(packet); 
 					} catch (IOException e) {
 						e.printStackTrace();
 						continue ; 
@@ -95,7 +95,7 @@ final class LocalCommunicationListener extends Thread {
 						// Deserialization 
 						User u = SerializationUtility.deserializeUser(msg.getContent()) ; 
 						
-						system.addLocalUser(u);  // TODO implement observer pattern 
+						system.addLocalUser(u); 
 						system.notifyConnectionResponse(packet);
 						
 					} catch (IOException e) {
@@ -124,7 +124,7 @@ final class LocalCommunicationListener extends Thread {
 					} 
 						
 					System.out.println("LocalCommunicationListener CR received ");
-					system.addLocalUser(u);// TODO implement observer pattern 
+					system.addLocalUser(u);
 					break ;
 				}
 				case DC:
@@ -144,7 +144,26 @@ final class LocalCommunicationListener extends Thread {
 					} 
 						
 					System.out.println("LocalCommunicationListener DC received ");
-					system.removeLocalUser(u);// TODO implement observer pattern 
+					system.removeLocalUser(u);
+				}
+				case CU :
+				{
+					User u;
+					try {
+						u = SerializationUtility.deserializeUser(msg.getContent());
+					} catch (JsonParseException e) {
+						e.printStackTrace();
+						return ; 
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+						return ; 
+					} catch (IOException e) {
+						e.printStackTrace();
+						return ; 
+					} 
+						
+					System.out.println("LocalCommunicationListener CU received ");
+					system.addLocalUser(u);
 				}
 
 					
