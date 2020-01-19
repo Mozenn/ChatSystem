@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import com.chatsystem.message.SystemMessage;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 
@@ -47,7 +48,7 @@ public class NotifyCloseLocalSessionTask implements Runnable{
 			return ; 
 		}
 		
-		System.out.println("NotifyCloseSession sent");
+		LoggerUtility.getInstance().info("NotifyCloseSession sent");
 		
 		
 	}

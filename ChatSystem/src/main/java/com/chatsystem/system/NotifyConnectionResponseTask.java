@@ -7,6 +7,7 @@ import java.net.InetAddress;
 
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -53,7 +54,6 @@ final class NotifyConnectionResponseTask implements Runnable {
 			msg = new SystemMessage(SystemMessage.SystemMessageType.CR, serializedUser);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("system message creation failed") ; 
 			return ; 
 		}
 		
@@ -65,12 +65,12 @@ final class NotifyConnectionResponseTask implements Runnable {
 			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, CommunicationSystem.LOCAL_LISTENING_PORT));
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("send failed") ; 
+			LoggerUtility.getInstance().warning("CommunicationSystem CR notify failed");
 			socket.close();
 			return ; 
 		}
 
-		System.out.println("CR notify sent");
+	    LoggerUtility.getInstance().info("CommunicationSystem CR notify sent");
 
 		socket.close();
 

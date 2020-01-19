@@ -43,15 +43,20 @@ public class Controller implements ControllerContract{
 			openCreateProfileWindow() ; 
 		}
 		else 
+		{
 			openMainWindow();
+			/*
+	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+	            	
+	            }
+	        }); */ 
+		}
+			
 
-		/*
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-            	
-            }
-        });
-        */
+		
+
+        
 		
 	}
 	
@@ -73,7 +78,12 @@ public class Controller implements ControllerContract{
     
     private void openMainWindow()
     {
-        createAndShowMainWindow();
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	createAndShowMainWindow();
+            }
+        });
+        
         
         model.start();
     }

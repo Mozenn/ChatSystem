@@ -9,6 +9,7 @@ import com.chatsystem.message.SystemMessage;
 import com.chatsystem.session.Session;
 import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -62,6 +63,8 @@ final class NotifyStartDistantSessionTask implements Runnable{
 			DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
 			
 			dOut.write(msgAsBytes);
+			
+			LoggerUtility.getInstance().info("NotifyStartDistantSession Sent");
 			
 		} catch (IOException e) {
 			e.printStackTrace();

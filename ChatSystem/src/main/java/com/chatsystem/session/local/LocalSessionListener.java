@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -81,7 +82,7 @@ public class LocalSessionListener extends Thread{
 					
 					if(sMsg.getSubtype().equals(SystemMessage.SystemMessageType.CS))
 					{
-						System.out.println("LocalSessionListener close Session received") ; 
+						LoggerUtility.getInstance().info("LocalSessionListener CloseSession received");
 						session.closeSession();
 						return ; 
 					}
@@ -98,8 +99,8 @@ public class LocalSessionListener extends Thread{
 				e.printStackTrace();
 				continue ; 
 			}
-
-			System.out.println("LocalSession Message Received");
+			
+			LoggerUtility.getInstance().info("LocalSessionListener Message Received");
 			session.addMessage(msg);
 		}
 		

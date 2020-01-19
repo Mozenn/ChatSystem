@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 
 final class SendDistantMessageTask implements Runnable {
@@ -31,10 +32,10 @@ final class SendDistantMessageTask implements Runnable {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("send failed") ; 
+			LoggerUtility.getInstance().info("DistantSessionMessage Failed");
 		}
 		
-		System.out.println("DistantSessionMessage sent");
+		LoggerUtility.getInstance().info("DistantSessionMessage sent");
 		
 	}
 

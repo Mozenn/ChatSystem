@@ -16,6 +16,7 @@ import com.chatsystem.session.Session;
 import com.chatsystem.session.local.NotifyCloseLocalSessionTask;
 import com.chatsystem.session.local.SendLocalMessageTask;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 
 public class DistantSession extends Session {
@@ -41,8 +42,6 @@ public class DistantSession extends Session {
 		
 		listener = new DistantSessionListener(this, socket);
 		
-		System.out.println("DistantSession Started");
-		
 		DAO dao;
 		try {
 			dao = new DAOSQLite();
@@ -52,6 +51,8 @@ public class DistantSession extends Session {
 		} 
 		
 		messages = (ArrayList<UserMessage>) dao.getHistory(receiver.getId()) ; 
+		
+		LoggerUtility.getInstance().info("DistantSession Started");
 
 	}
 
@@ -82,7 +83,8 @@ public class DistantSession extends Session {
 	protected void closeSession() {
 		listener.stopRun();
 		system.closeSession(receiver);
-
+		
+		LoggerUtility.getInstance().info("DistantSession Closed");
 	}
 	
 	@Override

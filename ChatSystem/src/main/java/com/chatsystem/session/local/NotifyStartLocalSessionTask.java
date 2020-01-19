@@ -11,6 +11,7 @@ import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.session.SessionData;
 import com.chatsystem.system.CommunicationSystem;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -63,7 +64,7 @@ class NotifyStartLocalSessionTask implements Runnable{
 			return ; 
 		}
 		
-		System.out.println("NotifyStartSession sent");
+		LoggerUtility.getInstance().info("NotifyStartLocalSession sent");
 		
 		
 		try {
@@ -78,7 +79,9 @@ class NotifyStartLocalSessionTask implements Runnable{
 			boolean bStop = false ; 
 			
 			long t = System.currentTimeMillis();
-			System.out.println("NotifyStartSession wait receive");
+
+			LoggerUtility.getInstance().info("NotifyStartLocalSession wait receive");
+			
 			while(!bStop && t - System.currentTimeMillis() < 1000)
 			{
 				socket.receive(packet);
@@ -91,20 +94,20 @@ class NotifyStartLocalSessionTask implements Runnable{
 					
 					parentSession.setReceiverPort(s.getPort()) ; 
 					
-					System.out.println("NotifyStartSession session confirmed");
+					LoggerUtility.getInstance().info("NotifyStartLocalSession session confirmed");
 					socket.close();
 					return ; 
 				}
 					
 			}
 
-			System.out.println("NotifyStartSession not received");
+			LoggerUtility.getInstance().info("NotifyStartLocalSession not received");
 			socket.close();
 			parentSession.closeSession();
 			
 		} catch (SocketTimeoutException e) { 
 			socket.close();
-			System.out.println("NotifyStartSession not received");
+			LoggerUtility.getInstance().info("NotifyStartLocalSession not received");
 			parentSession.closeSession();
 
 		}catch (IOException e) {

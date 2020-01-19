@@ -30,12 +30,11 @@ public class DAOTest {
 		
 		var messages = dao.getHistory(new UserId("u1".getBytes())) ; 
 		
-		messages.forEach( m -> System.out.println(m.getDate().toString() + " " + m.getSubtype()));
+		//messages.forEach( m -> System.out.println(m.getDate().toString() + " " + m.getSubtype()));
 		
 		assertTrue(messages.contains(m1)) ;
 		assertTrue(messages.contains(m2)) ;
 		assertTrue(new String(messages.get(0).getContent()).equals("data"));
-		System.out.println(new String(messages.get(0).getContent()));
 		
 		ConfigurationUtility.clearApplicationFolder();
 	}

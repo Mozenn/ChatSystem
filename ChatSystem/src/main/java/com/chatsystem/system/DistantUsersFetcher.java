@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 
 import java.io.DataOutputStream;
@@ -90,7 +91,7 @@ public class DistantUsersFetcher extends Thread{
 	
 	public void stopRun() 
 	{
-		System.out.println("DistantUsersFetcher Stop");
+		LoggerUtility.getInstance().info("DistantUsersFetcher Stop");
 		run.set(false);
 	}
 	

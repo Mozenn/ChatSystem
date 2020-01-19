@@ -14,6 +14,7 @@ import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SystemContract;
 import com.chatsystem.session.Session;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 
 
@@ -54,8 +55,6 @@ final public class LocalSession extends Session{
 		
 		listener = new LocalSessionListener(this, socket);
 		
-		System.out.println("LocalSession Started");
-		
 		DAO dao;
 		try {
 			dao = new DAOSQLite();
@@ -65,6 +64,8 @@ final public class LocalSession extends Session{
 		} 
 		
 		messages = (ArrayList<UserMessage>) dao.getHistory(receiver.getId()) ; 
+		
+		LoggerUtility.getInstance().info("LocalSession Started");
 	}
 	
 	@Override
@@ -94,6 +95,8 @@ final public class LocalSession extends Session{
 			socket.close();
 		*/ 
 		system.closeSession(receiver);
+		
+		LoggerUtility.getInstance().info("LocalSession Closed");
 	}
 
 	@Override

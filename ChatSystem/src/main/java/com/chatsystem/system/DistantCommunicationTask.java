@@ -8,6 +8,7 @@ import java.net.Socket;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.session.SessionData;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 
 final class DistantCommunicationTask implements Runnable {
@@ -44,8 +45,8 @@ final class DistantCommunicationTask implements Runnable {
 					try {
 						// Deserialization 
 						User u = SerializationUtility.deserializeUser(msg.getContent()) ; 
+						LoggerUtility.getInstance().info("DistantCommunicationListener CO received ");
 						
-						System.out.println("DistantCommunicationListener CO received ");
 						system.addDistantUser(u);
 						
 					} catch (IOException e) {
@@ -59,7 +60,7 @@ final class DistantCommunicationTask implements Runnable {
 						// Deserialization 
 						User u = SerializationUtility.deserializeUser(msg.getContent()) ; 
 						
-						System.out.println("DistantCommunicationListener DC received ");
+						LoggerUtility.getInstance().info("DistantCommunicationListener DC received ");
 						system.removeDistantUser(u); 
 						
 					} catch (IOException e) {
@@ -70,6 +71,8 @@ final class DistantCommunicationTask implements Runnable {
 				case SS:
 				{
 					User u = SerializationUtility.deserializeUser(msg.getContent());
+					
+					LoggerUtility.getInstance().info("DistantCommunicationListener SS received ");
 					
 					system.onDistantSessionRequest(u, clientSocket);
 				}

@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.session.Session;
 import com.chatsystem.session.SessionData;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -63,7 +64,8 @@ public class NotifyStartLocalSessionResponseTask implements Runnable {
 			return ; 
 		}
 		
-		System.out.println("NotifyStartSessionResponse sent");
+		LoggerUtility.getInstance().info("NotifyStartLocalSessionResponse sent");
+
 		
 		socket.close();
 	}

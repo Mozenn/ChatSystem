@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -31,7 +32,7 @@ final class LocalCommunicationListener extends Thread {
 		run.set(true);
 		start();
 		
-		System.out.println("Start LocalCommunicationListener") ; 
+		LoggerUtility.getInstance().info("LocalCommunicationListener Start");
 	}
 	
 	public void run() 
@@ -43,7 +44,9 @@ final class LocalCommunicationListener extends Thread {
 			try {
 				//System.out.println("LocalCommunicationListener wait receive");
 				socket.receive(packet);
-				System.out.println("LocalCommunicationListener receive done");
+				
+				LoggerUtility.getInstance().info("LocalCommunicationListener Message Received");
+				
 			} catch(SocketTimeoutException e)
 			{
 				continue ; 
@@ -67,9 +70,7 @@ final class LocalCommunicationListener extends Thread {
 			{
 				msg = SerializationUtility.deserializeSystemMessage(packet.getData()); 
 				type = msg.getSubtype(); 
-				System.out.println("LocalCommunicationListener message subtype " + type);
-				System.out.println("LocalCommunicationListener message port " + packet.getPort());
-				System.out.println();
+
 			}
 			catch(ClassCastException | IOException e) // not a system message 
 			{
@@ -97,6 +98,7 @@ final class LocalCommunicationListener extends Thread {
 						
 						system.addLocalUser(u); 
 						system.notifyConnectionResponse(packet);
+						LoggerUtility.getInstance().info("LocalCommunicationListener CO Received");
 						
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -123,7 +125,7 @@ final class LocalCommunicationListener extends Thread {
 						return ; 
 					} 
 						
-					System.out.println("LocalCommunicationListener CR received ");
+					LoggerUtility.getInstance().info("LocalCommunicationListener CR Received");
 					system.addLocalUser(u);
 					break ;
 				}
@@ -143,7 +145,7 @@ final class LocalCommunicationListener extends Thread {
 						return ; 
 					} 
 						
-					System.out.println("LocalCommunicationListener DC received ");
+					LoggerUtility.getInstance().info("LocalCommunicationListener DC Received");
 					system.removeLocalUser(u);
 				}
 				case CU :
@@ -162,7 +164,7 @@ final class LocalCommunicationListener extends Thread {
 						return ; 
 					} 
 						
-					System.out.println("LocalCommunicationListener CU received ");
+					LoggerUtility.getInstance().info("LocalCommunicationListener CU Received");
 					system.addLocalUser(u);
 				}
 
@@ -177,7 +179,7 @@ final class LocalCommunicationListener extends Thread {
 	
 	public void stopRun() 
 	{
-		System.out.println("LocalCommunicationListener Stop");
+		LoggerUtility.getInstance().info("LocalCommunicationListener Stop");
 		run.set(false);
 		try {
 			socket.leaveGroup(InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR));

@@ -39,6 +39,7 @@ import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.ConfigurationUtility;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -80,11 +81,11 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		downloadPath = properties.getProperty("downloadPath") ; 
 		if(downloadPath.equals("null"))
 			downloadPath = System.getProperty("java.io.tmpdir") ; 
+		
 	}
 	
 	public void start()
 	{
-		System.out.println("CommunicationSystem Started") ; 
 		
 		try {
 			localCommunicationListener = new LocalCommunicationListener(this);
@@ -105,6 +106,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		distantUsersFetcher = new DistantUsersFetcher(this) ; 
 		
 		bRunning = true ; 
+		
+		LoggerUtility.getInstance().info("CommunicationSystem Started");
 	}
 	
 	@Override
@@ -173,6 +176,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		{
 			sessions.put(session.getReceiver().getId(), session);
 			fireSessionStarted(session); // notify view 
+			
+			LoggerUtility.getInstance().info("CommunicationSystem Session Added");
 		}
 	}
 	
@@ -305,6 +310,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	@Override
 	public void downloadFile(UserId senderId, Timestamp date) 
 	{
+		LoggerUtility.getInstance().info("CommunicationSystem DownloadFile Start");
+		
 		Optional<UserMessage> m ; 
 		synchronized(sessions)
 		{
@@ -368,7 +375,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			e.printStackTrace();
 		} 
 		
-		System.out.println("CommunicationSystem DownloadPath Changed") ; 
+		LoggerUtility.getInstance().info("CommunicationSystem DownloadPath Changed");
 		
 	}
 	
@@ -393,7 +400,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			
 			localUsers.put(u.getId(),u);
 		}
-		System.out.println("Local User added " + u.getUsername()); 
+		LoggerUtility.getInstance().info("CommunicationSystem Local User added " + u.getUsername());
 		
 		fireuserConnection(u); // notify view 
 	}
@@ -404,7 +411,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		{
 			localUsers.remove(u.getId());
 		}
-		System.out.println("Local User removed " + u.getUsername()); 
+		
+		LoggerUtility.getInstance().info("CommunicationSystem Local User removed " + u.getUsername());
 		
 		fireuserDisconnection(u);
 		
@@ -433,7 +441,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			
 			distantUsers.put(u.getId(),u);
 		}
-		System.out.println("Distant User added " + u.getUsername()); 
+		
+		LoggerUtility.getInstance().info("CommunicationSystem Distant User added " + u.getUsername());
 		
 		fireuserConnection(u); // notify view 
 	}
@@ -444,7 +453,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		{
 			distantUsers.remove(u.getId());
 		}
-		System.out.println("Distant User removed " + u.getUsername()); 
+		
+		LoggerUtility.getInstance().info("CommunicationSystem Distant User removed " + u.getUsername());
 		
 		fireuserDisconnection(u);
 		
@@ -487,6 +497,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
         try {
 			HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
 			
+			LoggerUtility.getInstance().info("CommunicationSystem NotifyWebService CO Sent ");
+			
 			if(response.statusCode() == 200)
 			{
 				List<User> users = SerializationUtility.deserializeUsers(response.body().getBytes()) ; 
@@ -495,6 +507,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 				{
 					addDistantUser(u);
 				}
+				LoggerUtility.getInstance().info("CommunicationSystem NotifyWebService CO Received ");
 			}
 		}catch (HttpTimeoutException e) {
 			return ; 
@@ -530,13 +543,16 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
                 .build();
         
         try {
+        	LoggerUtility.getInstance().info("CommunicationSystem NotifyWebService DC Sent");
 			httpClient.send(request, BodyHandlers.ofString());
 		} catch (HttpTimeoutException e) {
 			return ; 
 		} catch (IOException e) {
 			e.printStackTrace();
+			return ; 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+			return ; 
 		}
         
         
@@ -655,6 +671,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	@Override
 	public Optional<User> createLocalUser(String username) 
 	{
+		
 		if(checkUsernameAvailability(username))
 		{
 			InetAddress ipAdd;
@@ -688,6 +705,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 				e.printStackTrace();
 			} 
 		}
+		
 		
 		return Optional.ofNullable(user); 
 	}
@@ -762,9 +780,12 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			HttpResponse<String> response;
 			
 			try {
+				LoggerUtility.getInstance().info("CommunicationSystem NotifyWebService CU Sent");
 				response = httpClient.send(request, BodyHandlers.ofString());
 				
 				res = response.statusCode() == 200 ; 
+				
+				LoggerUtility.getInstance().info("CommunicationSystem NotifyWebService CU Received");
 			} catch (HttpTimeoutException e) {
 				return true; 
 			} catch (ConnectException e){

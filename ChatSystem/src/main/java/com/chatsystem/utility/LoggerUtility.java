@@ -15,7 +15,7 @@ public class LoggerUtility {
 
 	private LoggerUtility()
 	{
-	    Logger logger = Logger.getLogger("Logger");  
+	    logger = Logger.getLogger("Logger");  
 	    
 	    FileHandler fh;  
 

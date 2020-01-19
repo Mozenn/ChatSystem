@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.chatsystem.utility.LoggerUtility;
+
 
 
 final class DistantCommunicationListener extends Thread {
@@ -28,7 +30,7 @@ final class DistantCommunicationListener extends Thread {
 		run.set(true);
 		start();
 		
-		System.out.println("Start DistantCommunicationListener") ; 
+		LoggerUtility.getInstance().info("DistantCommunicationListener Start");
 	}
 	
 	public void run() 
@@ -41,7 +43,6 @@ final class DistantCommunicationListener extends Thread {
 			try {
 				//System.out.println("DistantCommunicationListener wait receive");
 				Socket clientSocket = serverSocket.accept();
-				System.out.println("DistantCommunicationListener receive done");
 				
 				executorService.execute(new DistantCommunicationTask(clientSocket,system));
 				
@@ -64,8 +65,7 @@ final class DistantCommunicationListener extends Thread {
 	
 	public void stopRun() 
 	{
-		
-		System.out.println("DistantCommunicationListener Stop");
+		LoggerUtility.getInstance().info("DistantCommunicationListener Stop");
 		run.set(false);
 	}
 

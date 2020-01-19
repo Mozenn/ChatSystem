@@ -14,13 +14,13 @@ public class LoggerUtility {
 
 	private LoggerUtility()
 	{
-	    Logger logger = Logger.getLogger("Logger");  
+	    logger = Logger.getLogger("Logger");  
 	    
 	    FileHandler fh;  
 
 	    try {  
 
-	        fh = new FileHandler(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "chatsystem.log",limit,2);  
+	        fh = new FileHandler(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "presenceservice.log",limit,2);  
 	        
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter); 

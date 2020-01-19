@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.SystemMessage.SystemMessageType;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 
 
@@ -108,10 +109,10 @@ final class NotifyLocalUsersTask implements Runnable
 		switch(type)
 		{
 			case CONNECTION :
-				System.out.println("CO notify multicasted");
+				LoggerUtility.getInstance().info("CO notify multicasted");
 				break ; 
 			case DISCONNECTION:
-				System.out.println("DC notify multicasted");
+				LoggerUtility.getInstance().info("DC notify multicasted");
 				break ; 
 		}
 		

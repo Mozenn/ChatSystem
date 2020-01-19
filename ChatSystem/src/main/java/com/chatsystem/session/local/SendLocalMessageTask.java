@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 
 public class SendLocalMessageTask implements Runnable{
@@ -51,7 +52,7 @@ public class SendLocalMessageTask implements Runnable{
 			return ; 
 		}
 		
-		System.out.println("SessionMessage sent");
+		LoggerUtility.getInstance().info("SendLocalSessionMessage sent");
 		
 	}
 
