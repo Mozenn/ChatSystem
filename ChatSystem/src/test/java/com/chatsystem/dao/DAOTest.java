@@ -9,12 +9,15 @@ import org.junit.Test;
 import com.chatsystem.dao.DAO;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.user.UserId;
+import com.chatsystem.utility.ConfigurationUtility;
 
 public class DAOTest {
 	
 	@Test 
 	public void getHistoryTest() throws IOException
 	{
+		ConfigurationUtility.initializeApplicationFolder();
+		
 		UserMessage m1 = new UserMessage("data",new UserId("u1".getBytes()), new UserId("u2".getBytes())) ; 
 		UserMessage m2 = new UserMessage("data",new UserId("u2".getBytes()), new UserId("u1".getBytes())) ; 
 		
@@ -33,6 +36,8 @@ public class DAOTest {
 		assertTrue(messages.contains(m2)) ;
 		assertTrue(new String(messages.get(0).getContent()).equals("data"));
 		System.out.println(new String(messages.get(0).getContent()));
+		
+		ConfigurationUtility.clearApplicationFolder();
 	}
 	
 }

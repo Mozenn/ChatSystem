@@ -10,12 +10,15 @@ import org.junit.Test;
 
 import com.presenceservice.model.User;
 import com.presenceservice.model.UserId;
+import com.presenceservice.utility.ConfigUtility;
 
 public class UserDAOTest {
 	
 	@Test 
 	public void StoreUserTest() throws IOException 
 	{
+		ConfigUtility.initializeConfigFolder();
+		
 		UserId uId1 = new UserId("id1".getBytes()) ;
 		UserId uId2 = new UserId("id2".getBytes()) ;
 		
@@ -43,6 +46,8 @@ public class UserDAOTest {
 		
 		assertTrue(r1.get().equals(u1)) ; 
 		assertTrue(r2.get().equals(u2)) ; 
+		
+		ConfigUtility.clearConfigFolder();;
 		
 	}
 

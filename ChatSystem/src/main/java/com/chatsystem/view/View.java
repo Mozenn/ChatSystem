@@ -231,7 +231,8 @@ public class View implements ActionListener, SystemListener, SessionListener{
 
 	@Override
 	public void usernameChanged(User u) {
-		// TODO update JChatPanel 
+		
+		mainWindow.getChatPanel().updateUsernames(u);
 		
 	}
     

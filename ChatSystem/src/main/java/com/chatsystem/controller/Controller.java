@@ -13,6 +13,7 @@ import com.chatsystem.model.SystemContract;
 import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
+import com.chatsystem.utility.ConfigurationUtility;
 import com.chatsystem.view.ChangeUsernameWindow;
 import com.chatsystem.view.CreateUserWindow;
 import com.chatsystem.view.JChatPanel;
@@ -29,6 +30,8 @@ public class Controller implements ControllerContract{
 	
 	public Controller() throws IOException
 	{	
+		ConfigurationUtility.initializeApplicationFolder() ; 
+		
 		this.model = new CommunicationSystem(); 
 		
 		this.view = new View(this,model);
@@ -75,42 +78,42 @@ public class Controller implements ControllerContract{
         model.start();
     }
 	
-	public boolean changeUsername(String newUsername)
+    private boolean changeUsername(String newUsername)
 	{
 		return model.changeUname(newUsername);
 	}
 	
-	public void changeDownloadPath(String newPath)
+	private void changeDownloadPath(String newPath)
 	{
 		model.changeDownloadPath(newPath);
 	}
 	
-	public void startSession(User receiver)
+	private void startSession(User receiver)
 	{
 		model.startSession(receiver); 
 	}
 	
-	public void closeSession(User receiver)
+	private void closeSession(User receiver)
 	{
 		model.closeSessionNotified(receiver);
 	}
 	
-	public void sendMessage(User receiver, String text)
+	private void sendMessage(User receiver, String text)
 	{
 		model.sendMessage(receiver, text);
 	}
 	
-	public void sendFileMessage(User receiver, String filePath)
+	private void sendFileMessage(User receiver, String filePath)
 	{
 		model.sendFileMessage(receiver, filePath);
 	}
 	
-	public void downloadFile(UserId senderId, Timestamp date)
+	private void downloadFile(UserId senderId, Timestamp date)
 	{
 		model.downloadFile(senderId, date) ; 
 	}
 	
-	public void close()
+	private void close()
 	{
 		if(model.hasStarted())
 			model.close();
@@ -150,6 +153,7 @@ public class Controller implements ControllerContract{
 				if(createLocalUser(username))
 				{
 					closeCreateUserWindow();
+					openMainWindow() ; 
 				}
 				else
 				{
@@ -179,7 +183,7 @@ public class Controller implements ControllerContract{
 			
 			if(username.length() <= User.MAX_NAME_SIZE && username.length() > 0 ) 
 			{
-				if(createLocalUser(username))
+				if(changeUsername(username))
 				{
 					view.closeChangeUsernameWindow() ; 
 				}

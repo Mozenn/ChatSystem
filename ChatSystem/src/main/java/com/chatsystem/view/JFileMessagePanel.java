@@ -16,13 +16,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionListener {
+import com.chatsystem.user.User;
+
+public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionListener, MessagePanel {
 	
 	public static final String DOWNLOADFILE_ACTIONCOMMAND = "DownloadFile" ; 
 	
 	private JLabel fileNameLabel ; 
 	private JButton fileIconButton ; 
+	private JLabel usernameLabel ; 
 	private Timestamp date ; 
+	private User sender ; 
 	
 	private ArrayList<ActionListener> actionListeners ; 
 
@@ -55,7 +59,7 @@ public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionLi
 	/**
 	 * Create the panel.
 	 */
-	public JFileMessagePanel(String username, String fileName,Timestamp date) {
+	public JFileMessagePanel(User sender, String fileName,Timestamp date) {
 		
 		this.date = date ; 
 		actionListeners = new ArrayList<ActionListener>() ; 
@@ -69,7 +73,7 @@ public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionLi
 		add(headerPanel);
 		headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
 		
-		JLabel usernameLabel = new JLabel(username);
+		usernameLabel = new JLabel(sender.getUsername());
 		usernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		headerPanel.add(usernameLabel);
 		
@@ -98,6 +102,8 @@ public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionLi
 		fileNameLabel.setBackground(new Color(211, 211, 211));
 		fileNameLabel.repaint();
 		contentPanel.add(fileNameLabel);
+		
+		this.sender = sender ; 
 
 	}
 
@@ -118,6 +124,14 @@ public class JFileMessagePanel extends JPanel implements ActionEmitter, ActionLi
 	public void actionPerformed(ActionEvent e) {
 		actionListeners.forEach(l -> l.actionPerformed(new ActionEvent(this,0,DOWNLOADFILE_ACTIONCOMMAND)));
 		
+	}
+	
+	@Override
+	public void updateUsername()
+	{
+		usernameLabel.setText(sender.getUsername());
+		usernameLabel.repaint(); 
+		usernameLabel.validate(); 
 	}
 
 }

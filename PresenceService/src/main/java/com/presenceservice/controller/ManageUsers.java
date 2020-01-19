@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.presenceservice.model.*;
 import com.presenceservice.utility.ConfigUtility;
+import com.presenceservice.utility.LoggerUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -48,6 +49,13 @@ public class ManageUsers extends HttpServlet {
     public void init() throws ServletException {
     	super.init();
     	
+    	try {
+			ConfigUtility.initializeConfigFolder();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			return ; 
+		}
+    	
     	UserDAO dao = null;
 		try {
 			dao = new UserDAOSQLite();
@@ -56,7 +64,7 @@ public class ManageUsers extends HttpServlet {
 		} 
     	
     	List<User> usersResult = dao.getAllUsers();
-    	
+    	/*
     	try {
 			User u1 = new User(new UserId("id".getBytes()),InetAddress.getLocalHost(),"hey") ;
 			User u2 = new User(new UserId("id2".getBytes()),InetAddress.getLocalHost(),"hey2") ;
@@ -66,19 +74,17 @@ public class ManageUsers extends HttpServlet {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}  ; 
-    	
+    	*/
     	for(User u : usersResult)
     	{
     		users.put(u,false) ; 
-    	}
+    	} 
     	
 		Date d = new Date();
 		this.lastModificationDate = new Timestamp(d.getTime());
 		
-		System.out.println("Server Started ! ") ;
-		
-		String path = ConfigUtility.getConfigPath();
-		System.out.println(path) ; 
+		LoggerUtility.getInstance().info("Server Started");
+
     }
     
 
@@ -87,7 +93,7 @@ public class ManageUsers extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("get") ;
+		LoggerUtility.getInstance().info("GET Received");
 		
 		String tsString = request.getHeader("IF_MODIFIED_SINCE") ; 
 		
@@ -95,13 +101,13 @@ public class ManageUsers extends HttpServlet {
 		{
 			Timestamp ts = Timestamp.valueOf(tsString) ; 
 			
-			System.out.println("Time received " + ts.toString()) ; 
-			System.out.println("Last Modification Time : " + lastModificationDate.toString()) ; 
+			LoggerUtility.getInstance().info("Time received " + ts.toString());
+			LoggerUtility.getInstance().info("Last Modification Time : " + lastModificationDate.toString());
 			
 			if(lastModificationDate.before(ts))
 			{
 				response.setStatus(420);
-				System.out.println("not modified") ;
+				LoggerUtility.getInstance().info("No sending needed");
 			}
 			else
 			{
@@ -118,13 +124,13 @@ public class ManageUsers extends HttpServlet {
 	
 	protected void writeUsers(HttpServletResponse response) throws IOException 
 	{
-		System.out.println("writing users") ;
+		LoggerUtility.getInstance().info("Sending updated users list");
 		
 		List<User> onlineUsers = new ArrayList<User>();
 		
 		for(User u : users.keySet())
 		{
-			System.out.println(u.getUsername() + users.get(u)) ; 
+			LoggerUtility.getInstance().info("User "+ u.getUsername() + " connectedState" + users.get(u));
 			if(users.get(u))
 				onlineUsers.add(u) ; 
 		}
@@ -148,7 +154,7 @@ public class ManageUsers extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("Post") ;
+		LoggerUtility.getInstance().info("POST Received");
 		
 		String type = request.getHeader("COMMUNICATION") ; 
 		
@@ -157,7 +163,7 @@ public class ManageUsers extends HttpServlet {
 		
 		if(type.equals("CO")) // connection notify  
 		{
-			System.out.println("CO") ;
+			LoggerUtility.getInstance().info("CO");
 			
 			String userJsonString = request.getReader().readLine() ; 
 			
@@ -202,7 +208,7 @@ public class ManageUsers extends HttpServlet {
 		}
 		else if(type.equals("DC"))  // disconnection notify 
 		{
-			System.out.println("DC") ;
+			LoggerUtility.getInstance().info("DC");
 			
 			String userJsonString = request.getReader().readLine() ; 
 			
@@ -234,23 +240,33 @@ public class ManageUsers extends HttpServlet {
 		}
 		else if(type.equals("CU")) // checkusername request 
 		{
-			System.out.println("CU") ;
+			LoggerUtility.getInstance().info("CU");
 			
 			String username = request.getReader().readLine() ; 
 			
 			boolean isAvailable = true ; 
+			User uToUpdate = null ; 
 			
 			for(User u : users.keySet())
 			{
 				if(u.getUsername().equals(username))
+				{
 					isAvailable = false ;
+					uToUpdate = u ; 
+				}
+
 			}
 			
 			if(!isAvailable)
 				response.setStatus(400);
 			else
 			{
-				// TODO modify username in database + in hashmap 
+				// update user 
+				
+				uToUpdate.setUsername(username);
+				
+				UserDAO dao = new UserDAOSQLite() ; 
+				dao.updateUser(uToUpdate);
 				
 				lastModificationDate.setTime(new Date().getTime()); 
 			}

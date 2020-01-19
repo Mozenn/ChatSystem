@@ -9,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.net.http.HttpTimeoutException;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.io.File;
@@ -37,7 +38,7 @@ import com.chatsystem.system.NotifyLocalUsersTask.LocalNotifyType;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
-import com.chatsystem.utility.PropertiesUtility;
+import com.chatsystem.utility.ConfigurationUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -73,7 +74,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		distantUsers = new HashMap<UserId,User>();
 		sessions = new HashMap<UserId,Session>() ;	
 		
-		Properties properties = PropertiesUtility.getAppProperties() ; 
+		Properties properties = ConfigurationUtility.getAppProperties() ; 
 		
 		PRESENCESERVICE_URL = properties.getProperty("presenceServiceURL") ; 
 		downloadPath = properties.getProperty("downloadPath") ; 
@@ -353,7 +354,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		Properties properties ; 
 		
 		try {
-			properties = PropertiesUtility.getAppProperties() ;
+			properties = ConfigurationUtility.getAppProperties() ;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ; 
@@ -362,7 +363,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		properties.setProperty("downloadPath", newPath) ; 
 		
 		try {
-			PropertiesUtility.saveAppProperties(properties) ;
+			ConfigurationUtility.saveAppProperties(properties) ;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
@@ -480,6 +481,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
                 .uri(URI.create(PRESENCESERVICE_URL))
                 .header("Content-Type", "application/json")
                 .setHeader("COMMUNICATION", "CO")
+                .timeout(Duration.ofSeconds(2))
                 .build();
         
         try {
@@ -494,6 +496,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 					addDistantUser(u);
 				}
 			}
+		}catch (HttpTimeoutException e) {
+			return ; 
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -527,6 +531,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
         
         try {
 			httpClient.send(request, BodyHandlers.ofString());
+		} catch (HttpTimeoutException e) {
+			return ; 
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -599,6 +605,14 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		}
 	}
 	
+	protected void fireUsernameChanged(User u)
+	{
+		for(SystemListener sl : getSystemListeners())
+		{
+			sl.usernameChanged(u);
+		}
+	}
+	
 	// ===================  LOCAL USER ==============================
 	
 	@Override
@@ -622,7 +636,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	{
 		boolean result = false ; 
 		
-		Properties props = PropertiesUtility.getAppProperties() ; 
+		Properties props = ConfigurationUtility.getAppProperties() ; 
 		
 		String userAsJsonString = props.getProperty("localUser")  ;
 		
@@ -680,7 +694,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	
 	private void saveLocalUser() throws IOException 
 	{
-		Properties props = PropertiesUtility.getAppProperties() ; 
+		Properties props = ConfigurationUtility.getAppProperties() ; 
 		
 		byte[] userAsBytes;
 		try {
@@ -691,7 +705,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		} 
 		
 		props.setProperty("localUser", new String(userAsBytes))  ;
-		PropertiesUtility.saveAppProperties(props);
+		ConfigurationUtility.saveAppProperties(props);
 	}
 	
 	@Override
@@ -713,12 +727,11 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			new NotifyChangeUsernameTask(this) ; 
 			
 			
-			//TODO notify view 
+			// notify view 
+			fireUsernameChanged(this.user) ; 
 			
 		}
 
-
-		
 		
 		try {
 			saveLocalUser();
@@ -742,6 +755,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
                 .uri(URI.create(PRESENCESERVICE_URL))
                 .header("Content-Type", "text/plain")
                 .setHeader("COMMUNICATION", "CU")
+                .timeout(Duration.ofSeconds(2))
                 .build();
         
 
@@ -751,6 +765,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 				response = httpClient.send(request, BodyHandlers.ofString());
 				
 				res = response.statusCode() == 200 ; 
+			} catch (HttpTimeoutException e) {
+				return true; 
 			} catch (ConnectException e){
 				res = true ; 
 			}

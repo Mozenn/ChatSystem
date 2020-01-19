@@ -323,15 +323,15 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 				{
 
 					System.out.println("Text Message Added " + new String(m.getContent()));
-					JMessagePanel mp ; 
+					JTextMessagePanel mp ; 
 					if(m.getSenderId().equals(currentEmitter.getId()))
 					{
-						mp = new JMessagePanel(currentEmitter.getUsername(),new String(m.getContent()),m.getDate());
+						mp = new JTextMessagePanel(currentEmitter,new String(m.getContent()),m.getDate());
 						mp.setToEmitterColor();
 					}
 					else
 					{
-						mp = new JMessagePanel(currentReceiver.getUsername(),new String(m.getContent()),m.getDate());
+						mp = new JTextMessagePanel(currentReceiver,new String(m.getContent()),m.getDate());
 						mp.setToReceiverColor();
 					}
 					
@@ -358,14 +358,14 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 					}  
 					if(m.getSenderId().equals(currentEmitter.getId())) 
 					{
-						mp = new JFileMessagePanel(currentEmitter.getUsername(),fw.getFileName(),m.getDate());
+						mp = new JFileMessagePanel(currentEmitter,fw.getFileName(),m.getDate());
 						mp.addActionListener(this);
 						mp.setToEmitterColor(); 
 					}
 					else
 					{
 						
-						mp = new JFileMessagePanel(currentReceiver.getUsername(),fw.getFileName(),m.getDate());
+						mp = new JFileMessagePanel(currentReceiver,fw.getFileName(),m.getDate());
 						mp.addActionListener(this);
 						mp.setToReceiverColor(); 
 					}
@@ -386,15 +386,15 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 	{
 		if(newMessage.getSubtype().equals(UserMessage.UserMessageType.TX))
 		{
-			JMessagePanel mp ; 
+			JTextMessagePanel mp ; 
 			if(newMessage.getSenderId().equals(currentEmitter.getId()))
 			{
-				mp = new JMessagePanel(currentEmitter.getUsername(),new String(newMessage.getContent()),newMessage.getDate());
+				mp = new JTextMessagePanel(currentEmitter,new String(newMessage.getContent()),newMessage.getDate());
 				mp.setToEmitterColor();
 			}
 			else
 			{
-				mp = new JMessagePanel(currentReceiver.getUsername(),new String(newMessage.getContent()),newMessage.getDate());
+				mp = new JTextMessagePanel(currentReceiver,new String(newMessage.getContent()),newMessage.getDate());
 				mp.setToReceiverColor();
 			}
 			
@@ -418,13 +418,13 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 			
 			if(newMessage.getSenderId().equals(currentEmitter.getId()))
 			{
-				mp = new JFileMessagePanel(currentEmitter.getUsername(),fw.getFileName(),newMessage.getDate());
+				mp = new JFileMessagePanel(currentEmitter,fw.getFileName(),newMessage.getDate());
 				mp.addActionListener(this);
 				mp.setToEmitterColor();
 			}
 			else
 			{
-				mp = new JFileMessagePanel(currentReceiver.getUsername(),fw.getFileName(),newMessage.getDate());
+				mp = new JFileMessagePanel(currentReceiver,fw.getFileName(),newMessage.getDate());
 				mp.addActionListener(this);
 				mp.setToReceiverColor();
 			}
@@ -436,6 +436,18 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 		messagePanel.validate();
 		messagePanel.repaint();
 		
+	}
+	
+	public void updateUsernames(User u)
+	{
+		if(u.equals(currentEmitter) || u.equals(currentReceiver))
+		{
+			for(var c : messagePanel.getComponents())
+			{
+				MessagePanel mp = (MessagePanel) c ; 
+				mp.updateUsername();
+			}
+		}
 	}
 	
 	public void clear()

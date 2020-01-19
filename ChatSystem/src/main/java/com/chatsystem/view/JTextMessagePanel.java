@@ -9,13 +9,18 @@ import java.awt.Color;
 import java.sql.Timestamp;
 
 import javax.swing.border.EmptyBorder;
+
+import com.chatsystem.user.User;
+
 import javax.swing.UIManager;
 import javax.swing.SwingConstants;
 import java.awt.Component;
 
-public class JMessagePanel extends JPanel {
+public class JTextMessagePanel extends JPanel implements MessagePanel {
 	
 	private JLabel messageLabel ; 
+	private JLabel usernameLabel ; 
+	private User sender ; 
 
 	public JLabel getMessagePane() {
 		return messageLabel;
@@ -36,7 +41,7 @@ public class JMessagePanel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public JMessagePanel(String username, String text,Timestamp date) {
+	public JTextMessagePanel(User sender, String text,Timestamp date) {
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		setBackground(new Color(248, 248, 255));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -46,7 +51,7 @@ public class JMessagePanel extends JPanel {
 		add(panel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		
-		JLabel usernameLabel = new JLabel(username);
+		usernameLabel = new JLabel(sender.getUsername());
 		usernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(usernameLabel);
 		
@@ -67,13 +72,16 @@ public class JMessagePanel extends JPanel {
 		messageLabel.repaint();
 		add(messageLabel);
 		
-
+		this.sender = sender ; 
 		
-		
-		
-
-
-
+	}
+	
+	@Override
+	public void updateUsername()
+	{
+		usernameLabel.setText(sender.getUsername());
+		usernameLabel.repaint(); 
+		usernameLabel.validate(); 
 	}
 
 }

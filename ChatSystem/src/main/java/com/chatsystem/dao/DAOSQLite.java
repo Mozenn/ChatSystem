@@ -15,7 +15,7 @@ import java.util.Properties;
 
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.user.UserId;
-import com.chatsystem.utility.PropertiesUtility;
+import com.chatsystem.utility.ConfigurationUtility;
 
 public class DAOSQLite implements DAO {
 	
@@ -23,9 +23,9 @@ public class DAOSQLite implements DAO {
 	
 	public DAOSQLite() throws IOException 
 	{
-		Properties appProps = PropertiesUtility.getAppProperties() ; 
+		Properties appProps = ConfigurationUtility.getAppProperties() ; 
 		
-		DB_URL = appProps.getProperty("dbStartURL") + PropertiesUtility.getConfigPath() + appProps.getProperty("dbName") ; 
+		DB_URL = appProps.getProperty("dbStartURL") + ConfigurationUtility.getConfigPath() + appProps.getProperty("dbName") ; 
 		
 		String driver = appProps.getProperty("driverClassName") ; 
 		

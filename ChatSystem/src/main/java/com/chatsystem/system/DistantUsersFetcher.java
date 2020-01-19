@@ -70,7 +70,7 @@ public class DistantUsersFetcher extends Thread{
 					}
 				}
 			}  catch(ConnectException e ){
-				e.addSuppressed(e);
+				
 			} catch (IOException e) {
 	        
 				e.printStackTrace();
