@@ -20,8 +20,19 @@ public class LoggerUtility {
 	    FileHandler fh;  
 
 	    try {  
+	    	
+	    	String path = ConfigurationUtility.getAppProperties().getProperty("loggerPath") ; 
+	    	
+	    	if(path.equals("null"))
+	    	{
+	    		fh = new FileHandler(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "chatsystem.log",limit,2);  
+	    	}
+	    	else
+	    	{
+	    		fh = new FileHandler(path + System.getProperty("file.separator") + "chatsystem.log",limit,2);
+	    	}
 
-	        fh = new FileHandler(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "chatsystem.log",limit,2);  
+	        
 	        
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter); 

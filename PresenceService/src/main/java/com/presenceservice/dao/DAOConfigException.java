@@ -1,5 +1,8 @@
 package com.presenceservice.dao;
 
+/*
+ * Database configuration exception 
+ */
 public class DAOConfigException extends RuntimeException {
 
 	

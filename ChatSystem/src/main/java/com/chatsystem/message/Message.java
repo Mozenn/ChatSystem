@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.sql.Timestamp;
 
+/*
+ * 
+ */
 public abstract class Message implements Comparable<Message>{
 	
 	public static final int MAX_SIZE = 1310720;
@@ -21,8 +24,14 @@ public abstract class Message implements Comparable<Message>{
 		return this.date ; 
 	}
 	
+	/*
+	 * @throw NullPointerException if date is null 
+	 */
 	public void setDate(Timestamp date)
 	{
+		if(date == null)
+			throw new NullPointerException(); 
+		
 		this.date = date ; 
 	}
 	
@@ -35,6 +44,7 @@ public abstract class Message implements Comparable<Message>{
 	
 	protected Message(byte[] content) 
 	{
+		
 		this.content = content ; 
 		Date d = new Date();
 		this.date = new Timestamp(d.getTime());

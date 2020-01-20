@@ -5,6 +5,9 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+/*
+ * Logger that log both on console and file in the loggerPath specified in the config.properties file or temp folder if not specified 
+ */
 public class LoggerUtility {
 	
 	private static LoggerUtility instance ; 
@@ -20,7 +23,17 @@ public class LoggerUtility {
 
 	    try {  
 
-	        fh = new FileHandler(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "presenceservice.log",limit,2);  
+	    	String path = ConfigUtility.getConfigProperties().getProperty("loggerPath") ; 
+	    	
+	    	if(path.equals("null"))
+	    	{
+	    		fh = new FileHandler(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "presenceservice.log",limit,2);
+	    	}
+	    	else
+	    	{
+	    		fh = new FileHandler(path + System.getProperty("file.separator") + "presenceservice.log",limit,2);
+	    	}
+	          
 	        
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter); 

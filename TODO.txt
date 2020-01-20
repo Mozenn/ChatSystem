@@ -1,10 +1,10 @@
 ### Ongoing 
 
 - Test Home 
-	- Deploy Client 
+	- Deploy Client in Linux 
 	- deploy .war on localhost (see tuto) 
 - Test INSA
-	- .jar client 
+	- .jar client in Linux & Windows 
 	- Distant Session 
 	- changeUsername implementation + UI 
 	- File download 
@@ -12,17 +12,25 @@
 		- Local 
 		- Deploy on INSA server 
 
-- Logger Utility in client + presenceservice 
-	- Make log anywhere that ease comprehension for later testing 
 - Documentation 
-- check method parameter 
+	- see effective java & resources
+	- Use @throw tag 
+	- @param , @return 
+	- indicate side effect 
+	- use assert 
+- check method parameter & exception 
 	- see item 72 
+	- IllegalArgumentException
+	- IllegalStateException
+	- NullPointerException
+	- IndexOutOfBound
 - Deploy .war on localhost 
+- Redo UML 
 
 
 # Deploy
 
-- CLient 
+- Client 
 	- test .jar 
 - PresenceService 
 	- test at home and at INSA 
@@ -42,17 +50,12 @@
 	- Try to make the system more scalable 
 	- Use interface & think of SOLID 
 	- make factory for message 
-	- observer between localsystem and listener 
-	- observer between localsystem and sessions ? 
 
 - Presence server 
 	- Polish 
 		- use SLF4J for log 
 		- Use JPA & Hibernate 
 	- Optional 
-		- Make UserBean class & UserBeanAdaoter to convert from User to UserBean ? 
-		- Use Javabean for User 
-		- Use sessionListener ? 
 		- Tracking 
 			- Use to see if client already marked online 
 			- Use cookies ? or sessions ? 

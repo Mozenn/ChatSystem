@@ -17,6 +17,9 @@ import com.chatsystem.message.UserMessage;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.ConfigurationUtility;
 
+/*
+ * DAO implementation for embedded SQLite database
+ */
 public class DAOSQLite implements DAO {
 	
 	private static String DB_URL ;
@@ -61,10 +64,15 @@ public class DAOSQLite implements DAO {
 		} 
 	}
 
+	/*
+	 * @inheritDoc 
+	 * @throw NullPointerException if message is null 
+	 */
 	@Override
 	public void addMessage(UserMessage message)  {
 		
-
+		if(message == null)
+			throw new NullPointerException() ; 
 		
 		String insertStmt = "INSERT INTO messages(receiverid,senderid,timestamp,type,content) VALUES(?,?,?,?,?)" ; 
 	
@@ -83,9 +91,16 @@ public class DAOSQLite implements DAO {
 		
 	}
 
+	/*
+	 * @inheritDoc 
+	 * @throw NullPointerException if receiverId is null 
+	 */
 	@Override
 	public List<UserMessage> getHistory(UserId receiverId) {
 
+		if(receiverId == null)
+			throw new NullPointerException() ;
+		
 		List<UserMessage> messages = new ArrayList<UserMessage>();
 		
 		// query all messages 

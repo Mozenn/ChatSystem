@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+
+/*
+ * Wrap the content of a file and its name 
+ * Used to be serialized to Json and send via socket 
+ */
 public class FileWrapper {
 	
 	public byte[] getFileContent() {
@@ -18,7 +23,14 @@ public class FileWrapper {
 		return fileName;
 	}
 
+	/*
+	 * @throw NullPointerException if fileName is null 
+	 */
 	public void setFileName(String fileName) {
+		
+		if(fileName == null)
+			throw new NullPointerException() ;
+		
 		this.fileName = fileName;
 	}
 
@@ -31,8 +43,14 @@ public class FileWrapper {
 		fileName = "null" ; 
 	}
 	
+	/*
+	 * @throw NullPointerException if fileName is null 
+	 */
 	public FileWrapper(String fileName, File file) throws IOException
 	{
+		if(fileName == null)
+			throw new NullPointerException() ;
+		
 		this.fileContent = Files.readAllBytes(file.toPath()) ; 
 		this.fileName = fileName; 
 	}

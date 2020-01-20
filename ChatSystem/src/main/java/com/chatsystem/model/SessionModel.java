@@ -5,6 +5,9 @@ import java.util.List;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.user.User;
 
+/*
+ * Observable part of the observer pattern implementation specific to session events 
+ */
 public interface SessionModel {
 	
 	public void addSessionListener(SessionListener sl) ; 

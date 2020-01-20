@@ -16,6 +16,9 @@ public interface UserDAO {
 	
 	public void removeUser(User u) ; 
 	
+	/*
+	 * Remove all user entry from the database 
+	 */
 	public void clearUser() ; 
 	
 	public void updateUser(User user) ; 

@@ -2,8 +2,14 @@ package com.chatsystem.message;
 
 import java.io.IOException;
 
+/*
+ * Type of Message used by communication systems to communicate with other local or distant client 
+ */
 public class SystemMessage extends Message{
 	
+	/*
+	 * Allow to check the type of message received 
+	 */
 	public enum SystemMessageType
 	{
 		CO("CO"), // connection

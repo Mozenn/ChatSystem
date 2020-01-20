@@ -13,6 +13,9 @@ public class UserId {
 	
 	public UserId(byte[] id)
 	{
+		if(id == null)
+			throw new NullPointerException("Id can't be null") ; 
+		
 		this.id = id  ; 
 	}
 	
@@ -22,6 +25,10 @@ public class UserId {
 	}
 	
 	public void setId(byte[] id) {
+		
+		if(id == null)
+			throw new NullPointerException("Id can't be null") ; 
+		
 		this.id = id;
 	}
 	

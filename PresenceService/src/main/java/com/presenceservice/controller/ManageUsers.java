@@ -28,7 +28,7 @@ import com.presenceservice.dao.*;
 
 
 /**
- * Servlet implementation class QueryUser
+ * TODO Document 
  */
 @WebServlet(urlPatterns = "/users", loadOnStartup = 1)
 public class ManageUsers extends HttpServlet {
@@ -89,7 +89,7 @@ public class ManageUsers extends HttpServlet {
     
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @return list of online users if it has been modified since the date specified in the request or no date is specified 
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
@@ -122,6 +122,11 @@ public class ManageUsers extends HttpServlet {
  
 	}
 	
+	
+	/*
+	 * Writes all online users as a Json String in the given response 
+	 * @param the response to be filled
+	 */
 	protected void writeUsers(HttpServletResponse response) throws IOException 
 	{
 		LoggerUtility.getInstance().info("Sending updated users list");
@@ -150,7 +155,7 @@ public class ManageUsers extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * require the request to have a "COMMUNICATION" header of type CO(connection), DC(disconnection) or CU(changeUsername) 
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		

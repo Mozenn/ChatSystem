@@ -12,8 +12,14 @@ public interface DAO {
 	
 	public void addMessage(UserMessage message) ; 
 	
+	/*
+	 * @return list of all message where id is either the sender or the receiver 
+	 */
 	public List<UserMessage> getHistory(UserId receiverId) ; 
 	
+	/*
+	 * Remove every messages stored in the DB 
+	 */
 	public void clearHistory() ; 
 
 }

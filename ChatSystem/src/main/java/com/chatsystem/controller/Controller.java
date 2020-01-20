@@ -23,6 +23,9 @@ import com.chatsystem.view.MainWindow;
 import com.chatsystem.view.SettingsWindow;
 import com.chatsystem.view.View;
 
+/*
+ * Transmit event triggered in view to model 
+ */
 public class Controller implements ControllerContract{
 	
 	private SystemContract model ; 
@@ -228,12 +231,14 @@ public class Controller implements ControllerContract{
 		downloadFile(sender, receiptDate);
 	}
 
+
 	@Override
 	public void messageSent(User currentReceiver, String text) {
 		sendMessage(currentReceiver, text) ; 
 		
 	}
 
+	
 	@Override
 	public void fileMessageSent(User currentReceiver, DefaultListModel<String> pathList) {
 		

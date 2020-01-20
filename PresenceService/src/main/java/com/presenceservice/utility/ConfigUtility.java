@@ -13,6 +13,10 @@ public final class ConfigUtility {
 	
 	private ConfigUtility() {}
 	
+	/*
+	 * Load the config.properties file located in the config path 
+	 * @return the loaded config.properties as Properties 
+	 */
 	public static Properties getConfigProperties() throws IOException
 	{
 		Properties properties = new Properties();
@@ -24,6 +28,10 @@ public final class ConfigUtility {
 		return properties ; 
 	}
 	
+	/*
+	 * Save changes made to the config.properties 
+	 * @param the modified properties that need to be saved 
+	 */
 	public static void saveConfigProperties(Properties newProperties) throws IOException
 	{
 		String path = getConfigPath() + "config.properties";
@@ -58,6 +66,9 @@ public final class ConfigUtility {
 	    return false;
 	}
 	
+	/*
+	 * Initialize application folder and files in the config path if not exist 
+	 */
 	public static void initializeConfigFolder() throws IOException
 	{
 		Path path = Path.of(getConfigPath()) ; 
@@ -87,6 +98,10 @@ public final class ConfigUtility {
 		}
 	}
 	
+	
+	/*
+	 * clear application folder on disk 
+	 */
 	public static void clearConfigFolder()
 	{
 		Path path = Path.of(getConfigPath()) ; 

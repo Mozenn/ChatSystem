@@ -11,6 +11,10 @@ import com.chatsystem.utility.SerializationUtility;
 import java.io.File;
 import java.io.IOException;
 
+/*
+ * Type of Message used to communicate between two sessions 
+ * Can contain either text data or file data 
+ */
 public class UserMessage extends Message{
 	
 	public enum UserMessageType
@@ -41,25 +45,46 @@ public class UserMessage extends Message{
 		this.senderId = new UserId(); 
 	}
 	
+	/*
+	 * @throw NullPointerException if receiverId or senderId is null 
+	 */
 	public UserMessage(String text, UserId receiverId, UserId senderId ) 
 	{
 		super(text.getBytes());
+		
+		if(receiverId == null || senderId == null)
+			throw new NullPointerException() ; 
+
 		this.receiverId = receiverId ; 
 		this.senderId = senderId ; 
 		subtype = UserMessageType.TX;
 	}
 	
+	/*
+	 * @throw NullPointerException if receiverId, senderId or type is null 
+	 */
 	public UserMessage(byte[] content,UserMessageType type, UserId receiverId, UserId senderId)
 	{
 		super(content);
+		
+		if(receiverId == null || senderId == null || type == null)
+			throw new NullPointerException() ; 
+		
 		subtype = type;
 		this.receiverId= receiverId ; 
 		this.senderId = senderId ; 
 	} 
 	
+	/*
+	 * @throw NullPointerException if receiverId or senderId is null 
+	 */
 	public UserMessage(FileWrapper f, UserId receiverId, UserId senderId) throws IOException 
 	{
 		super(SerializationUtility.serializeFileWrapper(f));
+		
+		if(receiverId == null || senderId == null)
+			throw new NullPointerException() ; 
+		
 		subtype = UserMessageType.FL;
 		this.receiverId = receiverId ; 
 		this.senderId = senderId ;

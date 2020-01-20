@@ -1,5 +1,8 @@
 package com.chatsystem.dao;
 
+/*
+ * Database configuration exception 
+ */
 public class DAOConfigurationException extends RuntimeException {
 
 	

@@ -28,6 +28,9 @@ public class UserDAOSQLite implements UserDAO {
 		createUsersTable()  ; 
 	}
 	 
+	/*
+	 * Initialize driver & database URL stored in config.properties file 
+	 */
 	protected void setupDatabase() throws IOException
 	{
 		Properties configProps = ConfigUtility.getConfigProperties() ; 
@@ -61,8 +64,15 @@ public class UserDAOSQLite implements UserDAO {
 		}
 	}
 	
+	/*
+	 * @inheritDoc
+	 * @throw NullPointerException if u is null 
+	 */
+	@Override
 	public void addUser(User u)
 	{
+		if(u == null)
+			throw new NullPointerException() ; 
 		
 		String insertStmt = "INSERT INTO users(userid,inetaddress,username) VALUES(?,?,?)" ; 
 
@@ -80,8 +90,16 @@ public class UserDAOSQLite implements UserDAO {
 
 	}
 	
+	/*
+	 * @inheritDoc
+	 * @throw NullPointerException if u is null 
+	 */
+	@Override
 	public void removeUser(User u)
 	{
+		if(u == null)
+			throw new NullPointerException() ; 
+		
 		String deleteStmt = "DELETE FROM users where userid = ?" ;
 		 
 	    try(Connection conn = DriverManager.getConnection(DB_URL );
@@ -94,23 +112,34 @@ public class UserDAOSQLite implements UserDAO {
 		}
 	}
 	
-	public void updateUser(User u)
+	/*
+	 * @inheritDoc
+	 * @throw NullPointerException if user is null 
+	 */
+	@Override
+	public void updateUser(User user)
 	{
+		if(user == null)
+			throw new NullPointerException() ; 
+		
 		String updateStmt = "UPDATE users SET inetaddress = ?, username = ? WHERE userid = ?" ;
 		 
 	    try(Connection conn = DriverManager.getConnection(DB_URL );
 	    		PreparedStatement pstmt = conn.prepareStatement(updateStmt))
 	    {
-	        pstmt.setBytes(1, u.getIpAddress().getAddress());
-	        pstmt.setString(2, u.getUsername());
-	        pstmt.setBytes(3, u.getId().getId());
+	        pstmt.setBytes(1, user.getIpAddress().getAddress());
+	        pstmt.setString(2, user.getUsername());
+	        pstmt.setBytes(3, user.getId().getId());
 	        pstmt.executeUpdate();
 	    } catch (SQLException e) {
 	    	 throw new DAOException("User update failed", e) ; 
 		}
 	}
 	
-	
+	/*
+	 * @inheritDoc
+	 */
+	@Override
 	public void clearUser() {
 		
 		
@@ -128,8 +157,15 @@ public class UserDAOSQLite implements UserDAO {
 	
 	}
 	
+	/*
+	 * @inheritDoc
+	 * @throw NullPointerException if id is null 
+	 */
 	@Override
 	public Optional<User> getUser(UserId id) {
+		
+		if(id == null)
+			throw new NullPointerException() ; 
 		
 		String query = "SELECT inetaddress, username FROM users WHERE userid = ?" ;  
 		
@@ -159,6 +195,9 @@ public class UserDAOSQLite implements UserDAO {
        return userToAdd ; 
 	}
 
+	/*
+	 * @inheritDoc
+	 */
 	@Override
 	public List<User> getAllUsers() {
 		
@@ -190,8 +229,15 @@ public class UserDAOSQLite implements UserDAO {
        return res ; 
 	}
 
+	/*
+	 * @inheritDoc
+	 * @throw NullPointerException if username is null 
+	 */
 	@Override
 	public boolean isUsernameAvailable(String username) {
+		
+		if(username == null)
+			throw new NullPointerException() ; 
 		
 		String query = "SELECT * FROM users WHERE username = ?" ;  
 		
