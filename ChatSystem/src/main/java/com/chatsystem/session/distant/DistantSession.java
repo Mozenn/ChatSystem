@@ -24,11 +24,17 @@ public class DistantSession extends Session {
 	private Socket socket ; 
 	private DistantSessionListener listener ; 
 	
+	/*
+	 * Called by session initiator 
+	 */
 	public DistantSession(User emitter, User receiver, SystemContract system) throws IOException
 	{
 		super(emitter,receiver,system) ; 
 	}
 	
+	/*
+	 * Called by session receiver, after receiving SS SystemMessage  
+	 */
 	public DistantSession(User emitter, User receiver, Socket socket , SystemContract system) throws IOException
 	{
 		super(emitter,receiver,system) ; 
@@ -56,6 +62,10 @@ public class DistantSession extends Session {
 
 	}
 
+	/*
+	 * @inheritDoc 
+	 * Called by session initiator 
+	 */
 	@Override
 	public void notifyStartSession() {
 		

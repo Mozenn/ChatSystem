@@ -18,8 +18,14 @@ final class DistantSessionListener extends Thread {
 	private Socket socket;
 	private AtomicBoolean run;
 	
+	/*
+	 * @throws NullPointerException if socket is null 
+	 */
 	public DistantSessionListener(DistantSession s, Socket socket) 
 	{
+		if(socket == null)
+			throw new NullPointerException() ; 
+		
 		session = s;
 		this.socket = socket;
 

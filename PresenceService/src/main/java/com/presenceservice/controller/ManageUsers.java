@@ -77,7 +77,7 @@ public class ManageUsers extends HttpServlet {
     	*/
     	for(User u : usersResult)
     	{
-    		users.put(u,false) ; 
+    		users.put(u,Boolean.valueOf(false)) ; 
     	} 
     	
 		Date d = new Date();
@@ -94,9 +94,9 @@ public class ManageUsers extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		LoggerUtility.getInstance().info("GET Received");
-		
+		LoggerUtility.getInstance().info("Address " + request.getRemoteAddr());
 		String tsString = request.getHeader("IF_MODIFIED_SINCE") ; 
-		
+
 		if(tsString != null)
 		{
 			Timestamp ts = Timestamp.valueOf(tsString) ; 
@@ -135,8 +135,8 @@ public class ManageUsers extends HttpServlet {
 		
 		for(User u : users.keySet())
 		{
-			LoggerUtility.getInstance().info("User "+ u.getUsername() + " connectedState" + users.get(u));
-			if(users.get(u))
+			LoggerUtility.getInstance().info("User "+ u.getUsername() + " connectedState : " + users.get(u).booleanValue());
+			if(users.get(u).booleanValue())
 				onlineUsers.add(u) ; 
 		}
 		
@@ -193,13 +193,13 @@ public class ManageUsers extends HttpServlet {
 				Boolean isOnline = users.get(u) ; 
 				if(!isOnline)
 				{
-					isOnline = true ; 
+					users.put(u,Boolean.valueOf(true)) ;
 					lastModificationDate.setTime(new Date().getTime()); 
 				}
 			}
 			else
 			{
-				users.put(u,true) ; 
+				users.put(u,Boolean.valueOf(true)) ; 
 				System.out.println("User added : " + u) ; 
 				lastModificationDate.setTime(new Date().getTime()); 
 				
@@ -247,33 +247,59 @@ public class ManageUsers extends HttpServlet {
 		{
 			LoggerUtility.getInstance().info("CU");
 			
-			String username = request.getReader().readLine() ; 
+			String userJsonString = request.getReader().readLine() ; 
+			
+			if(userJsonString == null )
+				return ; 
+			
+			ObjectMapper uJson = new ObjectMapper();
+			
+			User user = null ; 
+			
+			try {
+				user = uJson.readValue(userJsonString, User.class) ; 
+			} catch(JsonMappingException | JsonParseException e)
+			{
+				e.printStackTrace();
+				return ; 
+			}
 			
 			boolean isAvailable = true ; 
 			User uToUpdate = null ; 
 			
 			for(User u : users.keySet())
 			{
-				if(u.getUsername().equals(username))
+				if(u.getUsername().equals(user.getUsername()))
 				{
 					isAvailable = false ;
+				}
+				
+				// keep reference of user to modify for later 
+				if(u.equals(user))
+				{
 					uToUpdate = u ; 
 				}
 
 			}
 			
 			if(!isAvailable)
+			{
 				response.setStatus(400);
+				
+				LoggerUtility.getInstance().info("Username Not Available");
+			}
 			else
 			{
 				// update user 
 				
-				uToUpdate.setUsername(username);
+				uToUpdate.setUsername(user.getUsername());
 				
 				UserDAO dao = new UserDAOSQLite() ; 
 				dao.updateUser(uToUpdate);
 				
 				lastModificationDate.setTime(new Date().getTime()); 
+				
+				LoggerUtility.getInstance().info("Username Updated");
 			}
 		}
 		

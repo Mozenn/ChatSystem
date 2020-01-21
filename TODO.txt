@@ -6,6 +6,7 @@
 - Test INSA
 	- .jar client in Linux & Windows 
 	- Distant Session 
+		- comment local user broadcast 
 	- changeUsername implementation + UI 
 	- File download 
 	- Presence Server 
@@ -24,8 +25,8 @@
 	- IllegalStateException
 	- NullPointerException
 	- IndexOutOfBound
-- Deploy .war on localhost 
 - Redo UML 
+- Authentification 
 
 
 # Deploy
@@ -96,6 +97,8 @@
 - Android 
 	- Use android Studio 
 	- see what can be kept 
+
+- REST authentification 
 
 {"id"\:{"id"\:"CgAnAAAa"},"ipAddress"\:"192.168.56.1","username"\:"name"}
 

@@ -25,7 +25,7 @@ public abstract class Message implements Comparable<Message>{
 	}
 	
 	/*
-	 * @throw NullPointerException if date is null 
+	 * @throws NullPointerException if date is null 
 	 */
 	public void setDate(Timestamp date)
 	{

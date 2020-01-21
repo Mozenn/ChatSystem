@@ -57,4 +57,5 @@ local.properties
 
 
 # Project specific 
-data/*
+*/data/*
+*/doc/*

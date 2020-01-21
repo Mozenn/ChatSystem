@@ -35,29 +35,39 @@ public abstract class Session implements SessionModel{
 		
 	}
 	
-	public Session(User e, User r, SystemContract system) throws IOException 
+	/*
+	 * @throws NullPointerException if emitter, receiver or system is null  
+	 */
+	public Session(User emitter, User receiver, SystemContract system) throws IOException 
 	{
-		emitter = e;
-		receiver = r;
+		if(emitter == null || receiver == null || system == null)
+			throw new NullPointerException() ; 
+		
+		this.emitter = emitter;
+		this.receiver = receiver;
 		messages = new ArrayList<UserMessage>();
 		this.system = system ; 
 	}
 	
+	@Override
 	public void addSessionListener(SessionListener sl) 
 	{
 		listeners.add(SessionListener.class, sl);
 	}
 	
+	@Override
 	public void removeSessionListener(SessionListener sl) 
 	{
 		listeners.remove(SessionListener.class, sl);
 	}
 	
+	@Override
 	public SessionListener[] getSessionListeners() 
 	{
 		return listeners.getListeners(SessionListener.class); 
 	}
 	
+	@Override
 	public void clearSessionListeners()
 	{
 		for(var sl : getSessionListeners())
@@ -88,7 +98,10 @@ public abstract class Session implements SessionModel{
 	{
 		return this.messages; 
 	}
-
+	
+	/*
+	 * @throws
+	 */
 	public void addMessage(UserMessage m) 
 	{
 		synchronized(messages)

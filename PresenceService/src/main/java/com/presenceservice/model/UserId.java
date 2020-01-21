@@ -11,6 +11,9 @@ public class UserId {
 		this.id = new byte[8]  ; 
 	}
 	
+	/*
+	 * @throws NullPointerException if id is null 
+	 */
 	public UserId(byte[] id)
 	{
 		if(id == null)

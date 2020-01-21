@@ -42,11 +42,18 @@ public class SystemMessage extends Message{
 		super();
 	
 	}
-
-	public SystemMessage(SystemMessageType s, byte[] c) throws IOException 
+	
+	/*
+	 * @throws NullPointerException if type is null 
+	 */
+	public SystemMessage(SystemMessageType type, byte[] c) throws IOException 
 	{
 		super(c);
-		this.subtype = s ; 
+		
+		if(type == null)
+			throw new NullPointerException() ; 
+		
+		this.subtype = type ; 
 	
 	}
 }

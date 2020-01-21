@@ -218,13 +218,14 @@ public class MainWindow extends JFrame implements ActionEmitter {
 		int index = 0 ; 
 		Optional<JUserPanel> panel = Optional.ofNullable(null); 
 		
-		JUserPanel[] components = (JUserPanel[]) connectedUserPannel.getComponents() ;
+		var components = connectedUserPannel.getComponents() ;
 		
 		while(index < components.length && !isFound)
 		{
-			if(components[index].getUser().equals(u))
+			JUserPanel up = (JUserPanel)components[index] ; 
+			if(up.getUser().equals(u))
 			{
-				panel = Optional.of(components[index]) ; 
+				panel = Optional.of(up) ; 
 				isFound = true ; 
 			}
 			
@@ -240,13 +241,15 @@ public class MainWindow extends JFrame implements ActionEmitter {
 		int index = 0 ; 
 		Optional<JSessionPanel> panel = Optional.ofNullable(null); 
 		
-		JSessionPanel[] components = (JSessionPanel[]) ongoingSessionPannel.getComponents() ;
+		var components = ongoingSessionPannel.getComponents() ;
 		
 		while(index < components.length && !isFound)
 		{
-			if(components[index].getSessionModel().getReceiver().equals(receiver))
+			JSessionPanel sp = (JSessionPanel)components[index] ; 
+			
+			if(sp.getSessionModel().getReceiver().equals(receiver))
 			{
-				panel = Optional.of(components[index]) ; 
+				panel = Optional.of(sp) ; 
 				isFound = true ; 
 			}
 			

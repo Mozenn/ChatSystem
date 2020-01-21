@@ -7,6 +7,7 @@ final public class User{
 	 private UserId id;  
 	 private InetAddress ipAddress;  
 	 private String username;
+	 private String subnet ; 
 	 
 	 public static final int MAX_NAME_SIZE = 20;
 	 

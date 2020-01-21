@@ -398,6 +398,9 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			if(localUsers.containsKey(u.getId()) && localUsers.get(u.getId()).getUsername().equals(u.getUsername()))
 				return ; 
 			
+			if(distantUsers.containsKey(u.getId())) // if webservice has sent back list of distant user before local user response has been received 
+				removeDistantUser(u);
+			
 			localUsers.put(u.getId(),u);
 		}
 		LoggerUtility.getInstance().info("CommunicationSystem Local User added " + u.getUsername());
@@ -436,7 +439,8 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			if( u.getId().equals(this.user.getId()))
 				return ; 
 			
-			if(distantUsers.containsKey(u.getId()) && distantUsers.get(u.getId()).getUsername().equals(u.getUsername())) // if user already contained && username has not changed 
+			if( (distantUsers.containsKey(u.getId()) && distantUsers.get(u.getId()).getUsername().equals(u.getUsername())) // if user already contained && username has not changed 
+					|| localUsers.containsKey(u.getId())) // or if user is in local network 
 				return ; 
 			
 			distantUsers.put(u.getId(),u);
@@ -710,6 +714,31 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 		return Optional.ofNullable(user); 
 	}
 	
+	private User getDummyLocalUser()
+	{
+		InetAddress ipAdd;
+		try {
+			ipAdd = NetworkUtility.getLocalIPAddress();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return null ;
+		} 
+		
+	    NetworkInterface ni;
+	    byte[] id ; 
+	    
+		try {
+			ni = NetworkInterface.getByInetAddress(ipAdd);
+			id = ni.getHardwareAddress();
+		} catch (SocketException e1) {
+			e1.printStackTrace();
+			return null ;
+		}
+	    
+	    
+		return new User(new UserId(id),ipAdd, "name") ; 
+	}
+	
 	private void saveLocalUser() throws IOException 
 	{
 		Properties props = ConfigurationUtility.getAppProperties() ; 
@@ -764,14 +793,24 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	{
 		boolean res = false ; 
 		
+		User newPotentialUser = getDummyLocalUser(); 
+		newPotentialUser.setUsername(username);
+		String userAsString;
+		try {
+			userAsString = new String(SerializationUtility.serializeUser(newPotentialUser));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return false; 
+		}  
+		
 		HttpClient httpClient = HttpClient.newBuilder()
 	            .version(HttpClient.Version.HTTP_2)
 	            .build();
 		
         HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(username))
+                .POST(HttpRequest.BodyPublishers.ofString(userAsString))
                 .uri(URI.create(PRESENCESERVICE_URL))
-                .header("Content-Type", "text/plain")
+                .header("Content-Type", "application/json")
                 .setHeader("COMMUNICATION", "CU")
                 .timeout(Duration.ofSeconds(2))
                 .build();
