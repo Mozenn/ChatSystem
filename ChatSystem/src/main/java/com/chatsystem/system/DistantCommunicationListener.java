@@ -23,8 +23,10 @@ final class DistantCommunicationListener extends Thread {
 	{
 		this.system = system;
 		
-		this.serverSocket = new ServerSocket(CommunicationSystem.DISTANT_LISTENING_PORT);
+		this.serverSocket = new ServerSocket(0);
 		this.serverSocket.setSoTimeout(1000);
+		
+		system.setDistantListeningPort(serverSocket.getLocalPort());
 		
 		run = new AtomicBoolean(); 
 		run.set(true);

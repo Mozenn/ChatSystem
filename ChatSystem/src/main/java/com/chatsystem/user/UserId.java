@@ -4,6 +4,10 @@ import java.util.Arrays;
 
 import com.chatsystem.message.Message;
 
+/*
+ * Identify a User 
+ * UserId must be unique  
+ */
 public class UserId { 
 	
 	private byte[] id ; 
@@ -13,8 +17,14 @@ public class UserId {
 		this.id = new byte[8]  ; 
 	}
 	
+	/*
+	 * @throws NullPointerException if id is null 
+	 */
 	public UserId(byte[] id)
 	{
+		if(id == null)
+			throw new NullPointerException("Id can't be null") ; 
+		
 		this.id = id  ; 
 	}
 	
@@ -23,7 +33,14 @@ public class UserId {
 		return this.id ; 
 	}
 	
+	/*
+	 * @throws NullPointerException if id is null 
+	 */
 	public void setId(byte[] id) {
+		
+		if(id == null)
+			throw new NullPointerException("Id can't be null") ; 
+		
 		this.id = id;
 	}
 	

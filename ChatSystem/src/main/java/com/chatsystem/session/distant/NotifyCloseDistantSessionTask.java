@@ -10,12 +10,21 @@ import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+/*
+ * Send CS notify to receiver 
+ */
 final class NotifyCloseDistantSessionTask implements Runnable {
 	
 	private Socket socket ; 
 	
+	/*
+	 * @throws NullPointerException if socket is null 
+	 */
 	public NotifyCloseDistantSessionTask(Socket socket)
 	{
+		if(socket == null)
+			throw new NullPointerException() ; 
+		
 		this.socket = socket ; 
 		
 		Thread thread = new Thread(this,"NotifyCloseDistantSession") ; 

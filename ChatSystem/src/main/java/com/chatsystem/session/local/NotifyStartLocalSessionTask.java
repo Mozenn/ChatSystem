@@ -58,7 +58,7 @@ class NotifyStartLocalSessionTask implements Runnable{
 		try {
 			
 			byte[] msgAsBytes = SerializationUtility.serializeMessage(msg);
-			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, CommunicationSystem.LOCAL_LISTENING_PORT));
+			socket.send(new DatagramPacket(msgAsBytes, msgAsBytes.length, addr, parentSession.getReceiver().getLocalPort()));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ; 

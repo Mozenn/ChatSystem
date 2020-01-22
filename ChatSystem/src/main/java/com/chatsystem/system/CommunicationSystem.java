@@ -5,6 +5,7 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.swing.event.EventListenerList;
 
@@ -46,7 +48,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-final public class CommunicationSystem implements AutoCloseable , SystemContract{
+public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	private HashMap<UserId,User> localUsers;
 	private HashMap<UserId,User> distantUsers;
@@ -60,11 +62,14 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	private final EventListenerList listeners = new EventListenerList();
 	
 	private LocalCommunicationListener localCommunicationListener ; 
-	public static final int LOCAL_LISTENING_PORT = 8888; 
+	/*
+	 * Port used to multicast in local network 
+	 */
+	public static final int LOCAL_LISTENING_PORT = 8888; // default port // TODO make a list with priority in case where the first is already taken ? 
 	public static final String MULTICAST_ADDR = "228.228.228.228"; // TODO use a non routable multicast address between 224.0.0.0 to 224.0.0.255 
 	
 	private DistantCommunicationListener distantCommunicationListener; 
-	public static final int DISTANT_LISTENING_PORT = 8888; 
+	private static final int DISTANT_LISTENING_PORT = 9999; // default port 
 	
 	public final String PRESENCESERVICE_URL ; 
 	private DistantUsersFetcher distantUsersFetcher ; 
@@ -86,28 +91,47 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	
 	public void start()
 	{
-		
-		try {
-			localCommunicationListener = new LocalCommunicationListener(this);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(ConfigurationUtility.isTesting())
+		{
+			try {
+				distantCommunicationListener = new DistantCommunicationListener(this) ;
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+			
+			notifyStartWebService();
+			
+			distantUsersFetcher = new DistantUsersFetcher(this) ; 
+			
+			bRunning = true ; 
+			
+			LoggerUtility.getInstance().info("CommunicationSystem Test Started");
 		}
-		
-		try {
-			distantCommunicationListener = new DistantCommunicationListener(this) ;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		
-		notifyLocalUsers(); 
-		
-		notifyStartWebService();
-		
-		distantUsersFetcher = new DistantUsersFetcher(this) ; 
-		
-		bRunning = true ; 
-		
-		LoggerUtility.getInstance().info("CommunicationSystem Started");
+		else
+		{
+			try {
+				localCommunicationListener = new LocalCommunicationListener(this);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				distantCommunicationListener = new DistantCommunicationListener(this) ;
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+			
+			notifyLocalUsers(); 
+			
+			notifyStartWebService();
+			
+			distantUsersFetcher = new DistantUsersFetcher(this) ; 
+			
+			bRunning = true ; 
+			
+			LoggerUtility.getInstance().info("CommunicationSystem Started");
+		}
+
 	}
 	
 	@Override
@@ -130,9 +154,19 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			e.printStackTrace();
 		} ; 
 		
-		localCommunicationListener.stopRun();	
-		distantCommunicationListener.stopRun();
-		distantUsersFetcher.stopRun() ; 
+		
+		if(ConfigurationUtility.isTesting())
+		{
+			distantCommunicationListener.stopRun();
+			distantUsersFetcher.stopRun() ; 
+		}
+		else
+		{
+			localCommunicationListener.stopRun();	
+			distantCommunicationListener.stopRun();
+			distantUsersFetcher.stopRun() ; 
+		}
+
 	}
 	
 	// ===================  COMMUNICATION ==============================
@@ -475,6 +509,36 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 
 	}
 	
+	protected void UpdateDistantUsers(List<User> updatedUsers)
+	{
+		// add new users 
+		
+		for(User u : updatedUsers)
+		{
+			if(distantUsers.containsKey(u))
+			{
+				if(!distantUsers.get(u.getId()).getUsername().equals(u.getUsername()))
+				{
+					addDistantUser(u);
+				}
+			}
+			else
+			{
+				addDistantUser(u);
+			}
+		}
+		
+		// remove missing users 
+		
+		for(User u : distantUsers.values())
+		{
+			if(!updatedUsers.contains(u))
+			{
+				removeDistantUser(u);
+			}
+		}
+	}
+	
 	private void notifyStartWebService()
 	{
 		
@@ -638,15 +702,43 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 	@Override
 	public Optional<User> getUser() 
 	{
-		
-		if(user == null)
+		if(ConfigurationUtility.isTesting())
 		{
-			try {
-				LoadLocalUser();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} 
+			if(user == null)
+			{
+			    int leftLimit = 97; // letter 'a'
+			    int rightLimit = 122; // letter 'z'
+			    Random random = new Random();
+			 
+			    String id = random.ints(leftLimit, rightLimit + 1)
+			      .limit(5)
+			      .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+			      .toString();
+			    
+			    String username = random.ints(leftLimit, rightLimit + 1)
+					      .limit(7)
+					      .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+					      .toString();
+				
+				try {
+					this.user = new User(new UserId(id.getBytes()),InetAddress.getLocalHost(),username) ;
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} 
+			}
 		}
+		else
+		{
+			if(user == null)
+			{
+				try {
+					LoadLocalUser();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+			}
+		}
+
 
 		return Optional.ofNullable(user);
 
@@ -698,7 +790,7 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			}
 		    
 		    
-			User newUser = new User(new UserId(id),ipAdd, username) ; 
+			User newUser = new User(new UserId(id),ipAdd, username,LOCAL_LISTENING_PORT, DISTANT_LISTENING_PORT) ; 
 			
 
 			this.user = newUser ; 
@@ -836,6 +928,14 @@ final public class CommunicationSystem implements AutoCloseable , SystemContract
 			}
 			
 		return res ;
+	}
+	
+	/*
+	 * Set distantListeningPort following binding of serversocket in DistantCommunicationListener 
+	 */
+	protected void setDistantListeningPort(int newPort)
+	{
+		this.user.setDistantPort(newPort);
 	}
 
 

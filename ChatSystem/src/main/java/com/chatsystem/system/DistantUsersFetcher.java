@@ -65,10 +65,7 @@ public class DistantUsersFetcher extends Thread{
 				{
 					List<User> users = SerializationUtility.deserializeUsers(response.body().getBytes()) ; 
 					
-					for(User u : users)
-					{
-						system.addDistantUser(u);
-					}
+					system.UpdateDistantUsers(users);
 				}
 			}  catch(ConnectException e ){
 				
@@ -82,7 +79,7 @@ public class DistantUsersFetcher extends Thread{
 			lastTimestamp.setTime(new Date().getTime());
 			
 			try {
-				sleep(5000) ;
+				sleep(5000) ; // TODO make this smaller for production 
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 

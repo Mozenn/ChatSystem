@@ -18,7 +18,9 @@ import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SessionListener;
 import com.chatsystem.model.SessionModel;
 import com.chatsystem.model.SystemContract;
+import com.chatsystem.system.CommunicationSystem;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.ConfigurationUtility;
 import com.chatsystem.utility.LoggerUtility;
 
 public abstract class Session implements SessionModel{
@@ -104,24 +106,39 @@ public abstract class Session implements SessionModel{
 	 */
 	public void addMessage(UserMessage m) 
 	{
-		synchronized(messages)
+		if(ConfigurationUtility.isTesting())
 		{
-			messages.add(m);
+			synchronized(messages)
+			{
+				messages.add(m);
+			}
+			
+			fireMessageAdded(m);
+			
+			LoggerUtility.getInstance().info("Session Message Added");
+		}
+		else
+		{
+			synchronized(messages)
+			{
+				messages.add(m);
+			}
+
+			DAO dao;
+			try {
+				dao = new DAOSQLite();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ; 
+			} 
+			
+			dao.addMessage(m);
+			
+			fireMessageAdded(m);
+			
+			LoggerUtility.getInstance().info("Session Message Added");
 		}
 
-		DAO dao;
-		try {
-			dao = new DAOSQLite();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return ; 
-		} 
-		
-		dao.addMessage(m);
-		
-		fireMessageAdded(m);
-		
-		LoggerUtility.getInstance().info("Session Message Added");
 	}
 	
 	public Optional<UserMessage> getMessage(Timestamp date) 

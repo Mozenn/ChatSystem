@@ -2,6 +2,10 @@ package com.presenceservice.model;
 
 import java.util.Arrays;
 
+/*
+ * Identify a User 
+ * UserId must be unique  
+ */
 public class UserId { 
 	
 	private byte[] id ; 

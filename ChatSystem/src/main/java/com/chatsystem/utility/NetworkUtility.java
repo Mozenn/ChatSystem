@@ -9,9 +9,11 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.chatsystem.session.local.LocalSessionListener;
 import com.chatsystem.system.CommunicationSystem;
 
+/*
+ * Method library providing utility method related to network  
+ */
 public final class NetworkUtility {
 	
 	private NetworkUtility() {}

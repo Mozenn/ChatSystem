@@ -14,7 +14,14 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import com.chatsystem.system.CommunicationSystem;
+
+/*
+ * Method library providing utility method related to configuration 
+ */
 public final class ConfigurationUtility {
+	
+	private static Boolean bTest ; 
 	
 	private ConfigurationUtility() {}
 	
@@ -29,13 +36,24 @@ public final class ConfigurationUtility {
 		return properties ; 
 	}
 	
+	/*
+	 * Save changes made to newProperties to the app.properties file 
+	 * @param the modified properties that need to be saved 
+	 * @throws NullPointerException if newProperties is null 
+	 */
 	public static void saveAppProperties(Properties newProperties) throws IOException
 	{
+		if(newProperties == null)
+			throw new NullPointerException() ; 
+		
 		String path = getConfigPath() + "app.properties";
 		FileOutputStream out = new FileOutputStream(path);
 		newProperties.store(out, null);
 	}
 	
+	/*
+	 * Get path where all configuration & data are stored 
+	 */
 	public static String getConfigPath() 
 	{
 		String path ; 
@@ -46,7 +64,10 @@ public final class ConfigurationUtility {
 		}
 		else
 		{
-			path = System.getProperty("user.home") + System.getProperty("file.separator") + ".chatsystem" + System.getProperty("file.separator") ;  
+			if(isTesting())
+				path = System.getProperty("user.home") + System.getProperty("file.separator") + ".chatsystemtest" + System.getProperty("file.separator") ;  
+			else
+				path = System.getProperty("user.home") + System.getProperty("file.separator") + ".chatsystem" + System.getProperty("file.separator") ;  
 		}
 		
 		return path ; 
@@ -62,7 +83,40 @@ public final class ConfigurationUtility {
 	    }
 	    return false;
 	}
+	/*
+	 * Whether the client is running as a testing version or standard version 
+	 * a testing version has no local communication enabled nor message storing functionality 
+	 */
+	public static boolean isTesting()
+	{
+		
+		
+		if(bTest == null)
+		{
+			Properties prop = new Properties() ; 
+			
+			try {
+				prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("app.properties")) ;
+				
+				bTest = prop.getProperty("test").equals("true") ? Boolean.valueOf(true) : Boolean.valueOf(false) ; 
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				bTest = Boolean.valueOf(false) ; 
+			} 
+			
+			
+			if(bTest)
+				LoggerUtility.getInstance().severe("TESTING"); 
+		}
+
+		
+		return bTest.booleanValue() ; 
+	}
 	
+	/*
+	 * Initialize application folder and files in the config path if not exist 
+	 */
 	public static void initializeApplicationFolder() throws IOException
 	{
 		Path path = Path.of(getConfigPath()) ; 

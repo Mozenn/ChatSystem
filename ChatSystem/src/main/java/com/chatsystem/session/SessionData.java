@@ -1,5 +1,7 @@
 package com.chatsystem.session;
 
+import java.net.UnknownHostException;
+
 import com.chatsystem.user.User;
 
 /*
@@ -11,7 +13,7 @@ public class SessionData {
 	
 	private int port ; 
 	
-	public SessionData() 
+	public SessionData() throws UnknownHostException 
 	{
 		user = new User() ; 
 	}

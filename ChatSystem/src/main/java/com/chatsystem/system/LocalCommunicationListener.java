@@ -28,6 +28,7 @@ final class LocalCommunicationListener extends Thread {
 		this.socket = new MulticastSocket(CommunicationSystem.LOCAL_LISTENING_PORT);
 		this.socket.joinGroup(InetAddress.getByName(CommunicationSystem.MULTICAST_ADDR));
 		this.socket.setSoTimeout(1000);
+		
 		run = new AtomicBoolean(); 
 		run.set(true);
 		start();

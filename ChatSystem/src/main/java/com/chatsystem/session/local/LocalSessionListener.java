@@ -16,7 +16,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException ; 
 
-public class LocalSessionListener extends Thread{
+/*
+ * Listen to UDP communications on local network 
+ */
+final class LocalSessionListener extends Thread{
 	
 	private LocalSession session;
 	private DatagramSocket socket;

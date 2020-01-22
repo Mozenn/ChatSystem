@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -53,11 +54,15 @@ final class DistantSessionListener extends Thread {
 	@Override 
 	public void run()
 	{
-		while(run.get()) 
+		try (DataInputStream dIn = new DataInputStream(socket.getInputStream());)
 		{
-			
-			try (DataInputStream dIn = new DataInputStream(socket.getInputStream());)
+			while(run.get()) 
 			{
+				LoggerUtility.getInstance().info("DistantSessionListener Entering Loop") ; 
+				
+				if(socket.isClosed())
+					LoggerUtility.getInstance().info("DistantSessionListener CLOSED") ; 
+
 				byte[] data = dIn.readAllBytes() ; // TODO test if that is blocking or not 
 				
 				UserMessage msg = null ; 
@@ -74,7 +79,7 @@ final class DistantSessionListener extends Thread {
 						
 						if(sMsg.getSubtype().equals(SystemMessage.SystemMessageType.CS))
 						{
-							System.out.println("DistantSessionListener close Session received") ; 
+							LoggerUtility.getInstance().info("DistantSessionListener close Session received") ; 
 							session.closeSession(); 
 							return ; 
 						}
@@ -92,14 +97,20 @@ final class DistantSessionListener extends Thread {
 					continue ; 
 				}
 
-				System.out.println("DistantSession Message Received");
+				LoggerUtility.getInstance().info("DistantSession Message Received");
 				session.addMessage(msg);	
 				
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			} 
+				try {
+					sleep(1000) ;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} 
 
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
+
 		
 	}
 	

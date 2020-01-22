@@ -304,7 +304,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 	
 	public void ChangeConversation(User newSender, User newReceiver,List<UserMessage> messages)
 	{
-		if(currentReceiver.equals(newReceiver))
+		if(currentReceiver != null && currentReceiver.equals(newReceiver))
 			return ; 
 		
 		clear();

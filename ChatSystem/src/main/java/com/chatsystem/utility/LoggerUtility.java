@@ -17,33 +17,33 @@ public class LoggerUtility {
 	{
 	    logger = Logger.getLogger("Logger");  
 	    
-	    FileHandler fh;  
+	    FileHandler fh = null;  
 
-	    try {  
+
 	    	
-	    	String path = ConfigurationUtility.getAppProperties().getProperty("loggerPath") ; 
 	    	
-	    	if(path.equals("null"))
-	    	{
-	    		fh = new FileHandler(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "chatsystem.log",limit,2);  
-	    	}
-	    	else
-	    	{
-	    		fh = new FileHandler(path + System.getProperty("file.separator") + "chatsystem.log",limit,2);
-	    	}
+			try {
+				String path;
+				path = ConfigurationUtility.getAppProperties().getProperty("loggerPath");
+				
+		    	if(path.equals("null"))
+		    	{
+		    		fh = new FileHandler(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "chatsystem.log",limit,2);  
+		    	}
+		    	else
+		    	{
+		    		fh = new FileHandler(path + System.getProperty("file.separator") + "chatsystem.log",limit,2);
+		    	}
+		    	
+		        SimpleFormatter formatter = new SimpleFormatter();  
+		        fh.setFormatter(formatter); 
+		        
+		        logger.addHandler(fh);
+		    	
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 
-	        
-	        
-	        SimpleFormatter formatter = new SimpleFormatter();  
-	        fh.setFormatter(formatter); 
-	        
-	        logger.addHandler(fh);
-
-	    } catch (SecurityException e) {  
-	        e.printStackTrace();  
-	    } catch (IOException e) {  
-	        e.printStackTrace();  
-	    }  
 	}
 	
     public static LoggerUtility getInstance() {

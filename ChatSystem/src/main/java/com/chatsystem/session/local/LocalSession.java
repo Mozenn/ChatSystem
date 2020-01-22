@@ -17,7 +17,9 @@ import com.chatsystem.user.User;
 import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 
-
+/*
+ * Represent a chat between two Users that are on same network
+ */
 final public class LocalSession extends Session{
 	
 	private DatagramSocket socket;
@@ -68,13 +70,18 @@ final public class LocalSession extends Session{
 		LoggerUtility.getInstance().info("LocalSession Started");
 	}
 	
+	/*
+	 * Notify receiver of session started 
+	 */
 	@Override
 	public void notifyStartSession() 
 	{
 		new NotifyStartLocalSessionTask(this,socket.getLocalPort()) ; 
 	}
 	
-	
+	/*
+	 * Notify initiator of session confirmed
+	 */
 	public void StartSessionResponse(InetAddress address, int port)
 	{
 		new NotifyStartLocalSessionResponseTask(address,port,socket.getLocalPort(),this) ; 
@@ -90,10 +97,7 @@ final public class LocalSession extends Session{
 	@Override
 	protected void closeSession() {
 		listener.stopRun();
-		/*
-		if(!socket.isClosed())
-			socket.close();
-		*/ 
+
 		system.closeSession(receiver);
 		
 		LoggerUtility.getInstance().info("LocalSession Closed");

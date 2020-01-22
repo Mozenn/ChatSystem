@@ -13,14 +13,24 @@ import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+/*
+ * Send SS notify to receiver 
+ * The local User is included is the message content 
+ */
 final class NotifyStartDistantSessionTask implements Runnable{
 	
 	private Socket socket; 
 	private Session parentSession ; 
 	private Thread thread ; 
 	
+	/*
+	 * @throws NullPointerException if parentSession 
+	 */
 	public NotifyStartDistantSessionTask(Session parentSession, Socket socket)
 	{
+		if(parentSession == null)
+			throw new NullPointerException() ; 
+		
 		this.socket = socket ; 
 		this.parentSession = parentSession ; 
 		
@@ -38,7 +48,7 @@ final class NotifyStartDistantSessionTask implements Runnable{
 		
 		try 
 		{
-			socket = new Socket(parentSession.getReceiver().getIpAddress(),CommunicationSystem.DISTANT_LISTENING_PORT) ; 
+			socket = new Socket(parentSession.getReceiver().getIpAddress(),parentSession.getReceiver().getDistantPort()) ; 
 			
 			byte[] serializedUser = null;
 			

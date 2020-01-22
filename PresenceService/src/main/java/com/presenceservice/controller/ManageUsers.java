@@ -236,9 +236,9 @@ public class ManageUsers extends HttpServlet {
 			if(users.containsKey(u))
 			{
 				Boolean isOnline = users.get(u) ; 
-				if(!isOnline)
+				if(isOnline)
 				{
-					isOnline = false ; 
+					users.put(u,Boolean.valueOf(false)) ; 
 					lastModificationDate.setTime(new Date().getTime()); 
 				}
 			}
@@ -293,6 +293,7 @@ public class ManageUsers extends HttpServlet {
 				// update user 
 				
 				uToUpdate.setUsername(user.getUsername());
+				users.put(uToUpdate, Boolean.valueOf(true)) ; 
 				
 				UserDAO dao = new UserDAOSQLite() ; 
 				dao.updateUser(uToUpdate);

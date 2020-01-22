@@ -2,31 +2,30 @@
 
 - Test Home 
 	- Deploy Client in Linux 
-	- deploy .war on localhost (see tuto) 
 - Test INSA
 	- .jar client in Linux & Windows 
 	- Distant Session 
-		- comment local user broadcast 
 	- changeUsername implementation + UI 
 	- File download 
+	- New port management 
 	- Presence Server 
 		- Local 
 		- Deploy on INSA server 
 
+- Fixe 
+	- Distant session 
+	- Distant user CU 
 - Documentation 
 	- see effective java & resources
 	- Use @throw tag 
 	- @param , @return 
 	- indicate side effect 
 	- use assert 
-- check method parameter & exception 
-	- see item 72 
-	- IllegalArgumentException
-	- IllegalStateException
-	- NullPointerException
-	- IndexOutOfBound
 - Redo UML 
+- ReadMe in github 
 - Authentification 
+	- Research 
+- JPA & Hibernate 
 
 
 # Deploy
@@ -86,8 +85,8 @@
 		- db url 
 		- port 
 		- webservice url 
-	- Check method parameter 
-		- not null, value ect 
+	- check method parameter & exception 
+		- IllegalArgumentException, IllegalStateException, NullPointerException, IndexOutOfBound
 
 -Pattern 
 	- Static factory method 
@@ -115,12 +114,6 @@
 		- CentralSys withstand 100 000 users 
 		- CentralSys memory footprint <= 100Mo 
 		- CPU use <= 1% in 5s range measure 
-
-# Documentation 
-- Explain choices 
-- How to 
-- Test made 
-
 
 # Polish 
 	- Produce javadoc with comments 

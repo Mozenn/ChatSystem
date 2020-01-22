@@ -8,6 +8,9 @@ import com.chatsystem.message.UserMessage;
 import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 
+/*
+ * Send Usermessage to receiver 
+ */
 final class SendDistantMessageTask implements Runnable {
 	
 	private final Socket sendingSocket ; 
@@ -16,6 +19,7 @@ final class SendDistantMessageTask implements Runnable {
 	
 	public SendDistantMessageTask(Socket sendingSocket, UserMessage message )
 	{
+		
 		this.messageToSend = message ; 
 		this.sendingSocket = sendingSocket ; 
 	}
