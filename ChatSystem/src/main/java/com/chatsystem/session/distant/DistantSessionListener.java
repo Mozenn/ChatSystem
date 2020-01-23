@@ -2,6 +2,7 @@ package com.chatsystem.session.distant;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,25 +17,25 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 final class DistantSessionListener extends Thread {
 	
 	private DistantSession session;
-	private Socket socket;
+	private DataInputStream stream;
 	private AtomicBoolean run;
 	
 	/*
-	 * @throws NullPointerException if socket is null 
+	 * @throws NullPointerException if stream is null 
 	 */
-	public DistantSessionListener(DistantSession s, Socket socket) 
+	public DistantSessionListener(DistantSession s, InputStream stream) 
 	{
-		if(socket == null)
+		if(stream == null)
 			throw new NullPointerException() ; 
 		
 		session = s;
-		this.socket = socket;
-
+		this.stream = new DataInputStream(stream);
+		/*
 		try {
 			this.socket.setSoTimeout(1000);
 		} catch (SocketException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		run = new AtomicBoolean(); 
 		run.set(true);
@@ -54,17 +55,41 @@ final class DistantSessionListener extends Thread {
 	@Override 
 	public void run()
 	{
-		try (DataInputStream dIn = new DataInputStream(socket.getInputStream());)
-		{
+
 			while(run.get()) 
 			{
-				LoggerUtility.getInstance().info("DistantSessionListener Entering Loop") ; 
+				LoggerUtility.getInstance().info("DistantSessionListener Reading") ; 
 				
-				if(socket.isClosed())
-					LoggerUtility.getInstance().info("DistantSessionListener CLOSED") ; 
+				
+				byte[] data = null;
+				
+				try
+				{
+					int length = stream.readInt();   
+					// read length of incoming message
+					if(length>0) {
+						LoggerUtility.getInstance().info("DistantSessionListener Received") ; 
+						data = new byte[length];
+					    stream.readFully(data, 0, data.length); // read the message
 
-				byte[] data = dIn.readAllBytes() ; // TODO test if that is blocking or not 
-				
+					}
+					else
+					{
+						//LoggerUtility.getInstance().info("Empty");
+						try {
+							sleep(1000) ;
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} 
+						continue ; 
+						
+					}
+				} catch( IOException e)
+				{
+					e.printStackTrace();
+					continue ; 
+				}
+
 				UserMessage msg = null ; 
 				
 				try
@@ -107,10 +132,6 @@ final class DistantSessionListener extends Thread {
 				} 
 
 			}
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
 		
 	}
 	

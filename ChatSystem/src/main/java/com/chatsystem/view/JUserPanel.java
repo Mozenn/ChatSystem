@@ -68,7 +68,7 @@ public class JUserPanel extends JPanel implements ActionListener, ActionEmitter{
 		gbc_userButton.gridy = 1;
 		add(startSessionButton, gbc_userButton);
 		
-		JLabel usernameLabel = new JLabel(user.getUsername());
+		usernameLabel = new JLabel(user.getUsername());
 		usernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.weighty = 1.0;

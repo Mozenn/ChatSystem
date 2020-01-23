@@ -15,6 +15,7 @@ import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SystemContract;
 import com.chatsystem.session.Session;
+import com.chatsystem.session.SessionData;
 import com.chatsystem.session.local.NotifyCloseLocalSessionTask;
 import com.chatsystem.session.local.SendLocalMessageTask;
 import com.chatsystem.user.User;
@@ -28,7 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  */
 public class DistantSession extends Session {
 	
-	private Socket socket ; 
+	private Socket communicationSocket ; 
 	private DistantSessionListener listener ; 
 	
 	/*
@@ -45,10 +46,17 @@ public class DistantSession extends Session {
 	 * @inheritDoc 
 	 * Called by session receiver, after receiving SS SystemMessage  
 	 */
-	public DistantSession(User emitter, User receiver, Socket socket , SystemContract system) throws IOException
+	public DistantSession(User emitter, User receiver, int portToReach , SystemContract system) throws IOException
 	{
 		super(emitter,receiver,system) ; 
-		this.socket = socket ; 
+		
+		initializeConnection(portToReach) ; 
+	}
+	
+	public void initializeConnection(int portToReach) throws IOException
+	{
+		communicationSocket = new Socket(receiver.getIpAddress(),portToReach) ; 
+		
 		startSession() ; 
 	}
 
@@ -56,7 +64,11 @@ public class DistantSession extends Session {
 	protected void startSession() {
 		
 		
-		listener = new DistantSessionListener(this, socket);
+		try {
+			listener = new DistantSessionListener(this, communicationSocket.getInputStream());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		DAO dao;
 		try {
@@ -79,49 +91,78 @@ public class DistantSession extends Session {
 	@Override
 	public void notifyStartSession() {
 		
-		try 
+
+		try (ServerSocket servSocket = new ServerSocket(0))
 		{
-			socket = new Socket(getReceiver().getIpAddress(),getReceiver().getDistantPort()) ; 
+			try 
+			{
+				Socket s = new Socket(getReceiver().getIpAddress(),getReceiver().getDistantPort()) ; 
+				
+				byte[] serializedData = null;
+				
+				try {
+					serializedData = SerializationUtility.serializeSessionData(new SessionData(getEmitter(),servSocket.getLocalPort()));
+				} catch (JsonProcessingException e3) {
+					e3.printStackTrace();
+					return ; 
+				} 
+				
+				SystemMessage msg;
+				
+				try {
+					msg = new SystemMessage(SystemMessage.SystemMessageType.SS, serializedData);
+				} catch (IOException e2) {
+					e2.printStackTrace();
+					return ; 
+				}
+				
+				byte[] msgAsBytes = SerializationUtility.serializeMessage(msg);
+				
+				DataOutputStream dOut = new DataOutputStream(s.getOutputStream());
+				
+				dOut.writeInt(msgAsBytes.length);
+				dOut.write(msgAsBytes);
+				dOut.flush();
+				
+				LoggerUtility.getInstance().info("NotifyStartDistantSession Sent");
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 			
-			byte[] serializedUser = null;
 			
 			try {
-				serializedUser = SerializationUtility.serializeUser(getEmitter());
-			} catch (JsonProcessingException e3) {
-				e3.printStackTrace();
+				LoggerUtility.getInstance().info("NotifyStartDistantSession Waiting for receiver Initialization");
+				
+				// Wait for receiver to initialize connection 
+				communicationSocket = servSocket.accept() ;
+				
+				LoggerUtility.getInstance().info("NotifyStartDistantSession Connection Initialized");
+				
+			} catch (IOException e) {
+				e.printStackTrace();
 				return ; 
 			} 
 			
-			SystemMessage msg;
 			
-			try {
-				msg = new SystemMessage(SystemMessage.SystemMessageType.SS, serializedUser);
-			} catch (IOException e2) {
-				e2.printStackTrace();
-				return ; 
-			}
+			startSession() ; 
 			
-			byte[] msgAsBytes = SerializationUtility.serializeMessage(msg);
-			
-			DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
-			
-			dOut.write(msgAsBytes);
-			
-			LoggerUtility.getInstance().info("NotifyStartDistantSession Sent");
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
-		
-		startSession() ; 
+
 
 	}
 
 	@Override
 	public void notifyCloseSession() {
 		
-		new NotifyCloseDistantSessionTask(socket); 
+		try {
+			new NotifyCloseDistantSessionTask(communicationSocket.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 		listener.stopRun();
 
 	}
@@ -140,9 +181,16 @@ public class DistantSession extends Session {
 	@Override
 	public void sendMessage(String s) {
 
-		 UserMessage m = new UserMessage(s, receiver.getId(), emitter.getId());
+		LoggerUtility.getInstance().info("DistantSession Sending Text Message");
 		
-		new SendDistantMessageTask(socket,m);
+		 UserMessage m = new UserMessage(s, receiver.getId(), emitter.getId());
+		 
+		try {
+			new SendDistantMessageTask(communicationSocket.getOutputStream(),m);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ; 
+		}
 		
 		addMessage(m) ; 
 
@@ -150,6 +198,8 @@ public class DistantSession extends Session {
 
 	@Override
 	public void sendMessage(FileWrapper f) {
+		
+		LoggerUtility.getInstance().info("DistantSession Sending File Message");
 		
 		UserMessage m;
 		
@@ -160,7 +210,12 @@ public class DistantSession extends Session {
 			return ; 
 		} 
 		
-		new SendDistantMessageTask(socket,m);
+		try {
+			new SendDistantMessageTask(communicationSocket.getOutputStream(),m);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ; 
+		}
 		
 		addMessage(m) ; 
 	}

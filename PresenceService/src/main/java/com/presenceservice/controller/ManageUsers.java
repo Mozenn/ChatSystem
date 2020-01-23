@@ -273,7 +273,6 @@ public class ManageUsers extends HttpServlet {
 				{
 					isAvailable = false ;
 				}
-				
 				// keep reference of user to modify for later 
 				if(u.equals(user))
 				{
@@ -291,9 +290,9 @@ public class ManageUsers extends HttpServlet {
 			else
 			{
 				// update user 
-				
 				uToUpdate.setUsername(user.getUsername());
-				users.put(uToUpdate, Boolean.valueOf(true)) ; 
+				
+				//users.put(uToUpdate, Boolean.valueOf(true)) ; 
 				
 				UserDAO dao = new UserDAOSQLite() ; 
 				dao.updateUser(uToUpdate);

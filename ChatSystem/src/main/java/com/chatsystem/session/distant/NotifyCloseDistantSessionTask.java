@@ -2,6 +2,7 @@ package com.chatsystem.session.distant;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -15,17 +16,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  */
 final class NotifyCloseDistantSessionTask implements Runnable {
 	
-	private Socket socket ; 
+	private DataOutputStream outputStream ; 
 	
 	/*
-	 * @throws NullPointerException if socket is null 
+	 * @throws NullPointerException if outputStream is null 
 	 */
-	public NotifyCloseDistantSessionTask(Socket socket)
+	public NotifyCloseDistantSessionTask(OutputStream outputStream)
 	{
-		if(socket == null)
+		if(outputStream == null)
 			throw new NullPointerException() ; 
 		
-		this.socket = socket ; 
+		this.outputStream = new DataOutputStream(outputStream) ; 
 		
 		Thread thread = new Thread(this,"NotifyCloseDistantSession") ; 
 		thread.start();
@@ -43,12 +44,13 @@ final class NotifyCloseDistantSessionTask implements Runnable {
 			return ; 
 		}
 		
-		try (DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());)
+		try
 		{
 			byte[] b = SerializationUtility.serializeMessage(msg); 
 			
-			dOut.write(b);
-			dOut.flush();
+			outputStream.writeInt(b.length);
+			outputStream.write(b);
+			outputStream.flush();
 			
 		} catch (IOException e) {
 			e.printStackTrace();

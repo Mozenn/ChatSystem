@@ -2,19 +2,22 @@
 
 - Test Home 
 	- Deploy Client in Linux 
+	- Test combination of local & distant 
+	- Perf 
+		- make bash script launching x testing client at same time 
 - Test INSA
+	- Step 
+		- Set up two computer 
+		- pull project 
 	- .jar client in Linux & Windows 
 	- Distant Session 
 	- changeUsername implementation + UI 
-	- File download 
-	- New port management 
 	- Presence Server 
 		- Local 
 		- Deploy on INSA server 
 
 - Fixe 
-	- Distant session 
-	- Distant user CU 
+	- Chnage username message 
 - Documentation 
 	- see effective java & resources
 	- Use @throw tag 

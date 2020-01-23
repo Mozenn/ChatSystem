@@ -144,6 +144,11 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	{
 		bRunning = false  ; 
 		
+		for(Session s : sessions.values())
+		{
+			closeSessionNotified(s.getReceiver());
+		}
+		
 		var t = new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 
 		
 		notifyCloseWebService() ; 
@@ -196,9 +201,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		addSession(session) ; 
 	}
 	
-	protected void onDistantSessionRequest(User user, Socket clientSocket) throws IOException
+	protected void onDistantSessionRequest(User user, int port) throws IOException
 	{
-		DistantSession session = new DistantSession(this.user,user,clientSocket,this) ; 
+		DistantSession session = new DistantSession(this.user,user,port,this) ; 
 		
 		addSession(session) ; 
 	}
@@ -252,6 +257,8 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 			sessions.put(receiver.getId(),locSes); 
 			
 			fireSessionStarted(locSes); // notify view 
+			
+			LoggerUtility.getInstance().info("CommunicationSystem Session Added");
 		}
 		
 		return true ;
@@ -277,6 +284,8 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 			sessions.put(receiver.getId(),distSes); 
 			
 			fireSessionStarted(distSes); // notify view 
+			
+			LoggerUtility.getInstance().info("CommunicationSystem Session Added");
 		}
 		
 		return true ;
@@ -515,7 +524,7 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		
 		for(User u : updatedUsers)
 		{
-			if(distantUsers.containsKey(u))
+			if(distantUsers.containsKey(u.getId()))
 			{
 				if(!distantUsers.get(u.getId()).getUsername().equals(u.getUsername()))
 				{
@@ -808,27 +817,45 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	private User getDummyLocalUser()
 	{
-		InetAddress ipAdd;
-		try {
-			ipAdd = NetworkUtility.getLocalIPAddress();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return null ;
-		} 
-		
-	    NetworkInterface ni;
-	    byte[] id ; 
-	    
-		try {
-			ni = NetworkInterface.getByInetAddress(ipAdd);
-			id = ni.getHardwareAddress();
-		} catch (SocketException e1) {
-			e1.printStackTrace();
-			return null ;
+		if(ConfigurationUtility.isTesting())
+		{
+			InetAddress ipAdd;
+			try {
+				ipAdd = NetworkUtility.getLocalIPAddress();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				return null ;
+			} 
+			
+		    byte[] id = this.user.getId().getId();  
+			
+			return new User(new UserId(id),ipAdd, "name") ; 
 		}
-	    
-	    
-		return new User(new UserId(id),ipAdd, "name") ; 
+		else
+		{
+			InetAddress ipAdd;
+			try {
+				ipAdd = NetworkUtility.getLocalIPAddress();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				return null ;
+			} 
+			
+		    NetworkInterface ni;
+		    byte[] id ; 
+		    
+			try {
+				ni = NetworkInterface.getByInetAddress(ipAdd);
+				id = ni.getHardwareAddress();
+			} catch (SocketException e1) {
+				e1.printStackTrace();
+				return null ;
+			}
+		    
+		    
+			return new User(new UserId(id),ipAdd, "name") ; 
+		}
+
 	}
 	
 	private void saveLocalUser() throws IOException 

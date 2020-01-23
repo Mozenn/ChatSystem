@@ -211,7 +211,7 @@ public class UserDAOSQLite implements UserDAO {
     	   ResultSet rs = stmt.executeQuery(query);
     	   
     	   
-           if (rs.next()) { 
+           while (rs.next()) { 
         	   UserId uId = new UserId(rs.getBytes("userid")) ; 
          	  InetAddress inetAddressResult = InetAddress.getByAddress(rs.getBytes("inetaddress")) ;
          	  String usernamedResult = rs.getString("username") ;

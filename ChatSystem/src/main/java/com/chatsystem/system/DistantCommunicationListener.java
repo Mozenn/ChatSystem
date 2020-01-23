@@ -27,6 +27,7 @@ final class DistantCommunicationListener extends Thread {
 		this.serverSocket.setSoTimeout(1000);
 		
 		system.setDistantListeningPort(serverSocket.getLocalPort());
+		LoggerUtility.getInstance().info("DistantCommunicationListener Localport" + serverSocket.getLocalPort());
 		
 		run = new AtomicBoolean(); 
 		run.set(true);
@@ -43,9 +44,9 @@ final class DistantCommunicationListener extends Thread {
 		{
 
 			try {
-				//System.out.println("DistantCommunicationListener wait receive");
+				//LoggerUtility.getInstance().info("DistantCommunicationListener wait receive");
 				Socket clientSocket = serverSocket.accept();
-				
+				LoggerUtility.getInstance().info("DistantCommunicationListener Received");
 				executorService.execute(new DistantCommunicationTask(clientSocket,system));
 				
 			} catch(SocketTimeoutException e)

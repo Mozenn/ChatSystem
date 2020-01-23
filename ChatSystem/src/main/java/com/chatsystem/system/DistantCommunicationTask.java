@@ -25,19 +25,34 @@ final class DistantCommunicationTask implements Runnable {
 	@Override
 	public void run() {
 		
-		try (DataInputStream dIn = new DataInputStream(clientSocket.getInputStream());)
+		LoggerUtility.getInstance().info("DistantCommunicationListenerTask Running ");
+		
+		try ( DataInputStream dIn = new DataInputStream(clientSocket.getInputStream());)
 		{
+			
 			SystemMessage msg ; 
 			try
 			{
-				msg = SerializationUtility.deserializeSystemMessage(dIn.readAllBytes());
+				int length = dIn.readInt();   
+				byte[] message = null ; 
+				// read length of incoming message
+				if(length>0) {
+				     message = new byte[length];
+				    dIn.readFully(message, 0, message.length); // read the message
+				    msg = SerializationUtility.deserializeSystemMessage(message);
+				}
+				else
+				{
+					LoggerUtility.getInstance().info("Empty");
+					return ; 
+				}
+				
 			}
 			catch(ClassCastException | IOException e) // not a system message 
 			{
 				e.printStackTrace();
 				return ; 
 			}
-			
 			switch(msg.getSubtype())
 			{
 				case CO:
@@ -70,11 +85,11 @@ final class DistantCommunicationTask implements Runnable {
 				}
 				case SS:
 				{
-					User u = SerializationUtility.deserializeUser(msg.getContent());
+					SessionData sd = SerializationUtility.deserializeSessionData(msg.getContent());
 					
 					LoggerUtility.getInstance().info("DistantCommunicationListener SS received ");
 					
-					system.onDistantSessionRequest(u, clientSocket);
+					system.onDistantSessionRequest(sd.getUser(), sd.getPort());
 				}
 				default:
 					break;
@@ -84,7 +99,7 @@ final class DistantCommunicationTask implements Runnable {
 			e.printStackTrace();
 			return ; 
 		}
-		
+		LoggerUtility.getInstance().info("DistantCommunicationListenerTask Quit ");
 		
 	}
 

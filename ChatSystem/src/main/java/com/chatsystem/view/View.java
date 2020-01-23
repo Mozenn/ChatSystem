@@ -18,6 +18,7 @@ import com.chatsystem.model.SystemContract;
 import com.chatsystem.model.SystemListener;
 import com.chatsystem.model.SystemModel;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 
 public class View implements ActionListener, SystemListener, SessionListener{
 	
@@ -178,7 +179,7 @@ public class View implements ActionListener, SystemListener, SessionListener{
 		if(sPanel.isPresent())
 		{
 			sPanel.get().getSessionModel().clearSessionListeners();
-			 mainWindow.getOngoingSessionPannel().remove(sPanel.get()) ;  
+			 mainWindow.removeSessionPanel(sPanel.get());
 		}
 		
 		Optional<JUserPanel> uPanel = mainWindow.getUserPanel(sm.getReceiver()) ;  
@@ -224,7 +225,7 @@ public class View implements ActionListener, SystemListener, SessionListener{
 	public void messageAdded(UserMessage m) {
 		if(mainWindow.getChatPanel().getCurrentReceiver().getId().equals(m.getSenderId()) || mainWindow.getChatPanel().getCurrentReceiver().getId().equals(m.getReceiverId()))
 		{
-			System.out.println("View Message Received");
+			LoggerUtility.getInstance().info("View Message Received");
 			mainWindow.getChatPanel().addMessage(m);
 		}
 	}
