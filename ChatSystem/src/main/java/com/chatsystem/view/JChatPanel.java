@@ -15,6 +15,7 @@ import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SessionListener;
 import com.chatsystem.user.User;
+import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -435,11 +436,14 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 		
 		messagePanel.validate();
 		messagePanel.repaint();
+		messageScrollPane.validate();
+		messageScrollPane.repaint();
 		
 	}
 	
 	public void updateUsernames(User u)
 	{
+		LoggerUtility.getInstance().info("ChatPanel Updating Users");
 		if(u.equals(currentEmitter) || u.equals(currentReceiver))
 		{
 			for(var c : messagePanel.getComponents())

@@ -430,25 +430,53 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	// ===================  USERS ==============================
 	
+	/*
+	 * updateDistantUser is called if u is already stored 
+	 */
 	protected void addLocalUser(User u) 
 	{
+		if( u.getId().equals(this.user.getId()))
+			return ; 
+		
 		synchronized(localUsers)
 		{
 			
-			if( u.getId().equals(this.user.getId()))
-				return ; 
-			
 			if(localUsers.containsKey(u.getId()) && localUsers.get(u.getId()).getUsername().equals(u.getUsername()))
+			{
 				return ; 
-			
-			if(distantUsers.containsKey(u.getId())) // if webservice has sent back list of distant user before local user response has been received 
+			}
+			else if(distantUsers.containsKey(u.getId())) // if webservice has sent back list of distant user before local user response has been received 
+			{
 				removeDistantUser(u);
+			}
+			else if(localUsers.containsKey(u.getId()))
+			{
+				updateLocalUser(u);
+				return ; 
+			}
 			
 			localUsers.put(u.getId(),u);
 		}
 		LoggerUtility.getInstance().info("CommunicationSystem Local User added " + u.getUsername());
 		
 		fireuserConnection(u); // notify view 
+	}
+	
+	
+	protected void updateLocalUser(User u)
+	{
+		if( u.getId().equals(this.user.getId()))
+			return ; 
+		
+		if(!localUsers.containsKey(u.getId()) || localUsers.get(u.getId()).getUsername().equals(u.getUsername()))
+			return ; 
+		
+		localUsers.put(u.getId(),u);
+		
+		fireUsernameChanged(u);
+		
+		LoggerUtility.getInstance().info("CommunicationSystem Local User updated " + u.getUsername());
+		
 	}
 	
 	protected void removeLocalUser(User u)
@@ -477,14 +505,20 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	protected void addDistantUser(User u) 
 	{
+		if( u.getId().equals(this.user.getId()))
+			return ; 
+		
 		synchronized(distantUsers)
 		{
-			if( u.getId().equals(this.user.getId()))
-				return ; 
-			
+
 			if( (distantUsers.containsKey(u.getId()) && distantUsers.get(u.getId()).getUsername().equals(u.getUsername())) // if user already contained && username has not changed 
 					|| localUsers.containsKey(u.getId())) // or if user is in local network 
 				return ; 
+			else if(distantUsers.containsKey(u.getId()))
+			{
+				updateDistantUser(u) ; 
+				return ; 
+			}
 			
 			distantUsers.put(u.getId(),u);
 		}
@@ -492,6 +526,21 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		LoggerUtility.getInstance().info("CommunicationSystem Distant User added " + u.getUsername());
 		
 		fireuserConnection(u); // notify view 
+	}
+	
+	protected void updateDistantUser(User u)
+	{
+		if( u.getId().equals(this.user.getId()))
+			return ; 
+		else if(!distantUsers.containsKey(u.getId()) || distantUsers.get(u.getId()).getUsername().equals(u.getUsername()))
+			return ; 
+		
+		distantUsers.put(u.getId(),u);
+		
+		fireUsernameChanged(u);
+		
+		LoggerUtility.getInstance().info("CommunicationSystem Distant User updated " + u.getUsername());
+		
 	}
 	
 	protected void removeDistantUser(User u)

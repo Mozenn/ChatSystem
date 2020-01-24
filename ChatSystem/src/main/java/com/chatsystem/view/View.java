@@ -233,6 +233,20 @@ public class View implements ActionListener, SystemListener, SessionListener{
 	@Override
 	public void usernameChanged(User u) {
 		
+		var uPanel = mainWindow.getUserPanel(u) ;
+		
+		if(uPanel.isPresent())
+		{
+			uPanel.get().setUsernameLabelText(u.getUsername()) ; 
+			
+			var sPanel = mainWindow.getSessionPanel(u) ; 
+			
+			if(sPanel.isPresent())
+			{
+				sPanel.get().SetUsernameLabelText(u.getUsername());
+			}
+		}
+		
 		mainWindow.getChatPanel().updateUsernames(u);
 		
 	}

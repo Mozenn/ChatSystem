@@ -9,7 +9,9 @@
 	- Step 
 		- Set up two computer 
 		- pull project 
-	- .jar client in Linux & Windows 
+		- Deploy .war on INSA server 
+		- generate testing .jar and default .jar  
+	- Local Session 
 	- Distant Session 
 	- changeUsername implementation + UI 
 	- Presence Server 
