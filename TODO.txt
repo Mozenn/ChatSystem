@@ -20,6 +20,9 @@
 
 - Fixe 
 	- Chnage username message 
+	- send button on session reopen 
+	- deploy on insa server 
+	- add user when window not open
 - Documentation 
 	- see effective java & resources
 	- Use @throw tag 
