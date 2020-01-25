@@ -55,7 +55,7 @@ public class ManageUsers extends HttpServlet {
     	
     	UserDAO dao = null;
 		try {
-			dao = new UserDAOSQLite();
+			dao = new UserDAOHSQLDB();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} 
@@ -81,6 +81,7 @@ public class ManageUsers extends HttpServlet {
 		this.lastModificationDate = new Timestamp(d.getTime());
 		
 		LoggerUtility.getInstance().info("Server Started");
+		System.out.println("Server Started");
 
     }
     
@@ -199,7 +200,7 @@ public class ManageUsers extends HttpServlet {
 				System.out.println("User added : " + u) ; 
 				lastModificationDate.setTime(new Date().getTime()); 
 				
-				UserDAO dao = new UserDAOSQLite() ; 
+				UserDAO dao = new UserDAOHSQLDB() ; 
 				
 				dao.addUser(u);
 			}

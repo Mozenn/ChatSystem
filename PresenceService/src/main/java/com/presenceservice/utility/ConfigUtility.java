@@ -24,7 +24,6 @@ public final class ConfigUtility {
 		String path = getConfigPath() + "config.properties" ;
 		FileInputStream in = new FileInputStream(path);
 		properties.load(in);
-		
 		return properties ; 
 	}
 	
@@ -92,9 +91,9 @@ public final class ConfigUtility {
 			
 			// Create data.db 
 			
-			File database = new File(getConfigPath() + prop.getProperty("dbName")) ; 
+			File dbFolder = new File(getConfigPath() + prop.getProperty("dbPath") ) ; 
+			dbFolder.mkdir(); 
 			
-			database.createNewFile() ; 
 		}
 	}
 	
@@ -108,7 +107,13 @@ public final class ConfigUtility {
 		
 		if(Files.exists(path))
 		{
+			try {
+				getConfigProperties().clear();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			deleteDirectory(new File(getConfigPath())) ; 
+			
 		}
 	}
 	
@@ -117,7 +122,7 @@ public final class ConfigUtility {
 	    File[] allContents = directory.listFiles();
 	    if (allContents != null) {
 	        for (File file : allContents) {
-	            deleteDirectory(file);
+	            System.out.println(deleteDirectory(file));
 	        }
 	    }
 	    return directory.delete();

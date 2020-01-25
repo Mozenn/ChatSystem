@@ -17,6 +17,7 @@ public class UserDAOTest {
 	@Test 
 	public void StoreUserTest() throws IOException 
 	{
+		
 		ConfigUtility.initializeConfigFolder();
 		
 		UserId uId1 = new UserId("id1".getBytes()) ;
@@ -33,7 +34,7 @@ public class UserDAOTest {
 			return ; 
 		} 
 		
-		UserDAO dao = new UserDAOSQLite() ; 
+		UserDAO dao = new UserDAOHSQLDB() ; 
 		
 		
 		dao.clearUser();
