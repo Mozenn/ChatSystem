@@ -1,7 +1,6 @@
 ### Ongoing 
 
 - Test Home 
-	- Deploy Client in Linux 
 	- Test combination of local & distant 
 	- Perf 
 		- make bash script launching x testing client at same time 
@@ -23,6 +22,9 @@
 	- send button on session reopen 
 	- deploy on insa server 
 	- add user when window not open
+	- Presence Service size 
+		- remove jackson useless dependancy and other useless dep 
+		- try to use hsql database 
 - Documentation 
 	- see effective java & resources
 	- Use @throw tag 

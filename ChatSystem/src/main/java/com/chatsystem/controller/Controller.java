@@ -48,12 +48,6 @@ public class Controller implements ControllerContract{
 		else 
 		{
 			openMainWindow();
-			/*
-	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	            	
-	            }
-	        }); */ 
 		}
 			
 
@@ -81,12 +75,13 @@ public class Controller implements ControllerContract{
     
     private void openMainWindow()
     {
+    	/*
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-            	createAndShowMainWindow();
+            	
             }
-        });
-        
+        }); */ 
+        createAndShowMainWindow();
         
         model.start();
     }
