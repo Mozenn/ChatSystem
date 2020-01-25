@@ -19,11 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.presenceservice.model.*;
 import com.presenceservice.utility.ConfigUtility;
 import com.presenceservice.utility.LoggerUtility;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.presenceservice.dao.*;
 
 
@@ -140,9 +137,9 @@ public class ManageUsers extends HttpServlet {
 				onlineUsers.add(u) ; 
 		}
 		
-		ObjectMapper uJson = new ObjectMapper();
+		Gson uJson = new Gson();
 		
-		String usersJsonString = uJson.writeValueAsString(onlineUsers) ; 
+		String usersJsonString = uJson.toJson(onlineUsers) ; 
 		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
@@ -175,14 +172,13 @@ public class ManageUsers extends HttpServlet {
 			if(userJsonString == null) 
 				return ; 
 			
-			ObjectMapper uJson = new ObjectMapper();
+			Gson uJson = new Gson();
 			
 			User u = null ; 
 			
 			try {
-				u = uJson.readValue(userJsonString, User.class) ; 
-			} catch(JsonMappingException | JsonParseException e)
-			{
+				u = uJson.fromJson(userJsonString, User.class) ; 
+			} catch(JsonSyntaxException e) {
 				e.printStackTrace();
 				return ; 
 			}
@@ -220,14 +216,13 @@ public class ManageUsers extends HttpServlet {
 			if(userJsonString == null) 
 				return ; 
 			
-			ObjectMapper uJson = new ObjectMapper();
+			Gson uJson = new Gson();
 			
 			User u = null ; 
 			
 			try {
-				u = uJson.readValue(userJsonString, User.class) ; 
-			} catch(JsonMappingException | JsonParseException e)
-			{
+				u = uJson.fromJson(userJsonString, User.class) ; 
+			} catch(JsonSyntaxException e) {
 				e.printStackTrace();
 				return ; 
 			}
@@ -252,14 +247,13 @@ public class ManageUsers extends HttpServlet {
 			if(userJsonString == null )
 				return ; 
 			
-			ObjectMapper uJson = new ObjectMapper();
+			Gson uJson = new Gson();
 			
 			User user = null ; 
 			
 			try {
-				user = uJson.readValue(userJsonString, User.class) ; 
-			} catch(JsonMappingException | JsonParseException e)
-			{
+				user = uJson.fromJson(userJsonString, User.class) ; 
+			} catch(JsonSyntaxException e) {
 				e.printStackTrace();
 				return ; 
 			}
