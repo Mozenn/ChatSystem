@@ -9,7 +9,6 @@ import java.net.Socket;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /*
  * Send CS notify to receiver 

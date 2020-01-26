@@ -3,16 +3,13 @@ package com.chatsystem.session.distant;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
-import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.utility.LoggerUtility;
+import com.chatsystem.utility.SerializationException;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 final class DistantSessionListener extends Thread {
 	
@@ -96,7 +93,7 @@ final class DistantSessionListener extends Thread {
 				{
 					msg = SerializationUtility.deserializeUserMessage(data);
 				}
-				catch(ClassCastException | JsonMappingException e) // Packet received is not a UserMessage  ;
+				catch(ClassCastException | SerializationException e) // Packet received is not a UserMessage  ;
 				{
 					try
 					{
@@ -109,18 +106,12 @@ final class DistantSessionListener extends Thread {
 							return ; 
 						}
 					}
-					catch(ClassCastException | IOException e2)
+					catch(ClassCastException | SerializationException e2)
 					{
 						continue ; 
 					}
 					continue ; 
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-					continue ; 
-				} catch (IOException e) {
-					e.printStackTrace();
-					continue ; 
-				}
+				} 
 
 				LoggerUtility.getInstance().info("DistantSession Message Received");
 				session.addMessage(msg);	

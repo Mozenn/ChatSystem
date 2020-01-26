@@ -11,6 +11,9 @@ import java.nio.file.Files;
  */
 public class FileWrapper {
 	
+	private byte[] fileContent ; 
+	private String fileName ; 
+	
 	public byte[] getFileContent() {
 		return fileContent;
 	}
@@ -34,8 +37,7 @@ public class FileWrapper {
 		this.fileName = fileName;
 	}
 
-	private byte[] fileContent ; 
-	private String fileName ; 
+
 	
 	public FileWrapper() throws IOException
 	{

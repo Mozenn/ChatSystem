@@ -2,16 +2,12 @@ package com.chatsystem.session.distant;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.session.Session;
-import com.chatsystem.system.CommunicationSystem;
-import com.chatsystem.user.User;
 import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /*
  * Send SS notify to receiver 
@@ -52,12 +48,9 @@ final class NotifyStartDistantSessionTask implements Runnable{
 			
 			byte[] serializedUser = null;
 			
-			try {
-				serializedUser = SerializationUtility.serializeUser(parentSession.getEmitter());
-			} catch (JsonProcessingException e3) {
-				e3.printStackTrace();
-				return ; 
-			} 
+
+			serializedUser = SerializationUtility.serializeUser(parentSession.getEmitter());
+
 			
 			SystemMessage msg;
 			

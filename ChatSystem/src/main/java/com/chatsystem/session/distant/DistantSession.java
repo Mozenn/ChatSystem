@@ -16,13 +16,9 @@ import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SystemContract;
 import com.chatsystem.session.Session;
 import com.chatsystem.session.SessionData;
-import com.chatsystem.session.local.NotifyCloseLocalSessionTask;
-import com.chatsystem.session.local.SendLocalMessageTask;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.LoggerUtility;
-import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /*
  * Represent a chat between two Users that are on two different networks 
@@ -100,12 +96,8 @@ public class DistantSession extends Session {
 				
 				byte[] serializedData = null;
 				
-				try {
-					serializedData = SerializationUtility.serializeSessionData(new SessionData(getEmitter(),servSocket.getLocalPort()));
-				} catch (JsonProcessingException e3) {
-					e3.printStackTrace();
-					return ; 
-				} 
+				serializedData = SerializationUtility.serializeSessionData(new SessionData(getEmitter(),servSocket.getLocalPort()));
+	
 				
 				SystemMessage msg;
 				

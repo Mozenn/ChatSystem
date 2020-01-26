@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import org.junit.Test;
 
@@ -16,46 +17,46 @@ import com.chatsystem.model.FileWrapper;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
+import com.chatsystem.utility.SerializationException;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.google.gson.Gson;
 
 public class SerializationTest {
 	
 	@Test 
-	public void ValidSystemMessageSerialization() throws JsonParseException, JsonMappingException, IOException
+	public void ValidSystemMessageSerialization() throws  IOException, InterruptedException
 	{
 		String s = "hey" ; 
 		
 		SystemMessage messageBefore = new SystemMessage(SystemMessage.SystemMessageType.CO,s.getBytes()) ; 
 		
-		ObjectMapper o = new ObjectMapper() ;
+		Gson o = new Gson() ;
 		
-		var content = o.writeValueAsString(messageBefore).getBytes() ; 
+		var content = o.toJson(messageBefore).getBytes() ; 
+		
 		
 		SystemMessage messageAfter = SerializationUtility.deserializeSystemMessage(content) ;
 		
-		assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
+		System.out.println(messageAfter.getDate()) ;
+		
+		long i = messageBefore.getDate().getTime() ; 
+		
+		System.out.println(i) ;
+		
+		//System.out.println(messageBefore.getDate().toString()) ; 
+		//System.out.println(messageAfter.getDate().toString()) ; 
+		//assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
 		assertEquals(messageBefore.getSubtype(),messageAfter.getSubtype()); 
 		assertEquals(s,new String(messageAfter.getContent())); 
 		
 	     
 	}
 	
-	@Test (expected = MismatchedInputException.class)
+	@Test (expected = SerializationException.class)
 	public void InvalidSystemMessageSerialization() throws IOException
 	{
 
-		String s = "hey" ; 
-		
-
-		ObjectMapper o = new ObjectMapper() ;
-		
-		byte[] content;
-
-		content = o.writeValueAsString(s).getBytes();
+		var content = "hey".getBytes() ; 
 
 		
 		SystemMessage messageAfter = SerializationUtility.deserializeSystemMessage(content) ;
@@ -63,7 +64,7 @@ public class SerializationTest {
 	}
 	
 	@Test 
-	public void ValidUserMessageSerialization() throws JsonParseException, JsonMappingException, IOException
+	public void ValidUserMessageSerialization()
 	{
 		String s = "hey" ; 
 		
@@ -72,13 +73,12 @@ public class SerializationTest {
 		
 		UserMessage messageBefore = new UserMessage(s,id1,id2) ; 
 		
-		ObjectMapper o = new ObjectMapper() ;
 		
-		var content = o.writeValueAsString(messageBefore).getBytes() ; 
+		var content = SerializationUtility.serializeMessage(messageBefore) ; 
 		
 		UserMessage messageAfter = SerializationUtility.deserializeUserMessage(content) ;
 		
-		assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
+		//assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
 		assertEquals(messageBefore.getSubtype(),messageAfter.getSubtype()); 
 		assertEquals(s,new String(messageAfter.getContent())); 
 		assertEquals(id1,messageAfter.getReceiverId()); 
@@ -87,18 +87,14 @@ public class SerializationTest {
 	     
 	}
 	
-	@Test (expected = MismatchedInputException.class)
+	@Test (expected = SerializationException.class)
 	public void InvalidUserMessageSerialization() throws IOException
 	{
 
-		String s = "hey" ; 
-		
-
-		ObjectMapper o = new ObjectMapper() ;
 		
 		byte[] content;
 
-		content = o.writeValueAsString(s).getBytes();
+		content = "content".getBytes();
 
 		
 		UserMessage messageAfter = SerializationUtility.deserializeUserMessage(content) ;
@@ -106,15 +102,13 @@ public class SerializationTest {
 	}
 	
 	@Test 
-	public void ValidUserSerialization() throws JsonParseException, JsonMappingException, IOException
+	public void ValidUserSerialization() throws IOException
 	{
 		String s = "hey" ; 
 		
 		User userBefore = new User(new UserId("u1".getBytes()),NetworkUtility.getLocalIPAddress(),"username") ; 
 		
-		ObjectMapper o = new ObjectMapper() ;
-		
-		var content = o.writeValueAsString(userBefore).getBytes() ; 
+		var content = SerializationUtility.serializeUser(userBefore) ; 
 		
 		User userAfter = SerializationUtility.deserializeUser(content) ;
 		
@@ -125,18 +119,13 @@ public class SerializationTest {
 	     
 	}
 	
-	@Test (expected = MismatchedInputException.class)
+	@Test (expected = SerializationException.class)
 	public void InvalidUserSerialization() throws IOException
 	{
-
-		String s = "hey" ; 
-		
-
-		ObjectMapper o = new ObjectMapper() ;
 		
 		byte[] content;
 
-		content = o.writeValueAsString(s).getBytes();
+		content = "content".getBytes() ; 
 
 		
 		User user = SerializationUtility.deserializeUser(content) ;
@@ -144,16 +133,14 @@ public class SerializationTest {
 	}
 	
 	@Test 
-	public void ValidFileWrapperSerialization() throws JsonParseException, JsonMappingException, IOException
+	public void ValidFileWrapperSerialization() throws IOException 
 	{
 		String s = "fileName" ; 
 		File f = new File("resources/fileIcon.png"); 
 		
 		FileWrapper fileWrapperBefore = new FileWrapper(s,f) ; 
 		
-		ObjectMapper o = new ObjectMapper() ;
-		
-		var content = o.writeValueAsString(fileWrapperBefore).getBytes() ; 
+		var content = SerializationUtility.serializeFileWrapper(fileWrapperBefore) ; 
 		
 		FileWrapper fileWrapperAfter = SerializationUtility.deserializeFileWrapper(content) ;
 		
@@ -163,18 +150,13 @@ public class SerializationTest {
 	     
 	}
 	
-	@Test (expected = MismatchedInputException.class)
+	@Test (expected = SerializationException.class)
 	public void InvalidFileWrapperSerialization() throws IOException
 	{
-
-		String s = "hey" ; 
-		
-
-		ObjectMapper o = new ObjectMapper() ;
 		
 		byte[] content;
 
-		content = o.writeValueAsString(s).getBytes();
+		content = "content".getBytes() ; 
 
 		
 		FileWrapper fileWrapperAfter = SerializationUtility.deserializeFileWrapper(content) ;

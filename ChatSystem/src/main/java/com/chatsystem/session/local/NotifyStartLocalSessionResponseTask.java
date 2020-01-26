@@ -11,7 +11,6 @@ import com.chatsystem.session.SessionData;
 import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class NotifyStartLocalSessionResponseTask implements Runnable {
 	
@@ -36,12 +35,9 @@ public class NotifyStartLocalSessionResponseTask implements Runnable {
 		
 		byte[] serializedData = null;
 		
-		try {
-			serializedData = SerializationUtility.serializeSessionData(new SessionData(parentSession.getEmitter(),sessionPort));
-		} catch (JsonProcessingException e3) {
-			e3.printStackTrace();
-			return ; 
-		} 
+
+		serializedData = SerializationUtility.serializeSessionData(new SessionData(parentSession.getEmitter(),sessionPort));
+
 		
 		SystemMessage msg;
 		

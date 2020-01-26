@@ -40,13 +40,10 @@ import com.chatsystem.system.NotifyLocalUsersTask.LocalNotifyType;
 import com.chatsystem.user.User;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.NetworkUtility;
+import com.chatsystem.utility.SerializationException;
 import com.chatsystem.utility.ConfigurationUtility;
 import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
@@ -178,12 +175,12 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	// CONNECTION 
 	
-	public void notifyLocalUsers() 
+	protected void notifyLocalUsers() 
 	{
 		new NotifyLocalUsersTask(this,LocalNotifyType.CONNECTION);
 	}
 	
-	public void notifyConnectionResponse(DatagramPacket packet) throws IOException, ClassNotFoundException 
+	protected void notifyConnectionResponse(DatagramPacket packet) throws IOException, ClassNotFoundException 
 	{
 		new NotifyConnectionResponseTask(this,packet);
 	}
@@ -292,6 +289,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		
 	}
 	
+	/*
+	 * Close a session, notify view and notify receiver session 
+	 */
 	@Override
 	public void closeSessionNotified(User receiver) 
 	{
@@ -303,6 +303,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		}
 	}
 	
+	/*
+	 * Close session without notifying receiver session
+	 */
 	@Override
 	public void closeSession(User receiver) 
 	{
@@ -366,13 +369,7 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 			FileWrapper fw = null ; 
 			try {
 				fw = SerializationUtility.deserializeFileWrapper(m.get().getContent()) ;
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-				return ; 
-			} catch (JsonMappingException e) {
-				e.printStackTrace();
-				return ; 
-			} catch (IOException e) {
+			} catch (SerializationException e) {
 				e.printStackTrace();
 				return ; 
 			} 
@@ -605,12 +602,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	            .build();
 		
 		String userAsString;
-		try {
-			userAsString = new String(SerializationUtility.serializeUser(this.user));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return ; 
-		}  
+
+		userAsString = new String(SerializationUtility.serializeUser(this.user));
+
 		
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(userAsString))
@@ -653,12 +647,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	            .build();
 		
 		String userAsString;
-		try {
-			userAsString = new String(SerializationUtility.serializeUser(this.user));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return ; 
-		}  
+
+		userAsString = new String(SerializationUtility.serializeUser(this.user));
+
 		
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(userAsString))
@@ -912,12 +903,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		Properties props = ConfigurationUtility.getAppProperties() ; 
 		
 		byte[] userAsBytes;
-		try {
-			userAsBytes = SerializationUtility.serializeUser(this.user);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return ; 
-		} 
+
+		userAsBytes = SerializationUtility.serializeUser(this.user);
+
 		
 		props.setProperty("localUser", new String(userAsBytes))  ;
 		ConfigurationUtility.saveAppProperties(props);
@@ -964,12 +952,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		User newPotentialUser = getDummyLocalUser(); 
 		newPotentialUser.setUsername(username);
 		String userAsString;
-		try {
-			userAsString = new String(SerializationUtility.serializeUser(newPotentialUser));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return false; 
-		}  
+
+		userAsString = new String(SerializationUtility.serializeUser(newPotentialUser));
+
 		
 		HttpClient httpClient = HttpClient.newBuilder()
 	            .version(HttpClient.Version.HTTP_2)

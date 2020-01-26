@@ -22,10 +22,7 @@
 	- send button on session reopen 
 	- deploy on insa server 
 	- add user when window not open
-	- Presence Service size 
-		- remove jackson useless dependancy and other useless dep 
-		- try to use hsql database 
-- Documentation 
+- Documentation (from system package) 
 	- see effective java & resources
 	- Use @throw tag 
 	- @param , @return 

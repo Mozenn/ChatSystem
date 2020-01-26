@@ -31,15 +31,12 @@ public class SendLocalMessageTask implements Runnable{
 		byte[] buffer;
 		
 		DatagramPacket packet ; 
-		try {
-			buffer = SerializationUtility.serializeMessage(messageToSend); 
-			InetAddress ipAdd = parentSession.getReceiver().getIpAddress() ;  // TODO check if that is correct 
-			packet = new DatagramPacket(buffer, buffer.length, ipAdd ,parentSession.getReceiverPort());
+
+		buffer = SerializationUtility.serializeMessage(messageToSend); 
+		InetAddress ipAdd = parentSession.getReceiver().getIpAddress() ;  // TODO check if that is correct 
+		packet = new DatagramPacket(buffer, buffer.length, ipAdd ,parentSession.getReceiverPort());
 			
-		} catch (IOException e) {
-			e.printStackTrace();
-			return ; 
-		}
+
 		
 		
 		try {

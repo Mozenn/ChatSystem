@@ -9,6 +9,7 @@ import com.chatsystem.message.SystemMessage;
 import com.chatsystem.session.SessionData;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.LoggerUtility;
+import com.chatsystem.utility.SerializationException;
 import com.chatsystem.utility.SerializationUtility;
 
 final class DistantCommunicationTask implements Runnable {
@@ -64,9 +65,10 @@ final class DistantCommunicationTask implements Runnable {
 						
 						system.addDistantUser(u);
 						
-					} catch (IOException e) {
+					} catch (SerializationException e) {
 						e.printStackTrace();
 					} 
+					
 					break ;
 				}
 				case DC:
@@ -78,7 +80,7 @@ final class DistantCommunicationTask implements Runnable {
 						LoggerUtility.getInstance().info("DistantCommunicationListener DC received ");
 						system.removeDistantUser(u); 
 						
-					} catch (IOException e) {
+					} catch (SerializationException e) {
 						e.printStackTrace();
 					} 
 					break ;

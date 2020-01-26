@@ -10,7 +10,6 @@ import com.chatsystem.user.User;
 import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 final class NotifyConnectionResponseTask implements Runnable {
 	
@@ -42,12 +41,9 @@ final class NotifyConnectionResponseTask implements Runnable {
 		
 		
 		byte[] serializedUser;
-		try {
-			serializedUser = SerializationUtility.serializeUser(localSystem.getUser().get());
-		} catch (JsonProcessingException e1) {
-			e1.printStackTrace();
-			return ; 
-		} 
+
+		serializedUser = SerializationUtility.serializeUser(localSystem.getUser().get());
+
 		
 		SystemMessage msg = null;
 		try {

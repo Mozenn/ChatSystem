@@ -28,7 +28,7 @@ import com.presenceservice.dao.*;
  * TODO Document 
  */
 @WebServlet(urlPatterns = "/users", loadOnStartup = 1)
-public class ManageUsers extends HttpServlet {
+public class ManageUsersServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private static HashMap<User,Boolean> users = new HashMap<User,Boolean>() ; // true if online, false if not 
@@ -38,7 +38,7 @@ public class ManageUsers extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ManageUsers() {
+    public ManageUsersServlet() {
         super();
     }
     
@@ -61,17 +61,7 @@ public class ManageUsers extends HttpServlet {
 		} 
     	
     	List<User> usersResult = dao.getAllUsers();
-    	/*
-    	try {
-			User u1 = new User(new UserId("id".getBytes()),InetAddress.getLocalHost(),"hey") ;
-			User u2 = new User(new UserId("id2".getBytes()),InetAddress.getLocalHost(),"hey2") ;
-			
-			usersResult.add(u1) ; 
-			usersResult.add(u2) ; 
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}  ; 
-    	*/
+
     	for(User u : usersResult)
     	{
     		users.put(u,Boolean.valueOf(false)) ; 
@@ -125,7 +115,7 @@ public class ManageUsers extends HttpServlet {
 	 * Writes all online users as a Json String in the given response 
 	 * @param the response to be filled
 	 */
-	protected void writeUsers(HttpServletResponse response) throws IOException 
+	private void writeUsers(HttpServletResponse response) throws IOException 
 	{
 		LoggerUtility.getInstance().info("Sending updated users list");
 		

@@ -11,10 +11,8 @@ import com.chatsystem.message.Message;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.utility.LoggerUtility;
+import com.chatsystem.utility.SerializationException;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException ; 
 
 /*
  * Listen to UDP communications on local network 
@@ -77,7 +75,7 @@ final class LocalSessionListener extends Thread{
 			{
 				msg = SerializationUtility.deserializeUserMessage(packet.getData());
 			}
-			catch(ClassCastException | JsonMappingException e) // Packet received is not a UserMessage  ;
+			catch(ClassCastException | SerializationException e) // Packet received is not a UserMessage  ;
 			{
 				try
 				{
@@ -90,18 +88,12 @@ final class LocalSessionListener extends Thread{
 						return ; 
 					}
 				}
-				catch(ClassCastException | IOException e2)
+				catch(ClassCastException | SerializationException e2)
 				{
 					continue ; 
 				}
 				continue ; 
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-				continue ; 
-			} catch (IOException e) {
-				e.printStackTrace();
-				continue ; 
-			}
+			} 
 			
 			LoggerUtility.getInstance().info("LocalSessionListener Message Received");
 			session.addMessage(msg);

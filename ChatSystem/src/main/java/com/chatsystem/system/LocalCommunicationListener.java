@@ -12,9 +12,8 @@ import com.chatsystem.message.SystemMessage;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.LoggerUtility;
 import com.chatsystem.utility.NetworkUtility;
+import com.chatsystem.utility.SerializationException;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 final class LocalCommunicationListener extends Thread {
 	
@@ -73,7 +72,7 @@ final class LocalCommunicationListener extends Thread {
 				type = msg.getSubtype(); 
 
 			}
-			catch(ClassCastException | IOException e) // not a system message 
+			catch(ClassCastException | SerializationException e) // not a system message 
 			{
 				e.printStackTrace();
 				continue; 
@@ -115,15 +114,9 @@ final class LocalCommunicationListener extends Thread {
 					User u;
 					try {
 						u = SerializationUtility.deserializeUser(msg.getContent());
-					} catch (JsonParseException e) {
+					} catch (SerializationException e) {
 						e.printStackTrace();
-						return ; 
-					} catch (JsonMappingException e) {
-						e.printStackTrace();
-						return ; 
-					} catch (IOException e) {
-						e.printStackTrace();
-						return ; 
+						continue ;
 					} 
 						
 					LoggerUtility.getInstance().info("LocalCommunicationListener CR Received");
@@ -135,15 +128,9 @@ final class LocalCommunicationListener extends Thread {
 					User u;
 					try {
 						u = SerializationUtility.deserializeUser(msg.getContent());
-					} catch (JsonParseException e) {
+					} catch (SerializationException e) {
 						e.printStackTrace();
-						return ; 
-					} catch (JsonMappingException e) {
-						e.printStackTrace();
-						return ; 
-					} catch (IOException e) {
-						e.printStackTrace();
-						return ; 
+						continue ; 
 					} 
 						
 					LoggerUtility.getInstance().info("LocalCommunicationListener DC Received");
@@ -154,15 +141,9 @@ final class LocalCommunicationListener extends Thread {
 					User u;
 					try {
 						u = SerializationUtility.deserializeUser(msg.getContent());
-					} catch (JsonParseException e) {
+					} catch (SerializationException e) {
 						e.printStackTrace();
-						return ; 
-					} catch (JsonMappingException e) {
-						e.printStackTrace();
-						return ; 
-					} catch (IOException e) {
-						e.printStackTrace();
-						return ; 
+						continue ; 
 					} 
 						
 					LoggerUtility.getInstance().info("LocalCommunicationListener CU Received");

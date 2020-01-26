@@ -16,9 +16,9 @@ import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SessionListener;
 import com.chatsystem.user.User;
 import com.chatsystem.utility.LoggerUtility;
+import com.chatsystem.utility.SerializationException;
 import com.chatsystem.utility.SerializationUtility;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.gson.JsonSyntaxException;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -347,16 +347,10 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 					FileWrapper fw = null; // TODO use FileWrapperModel class to hide serialization from view 
 					try {
 						fw = SerializationUtility.deserializeFileWrapper(m.getContent()); 
-					} catch (JsonParseException e) {
+					} catch (SerializationException e) {
 						e.printStackTrace();
 						return ; 
-					} catch (JsonMappingException e) {
-						e.printStackTrace();
-						return ; 
-					} catch (IOException e) {
-						e.printStackTrace();
-						return ; 
-					}  
+					} 
 					if(m.getSenderId().equals(currentEmitter.getId())) 
 					{
 						mp = new JFileMessagePanel(currentEmitter,fw.getFileName(),m.getDate());
@@ -409,11 +403,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 			
 			try {
 				fw = SerializationUtility.deserializeFileWrapper(newMessage.getContent()) ;
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (SerializationException e) {
 				e.printStackTrace();
 			} 
 			
