@@ -20,6 +20,7 @@ import com.chatsystem.utility.NetworkUtility;
 import com.chatsystem.utility.SerializationException;
 import com.chatsystem.utility.SerializationUtility;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class SerializationTest {
 	
@@ -30,22 +31,16 @@ public class SerializationTest {
 		
 		SystemMessage messageBefore = new SystemMessage(SystemMessage.SystemMessageType.CO,s.getBytes()) ; 
 		
-		Gson o = new Gson() ;
 		
-		var content = o.toJson(messageBefore).getBytes() ; 
+		var content = SerializationUtility.serializeMessage(messageBefore) ; 
 		
 		
 		SystemMessage messageAfter = SerializationUtility.deserializeSystemMessage(content) ;
 		
-		System.out.println(messageAfter.getDate()) ;
 		
-		long i = messageBefore.getDate().getTime() ; 
-		
-		System.out.println(i) ;
-		
-		//System.out.println(messageBefore.getDate().toString()) ; 
-		//System.out.println(messageAfter.getDate().toString()) ; 
-		//assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
+		System.out.println(messageBefore.getDate().toString()) ; 
+		System.out.println(messageAfter.getDate().toString()) ; 
+		assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
 		assertEquals(messageBefore.getSubtype(),messageAfter.getSubtype()); 
 		assertEquals(s,new String(messageAfter.getContent())); 
 		
@@ -78,7 +73,7 @@ public class SerializationTest {
 		
 		UserMessage messageAfter = SerializationUtility.deserializeUserMessage(content) ;
 		
-		//assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
+		assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
 		assertEquals(messageBefore.getSubtype(),messageAfter.getSubtype()); 
 		assertEquals(s,new String(messageAfter.getContent())); 
 		assertEquals(id1,messageAfter.getReceiverId()); 

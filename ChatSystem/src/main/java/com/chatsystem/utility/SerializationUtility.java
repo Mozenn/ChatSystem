@@ -9,6 +9,7 @@ import com.chatsystem.model.FileWrapper;
 import com.chatsystem.session.SessionData;
 import com.chatsystem.user.User;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
@@ -151,8 +152,9 @@ final public class SerializationUtility {
 			throw new NullPointerException() ;
 		
 		// Serialization to Json 
-		Gson uJson = new Gson();
-		return uJson.toJson(m).getBytes(); 
+		return new GsonBuilder()
+	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
+	               .create().toJson(m).getBytes(); 
 	}
 	
 	/*
@@ -163,12 +165,12 @@ final public class SerializationUtility {
 	{
 		if(messageAsByte == null)
 			throw new NullPointerException() ;
-		
-		Gson o = new Gson () ; 
 
 		try
 		{
-	      return  o.fromJson(new String(messageAsByte), UserMessage.class); 
+	      return  new GsonBuilder()
+	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
+	               .create().fromJson(new String(messageAsByte), UserMessage.class); 
 			
 		} catch (JsonSyntaxException e)
 		{
@@ -185,11 +187,12 @@ final public class SerializationUtility {
 		if(messageAsByte == null)
 			throw new NullPointerException() ;
 		
-		Gson o = new Gson () ; 
 
 		try
 		{
-	      return  o.fromJson(new String(messageAsByte), SystemMessage.class); 
+	      return  new GsonBuilder()
+	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
+	               .create().fromJson(new String(messageAsByte), SystemMessage.class); 
 			
 		} catch (JsonSyntaxException e)
 		{
