@@ -135,6 +135,7 @@ final class LocalCommunicationListener extends Thread {
 						
 					LoggerUtility.getInstance().info("LocalCommunicationListener DC Received");
 					system.removeLocalUser(u);
+					break ; 
 				}
 				case CU :
 				{

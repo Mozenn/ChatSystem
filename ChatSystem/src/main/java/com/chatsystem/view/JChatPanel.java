@@ -452,6 +452,9 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 
 		sendTextButton.setEnabled(false);
 		sendFileButton.setEnabled(false);
+		
+		currentEmitter = null ; 
+		currentReceiver = null ; 
 	}
 
 	@Override
