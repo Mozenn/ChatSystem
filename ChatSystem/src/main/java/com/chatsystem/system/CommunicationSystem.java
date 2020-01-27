@@ -86,6 +86,10 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		
 	}
 	
+	/*
+	 * Start communications & notify connection 
+	 */
+	@Override 
 	public void start()
 	{
 		if(ConfigurationUtility.isTesting())
@@ -137,6 +141,10 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		return bRunning;
 	}
 	
+	/*
+	 * Close all communications & notify disconnection 
+	 */
+	@Override 
 	public void close() 
 	{
 		bRunning = false  ; 
@@ -185,8 +193,11 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		new NotifyConnectionResponseTask(this,packet);
 	}
 	
-	/// ===================  SESSIONS ==============================
+	// ===================  SESSIONS ==============================
 	
+	/*
+	 * Called when StartSession request has been received by localCommunicationListener 
+	 */
 	protected void onLocalSessionRequest(DatagramPacket packet) throws IOException 
 	{
 
@@ -198,6 +209,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		addSession(session) ; 
 	}
 	
+	/*
+	 * Called when StartSession request has been received by distantCommunicationListener 
+	 */
 	protected void onDistantSessionRequest(User user, int port) throws IOException
 	{
 		DistantSession session = new DistantSession(this.user,user,port,this) ; 
@@ -217,9 +231,15 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		}
 	}
 	
+	/*
+	 * @throws NullPointerException if receiver is null 
+	 */
 	@Override
 	public boolean startSession(User receiver) 
 	{
+		if(receiver == null)
+			throw new NullPointerException() ; 
+		
 		if(sessions.containsKey(receiver.getId()))
 			return false ; 
 		
@@ -291,10 +311,14 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	/*
 	 * Close a session, notify view and notify receiver session 
+	 * @throws NullPointerException if receiver is null 
 	 */
 	@Override
 	public void closeSessionNotified(User receiver) 
 	{
+		if(receiver == null)
+			throw new NullPointerException() ; 
+		
 		synchronized(sessions)
 		{
 			fireSessionClosed(sessions.get(receiver.getId())) ; 
@@ -305,10 +329,14 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	/*
 	 * Close session without notifying receiver session
+	 * @throws NullPointerException if receiver is null 
 	 */
 	@Override
 	public void closeSession(User receiver) 
 	{
+		if(receiver == null)
+			throw new NullPointerException() ; 
+		
 		synchronized(sessions)
 		{
 			fireSessionClosed(sessions.get(receiver.getId())) ; 
@@ -316,17 +344,30 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		}
 	}
 	
+	/*
+	 * @throws NullPointerException if receiver or text is null 
+	 */
 	@Override
 	public void sendMessage(User receiver, String text) {
 		
+		if(receiver == null || text == null)
+			throw new NullPointerException() ; 
+		
 		synchronized(sessions)
 		{
-			sessions.get(receiver.getId()).sendMessage(text);
+			if(sessions.containsKey(receiver.getId()))
+				sessions.get(receiver.getId()).sendMessage(text);
 		}
 	}
 
+	/*
+	 * @throws NullPointerException if receiver or filePath is null 
+	 */
 	@Override
 	public void sendFileMessage(User receiver, String filePath) {
+		
+		if(receiver == null || filePath == null)
+			throw new NullPointerException() ; 
 		
 		File file = new File(filePath) ; 
 		System.out.println(filePath) ; 
@@ -353,9 +394,15 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	
 	// ===================  DOWNLOAD ==============================
 	
+	/*
+	 * @throws NullPointerException if senderId or date is null 
+	 */
 	@Override
 	public void downloadFile(UserId senderId, Timestamp date) 
 	{
+		if(senderId == null || date == null)
+			throw new NullPointerException() ; 
+		
 		LoggerUtility.getInstance().info("CommunicationSystem DownloadFile Start");
 		
 		Optional<UserMessage> m ; 
@@ -393,9 +440,15 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		
 	}
 	
+	/*
+	 * @throws NullPointerException if newPath or date is null 
+	 */
 	@Override
 	public void changeDownloadPath(String newPath)
 	{
+		if(newPath == null)
+			throw new NullPointerException() ;
+		
 		this.downloadPath = newPath ; 
 		
 		Properties properties ; 
@@ -855,6 +908,9 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		return Optional.ofNullable(user); 
 	}
 	
+	/*
+	 * Create a new temporary user to send to webservice to check username availability 
+	 */
 	private User getDummyLocalUser()
 	{
 		if(ConfigurationUtility.isTesting())
@@ -911,9 +967,15 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 		ConfigurationUtility.saveAppProperties(props);
 	}
 	
+	/*
+	 * @throws NullPointerException if newName is null 
+	 */
 	@Override
 	public boolean changeUname(String newName) 
 	{
+		if(newName == null)
+			throw new NullPointerException() ; 
+		
 		boolean res = checkUsernameAvailability(newName) ; 
 		
 

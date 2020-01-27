@@ -30,6 +30,8 @@
 	- use assert 
 - Redo UML 
 - ReadMe in github 
+- Manuscrit 
+
 - Authentification 
 	- Research 
 - JPA & Hibernate 
