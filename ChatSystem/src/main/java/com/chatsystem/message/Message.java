@@ -19,6 +19,11 @@ public abstract class Message implements Comparable<Message>{
 		return content;
 	}
 	
+	public void setContent(byte[] content)
+	{
+		this.content = content ; 
+	}
+	
 	public Timestamp getDate()
 	{
 		return this.date ; 

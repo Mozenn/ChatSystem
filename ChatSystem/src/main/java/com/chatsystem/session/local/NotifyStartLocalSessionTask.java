@@ -83,7 +83,7 @@ class NotifyStartLocalSessionTask implements Runnable{
 				
 				SystemMessage receivedMsg = SerializationUtility.deserializeSystemMessage(packet.getData()); 
 				
-				if(receivedMsg.getSubtype().equals(SystemMessage.SystemMessageType.SR)) // session valid 
+				if(receivedMsg.getSystemMessageType().equals(SystemMessage.SystemMessageType.SR)) // session valid 
 				{
 					SessionData s = SerializationUtility.deserializeSessionData(receivedMsg.getContent());
 					

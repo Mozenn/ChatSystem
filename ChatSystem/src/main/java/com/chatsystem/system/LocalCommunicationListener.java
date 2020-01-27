@@ -69,7 +69,7 @@ final class LocalCommunicationListener extends Thread {
 			try
 			{
 				msg = SerializationUtility.deserializeSystemMessage(packet.getData()); 
-				type = msg.getSubtype(); 
+				type = msg.getSystemMessageType(); 
 
 			}
 			catch(ClassCastException | SerializationException e) // not a system message 

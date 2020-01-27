@@ -318,7 +318,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 		
 		for(UserMessage m : messages)
 		{
-			switch(m.getSubtype())
+			switch(m.getUserMessageType())
 			{
 				case TX:
 				{
@@ -379,7 +379,7 @@ public class JChatPanel extends JPanel implements ActionListener, ActionEmitter,
 	
 	public void addMessage(UserMessage newMessage)
 	{
-		if(newMessage.getSubtype().equals(UserMessage.UserMessageType.TX))
+		if(newMessage.getUserMessageType().equals(UserMessage.UserMessageType.TX))
 		{
 			JTextMessagePanel mp ; 
 			if(newMessage.getSenderId().equals(currentEmitter.getId()))

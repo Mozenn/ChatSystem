@@ -54,7 +54,7 @@ final class DistantCommunicationTask implements Runnable {
 				e.printStackTrace();
 				return ; 
 			}
-			switch(msg.getSubtype())
+			switch(msg.getSystemMessageType())
 			{
 				case CO:
 				{

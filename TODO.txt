@@ -19,9 +19,10 @@
 
 - Fixe 
 	- Chnage username message 
-	- send button on session reopen 
-	- deploy on insa server 
-	- add user when window not open
+	- Message serialization
+- Redesign 
+	- mysql database for production 
+	- sqlite for test 
 - Documentation (from system package) 
 	- see effective java & resources
 	- Use @throw tag 

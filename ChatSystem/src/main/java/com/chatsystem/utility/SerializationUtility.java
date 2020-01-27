@@ -146,7 +146,21 @@ final public class SerializationUtility {
 	/*
 	 * @throws NullPointerException if m is null 
 	 */
-	public static byte[] serializeMessage(Message m) 
+	public static byte[] serializeMessage(UserMessage m) 
+	{
+		if(m == null)
+			throw new NullPointerException() ;
+		
+		// Serialization to Json 
+		return new GsonBuilder()
+	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
+	               .create().toJson(m).getBytes(); 
+	}
+	
+	/*
+	 * @throws NullPointerException if m is null 
+	 */
+	public static byte[] serializeMessage(SystemMessage m) 
 	{
 		if(m == null)
 			throw new NullPointerException() ;
@@ -168,9 +182,14 @@ final public class SerializationUtility {
 
 		try
 		{
-	      return  new GsonBuilder()
+			UserMessage msg =   new GsonBuilder()
 	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
-	               .create().fromJson(new String(messageAsByte), UserMessage.class); 
+	               .create().fromJson(new String(messageAsByte), UserMessage.class);
+			
+			if(msg.getUserMessageType() == null)
+				throw new SerializationException("not a UserMessage") ;
+			
+			return msg ; 
 			
 		} catch (JsonSyntaxException e)
 		{

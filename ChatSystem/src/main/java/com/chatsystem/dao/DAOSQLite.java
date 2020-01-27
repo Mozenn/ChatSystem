@@ -82,7 +82,7 @@ public class DAOSQLite implements DAO {
 	        pstmt.setBytes(1, message.getReceiverId().getId());
 	        pstmt.setBytes(2, message.getSenderId().getId());
 	        pstmt.setString(3, message.getDate().toString());
-	        pstmt.setString(4, message.getSubtype().toString());
+	        pstmt.setString(4, message.getUserMessageType().toString());
 	        pstmt.setBytes(5, message.getContent());
 	        pstmt.executeUpdate();
 	    }catch (SQLException e) {

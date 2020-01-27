@@ -92,6 +92,7 @@ final class DistantSessionListener extends Thread {
 				try
 				{
 					msg = SerializationUtility.deserializeUserMessage(data);
+					LoggerUtility.getInstance().info("DistantSessionListener Message Type " + msg.getUserMessageType());
 				}
 				catch(ClassCastException | SerializationException e) // Packet received is not a UserMessage  ;
 				{
@@ -99,7 +100,7 @@ final class DistantSessionListener extends Thread {
 					{
 						SystemMessage sMsg = SerializationUtility.deserializeSystemMessage(data) ; 
 						
-						if(sMsg.getSubtype().equals(SystemMessage.SystemMessageType.CS))
+						if(sMsg.getSystemMessageType().equals(SystemMessage.SystemMessageType.CS))
 						{
 							LoggerUtility.getInstance().info("DistantSessionListener close Session received") ; 
 							session.closeSession(); 

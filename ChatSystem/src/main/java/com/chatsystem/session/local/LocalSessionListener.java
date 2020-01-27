@@ -81,7 +81,7 @@ final class LocalSessionListener extends Thread{
 				{
 					SystemMessage sMsg = SerializationUtility.deserializeSystemMessage(packet.getData()) ; 
 					
-					if(sMsg.getSubtype().equals(SystemMessage.SystemMessageType.CS))
+					if(sMsg.getSystemMessageType().equals(SystemMessage.SystemMessageType.CS))
 					{
 						LoggerUtility.getInstance().info("LocalSessionListener CloseSession received");
 						session.closeSession();

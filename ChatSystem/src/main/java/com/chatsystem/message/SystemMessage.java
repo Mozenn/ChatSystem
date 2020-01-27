@@ -31,10 +31,15 @@ public class SystemMessage extends Message{
 	    }
 	}
 	
-	private SystemMessageType subtype ; 
+	private SystemMessageType systemMessageType ; 
 	
-	public SystemMessageType getSubtype() {
-		return subtype;
+	public SystemMessageType getSystemMessageType() {
+		return systemMessageType;
+	}
+	
+	public void setSystemMessageType(SystemMessageType type)
+	{
+		this.systemMessageType = type ; 
 	}
 	
 	public SystemMessage() throws IOException 
@@ -53,7 +58,7 @@ public class SystemMessage extends Message{
 		if(type == null)
 			throw new NullPointerException() ; 
 		
-		this.subtype = type ; 
+		this.systemMessageType = type ; 
 	
 	}
 }

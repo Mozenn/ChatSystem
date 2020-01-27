@@ -33,17 +33,17 @@ public class UserMessage extends Message{
 	    }
 	}
 
-	private UserMessageType subtype;
+	private UserMessageType userMessageType;
 	private UserId receiverId ;
 	private UserId senderId ;  
 	
 	public UserMessage()
 	{
 		super();
-		this.subtype = UserMessageType.TX;
+		/*this.userMessageType = UserMessageType.TX;
 		this.receiverId = new UserId(); 
-		this.senderId = new UserId(); 
-	}
+		this.senderId = new UserId(); */
+	} 
 	
 	/*
 	 * @throw NullPointerException if receiverId or senderId is null 
@@ -57,7 +57,7 @@ public class UserMessage extends Message{
 
 		this.receiverId = receiverId ; 
 		this.senderId = senderId ; 
-		subtype = UserMessageType.TX;
+		userMessageType = UserMessageType.TX;
 	}
 	
 	/*
@@ -70,7 +70,7 @@ public class UserMessage extends Message{
 		if(receiverId == null || senderId == null || type == null)
 			throw new NullPointerException() ; 
 		
-		subtype = type;
+		userMessageType = type;
 		this.receiverId= receiverId ; 
 		this.senderId = senderId ; 
 	} 
@@ -85,13 +85,13 @@ public class UserMessage extends Message{
 		if(receiverId == null || senderId == null)
 			throw new NullPointerException() ; 
 		
-		subtype = UserMessageType.FL;
+		userMessageType = UserMessageType.FL;
 		this.receiverId = receiverId ; 
 		this.senderId = senderId ;
 	}
 	
-	public UserMessageType getSubtype() {
-		return subtype;
+	public UserMessageType getUserMessageType() {
+		return userMessageType;
 	}
 	
 	public UserId getReceiverId() {
@@ -101,6 +101,18 @@ public class UserMessage extends Message{
 	public UserId getSenderId()
 	{
 		return this.senderId ; 
+	}
+	
+	public void setUserMessageType(UserMessageType userMessageType) {
+		this.userMessageType = userMessageType;
+	}
+
+	public void setReceiverId(UserId receiverId) {
+		this.receiverId = receiverId;
+	}
+
+	public void setSenderId(UserId senderId) {
+		this.senderId = senderId;
 	}
 	
 	@Override

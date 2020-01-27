@@ -41,11 +41,36 @@ public class SerializationTest {
 		System.out.println(messageBefore.getDate().toString()) ; 
 		System.out.println(messageAfter.getDate().toString()) ; 
 		assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
-		assertEquals(messageBefore.getSubtype(),messageAfter.getSubtype()); 
+		assertEquals(messageBefore.getSystemMessageType(),messageAfter.getSystemMessageType()); 
 		assertEquals(s,new String(messageAfter.getContent())); 
 		
 	     
 	}
+	
+	@Test 
+	public void ValidSystemMessageSerializationWithUser() throws  IOException, InterruptedException
+	{
+		String s = "hey" ; 
+		
+		SystemMessage messageBefore = new SystemMessage(SystemMessage.SystemMessageType.CO,s.getBytes()) ; 
+		
+		
+		var content = SerializationUtility.serializeMessage(messageBefore) ; 
+		
+		
+		SystemMessage messageAfter = SerializationUtility.deserializeSystemMessage(content) ;
+		
+		
+		System.out.println(messageBefore.getDate().toString()) ; 
+		System.out.println(messageAfter.getDate().toString()) ; 
+		assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
+		assertEquals(messageBefore.getSystemMessageType(),messageAfter.getSystemMessageType()); 
+		assertEquals(s,new String(messageAfter.getContent())); 
+		
+	     
+	}
+	
+	
 	
 	@Test (expected = SerializationException.class)
 	public void InvalidSystemMessageSerialization() throws IOException
@@ -74,7 +99,7 @@ public class SerializationTest {
 		UserMessage messageAfter = SerializationUtility.deserializeUserMessage(content) ;
 		
 		assertEquals(messageBefore.getDate(),messageAfter.getDate()); 
-		assertEquals(messageBefore.getSubtype(),messageAfter.getSubtype()); 
+		assertEquals(messageBefore.getUserMessageType(),messageAfter.getUserMessageType()); 
 		assertEquals(s,new String(messageAfter.getContent())); 
 		assertEquals(id1,messageAfter.getReceiverId()); 
 		assertEquals(id2,messageAfter.getSenderId()); 
