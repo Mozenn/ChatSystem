@@ -1,5 +1,6 @@
 package com.chatsystem.utility;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.chatsystem.message.Message;
@@ -8,6 +9,10 @@ import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
 import com.chatsystem.session.SessionData;
 import com.chatsystem.user.User;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -152,9 +157,13 @@ final public class SerializationUtility {
 			throw new NullPointerException() ;
 		
 		// Serialization to Json 
-		return new GsonBuilder()
-	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
-	               .create().toJson(m).getBytes(); 
+		ObjectMapper uJson = new ObjectMapper();
+		try {
+			return uJson.writeValueAsString(m).getBytes();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			throw new SerializationException(e) ; 
+		} 
 	}
 	
 	/*
@@ -166,9 +175,13 @@ final public class SerializationUtility {
 			throw new NullPointerException() ;
 		
 		// Serialization to Json 
-		return new GsonBuilder()
-	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
-	               .create().toJson(m).getBytes(); 
+		ObjectMapper uJson = new ObjectMapper();
+		try {
+			return uJson.writeValueAsString(m).getBytes();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			throw new SerializationException(e) ; 
+		} 
 	}
 	
 	/*
@@ -182,16 +195,10 @@ final public class SerializationUtility {
 
 		try
 		{
-			UserMessage msg =   new GsonBuilder()
-	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
-	               .create().fromJson(new String(messageAsByte), UserMessage.class);
+		    ObjectMapper o = new ObjectMapper () ; 
+		      return  o.readValue(messageAsByte, UserMessage.class); 
 			
-			if(msg.getUserMessageType() == null)
-				throw new SerializationException("not a UserMessage") ;
-			
-			return msg ; 
-			
-		} catch (JsonSyntaxException e)
+		} catch (IOException e)
 		{
 			throw new SerializationException(e) ; 
 		}
@@ -209,11 +216,11 @@ final public class SerializationUtility {
 
 		try
 		{
-	      return  new GsonBuilder()
-	               .setDateFormat("yyyy-MM-dd HH:mm:ss.S")
-	               .create().fromJson(new String(messageAsByte), SystemMessage.class); 
+
+		    ObjectMapper o = new ObjectMapper () ; 
+		      return  o.readValue(messageAsByte, SystemMessage.class); 
 			
-		} catch (JsonSyntaxException e)
+		} catch (IOException e)
 		{
 			throw new SerializationException(e) ; 
 		}

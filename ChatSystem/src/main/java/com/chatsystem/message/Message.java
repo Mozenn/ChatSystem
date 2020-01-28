@@ -9,7 +9,7 @@ import java.sql.Timestamp;
  */
 public abstract class Message implements Comparable<Message>{
 	
-	public static final int MAX_SIZE = 1310720;
+	public static final int MAX_SIZE = 131072;
 	
 	protected byte[] content;
 	protected Timestamp date ; 

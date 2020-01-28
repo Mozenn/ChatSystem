@@ -55,6 +55,7 @@ final class LocalCommunicationListener extends Thread {
 				continue; 
 			} 
 			
+			
 			// ignore packet coming from this machine 
 			try {
 				if(packet.getAddress().equals(NetworkUtility.getLocalIPAddress()))
