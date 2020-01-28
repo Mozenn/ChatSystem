@@ -1,4 +1,4 @@
-package com.presenceservice.dao;
+package com.chatsystem.dao;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,16 +13,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
-import com.presenceservice.model.User;
-import com.presenceservice.model.UserId;
-import com.presenceservice.utility.ConfigUtility;
-import com.presenceservice.utility.LoggerUtility;
+import com.chatsystem.user.User;
+import com.chatsystem.user.UserId;
+import com.chatsystem.utility.ConfigurationUtility;
 
-public class UserDAOHSQLDB implements UserDAO {
+final class UserDAOMySQL implements UserDAO {
 	
 	private static String DB_URL;
+	private static String DB_LOGIN ;
+	private static String DB_PSW ;
+	
+	
 
-	public UserDAOHSQLDB() throws IOException 
+	protected UserDAOMySQL() throws IOException 
 	{
 		setupDatabase() ; 
 	
@@ -34,16 +37,19 @@ public class UserDAOHSQLDB implements UserDAO {
 	 */
 	protected void setupDatabase() throws IOException
 	{
-		Properties configProps = ConfigUtility.getConfigProperties() ; 
+
+		// TODO MYSQL : Make factory class  
 		
-		DB_URL = configProps.getProperty("dbStartURL") + ConfigUtility.getConfigPath() + configProps.getProperty("dbPath") + configProps.getProperty("dbName") ; 
+		Properties configProps = ConfigurationUtility.getAppProperties() ; 
 		
-		try {
-			String driver = ConfigUtility.getConfigProperties().getProperty("driverClassName") ; 
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			throw new DAOConfigException("Driver not found", e) ; 
-		} 
+		DB_URL = configProps.getProperty("dbURL")  ; 
+		DB_LOGIN = configProps.getProperty("dbLogin") ;
+		DB_PSW = configProps.getProperty("dbPassword") ;
+		
+		if(DB_URL == null || DB_LOGIN == null || DB_PSW == null)
+			throw new DAOConfigurationException("Error in db properties") ; 
+		
+
 	}
 	
 	private void createUsersTable() 
@@ -51,10 +57,10 @@ public class UserDAOHSQLDB implements UserDAO {
 		String createStmt = "CREATE TABLE IF NOT EXISTS users (\n"
                 + "    userid BLOB NOT NULL,\n"
                 + "    inetaddress BLOB NOT NULL,\n"
-                + "    username VARCHAR(255) NOT NULL\n"
+                + "    username text NOT NULL\n"
                 + ");";  
 		
-		try (Connection conn = DriverManager.getConnection(DB_URL );
+		try (Connection conn = DriverManager.getConnection(DB_URL,DB_LOGIN,DB_PSW);
 		        Statement stmt = conn.createStatement()) {
 			
 		    // create a new table if not exist 
@@ -78,7 +84,7 @@ public class UserDAOHSQLDB implements UserDAO {
 		String insertStmt = "INSERT INTO users(userid,inetaddress,username) VALUES(?,?,?)" ; 
 
 	    
-	    try(Connection conn = DriverManager.getConnection(DB_URL ); 
+	    try(Connection conn = DriverManager.getConnection(DB_URL,DB_LOGIN,DB_PSW); 
 	    		PreparedStatement pstmt = conn.prepareStatement(insertStmt))
 	    {
 	        pstmt.setBytes(1, u.getId().getId());
@@ -103,7 +109,7 @@ public class UserDAOHSQLDB implements UserDAO {
 		
 		String deleteStmt = "DELETE FROM users where userid = ?" ;
 		 
-	    try(Connection conn = DriverManager.getConnection(DB_URL );
+	    try(Connection conn = DriverManager.getConnection(DB_URL,DB_LOGIN,DB_PSW);
 	    		PreparedStatement pstmt = conn.prepareStatement(deleteStmt))
 	    {
 	        pstmt.setBytes(1, u.getId().getId());
@@ -125,7 +131,7 @@ public class UserDAOHSQLDB implements UserDAO {
 		
 		String updateStmt = "UPDATE users SET inetaddress = ?, username = ? WHERE userid = ?" ;
 		 
-	    try(Connection conn = DriverManager.getConnection(DB_URL );
+	    try(Connection conn = DriverManager.getConnection(DB_URL,DB_LOGIN,DB_PSW);
 	    		PreparedStatement pstmt = conn.prepareStatement(updateStmt))
 	    {
 	        pstmt.setBytes(1, user.getIpAddress().getAddress());
@@ -146,7 +152,7 @@ public class UserDAOHSQLDB implements UserDAO {
 		
 		String deleteStmt = "DELETE FROM users" ; 
 	
-	try (Connection conn = DriverManager.getConnection(DB_URL );
+	try (Connection conn = DriverManager.getConnection(DB_URL,DB_LOGIN,DB_PSW);
 	        Statement stmt = conn.createStatement()) {
 		
 	    stmt.execute(deleteStmt);
@@ -172,7 +178,7 @@ public class UserDAOHSQLDB implements UserDAO {
 		
 		Optional<User> userToAdd = null ; 
 		
-       try (Connection conn = DriverManager.getConnection(DB_URL );
+       try (Connection conn = DriverManager.getConnection(DB_URL,DB_LOGIN,DB_PSW);
     		   PreparedStatement pstmt = conn.prepareStatement(query)){
     	   pstmt.setBytes(1,id.getId());  
     	   ResultSet rs = pstmt.executeQuery();
@@ -206,7 +212,7 @@ public class UserDAOHSQLDB implements UserDAO {
 		
 		ArrayList<User> res = new ArrayList<User>() ; 
 		
-       try (Connection conn = DriverManager.getConnection(DB_URL );
+       try (Connection conn = DriverManager.getConnection(DB_URL,DB_LOGIN,DB_PSW);
     		   Statement stmt = conn.createStatement()){
 
     	   ResultSet rs = stmt.executeQuery(query);
@@ -242,7 +248,7 @@ public class UserDAOHSQLDB implements UserDAO {
 		
 		String query = "SELECT * FROM users WHERE username = ?" ;  
 		
-       try (Connection conn = DriverManager.getConnection(DB_URL );
+       try (Connection conn = DriverManager.getConnection(DB_URL,DB_LOGIN,DB_PSW);
     		   PreparedStatement pstmt = conn.prepareStatement(query)){
     	   pstmt.setString(1,username);  
     	   ResultSet rs = pstmt.executeQuery();
@@ -259,6 +265,5 @@ public class UserDAOHSQLDB implements UserDAO {
 	}
 
 	}
-
-
+	
 }

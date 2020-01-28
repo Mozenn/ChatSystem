@@ -1,13 +1,9 @@
 package com.presenceservice.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -21,7 +17,6 @@ import com.presenceservice.utility.ConfigUtility;
 import com.presenceservice.utility.LoggerUtility;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.presenceservice.dao.*;
 
 
 /**
@@ -31,7 +26,7 @@ import com.presenceservice.dao.*;
 public class ManageUsersServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private static HashMap<User,Boolean> users = new HashMap<User,Boolean>() ; // true if online, false if not 
+	private static List<User> users = new ArrayList<User>() ; 
 	
 	private Timestamp lastModificationDate ; 
        
@@ -53,25 +48,10 @@ public class ManageUsersServlet extends HttpServlet {
 			return ; 
 		}
     	
-    	UserDAO dao = null;
-		try {
-			dao = new UserDAOHSQLDB();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} 
-    	
-    	List<User> usersResult = dao.getAllUsers();
-
-    	for(User u : usersResult)
-    	{
-    		users.put(u,Boolean.valueOf(false)) ; 
-    	} 
-    	
 		Date d = new Date();
 		this.lastModificationDate = new Timestamp(d.getTime());
 		
 		LoggerUtility.getInstance().info("Server Started");
-		System.out.println("Server Started");
 
     }
     
@@ -82,7 +62,7 @@ public class ManageUsersServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		LoggerUtility.getInstance().info("GET Received");
-		LoggerUtility.getInstance().info("Address " + request.getRemoteAddr());
+
 		String tsString = request.getHeader("IF_MODIFIED_SINCE") ; 
 
 		if(tsString != null)
@@ -119,18 +99,9 @@ public class ManageUsersServlet extends HttpServlet {
 	{
 		LoggerUtility.getInstance().info("Sending updated users list");
 		
-		List<User> onlineUsers = new ArrayList<User>();
-		
-		for(User u : users.keySet())
-		{
-			LoggerUtility.getInstance().info("User "+ u.getUsername() + " connectedState : " + users.get(u).booleanValue());
-			if(users.get(u).booleanValue())
-				onlineUsers.add(u) ; 
-		}
-		
 		Gson uJson = new Gson();
 		
-		String usersJsonString = uJson.toJson(onlineUsers) ; 
+		String usersJsonString = uJson.toJson(users) ; 
 		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
@@ -175,27 +146,13 @@ public class ManageUsersServlet extends HttpServlet {
 			}
 			
 			
-			if(users.containsKey(u))
+			if(!users.contains(u))
 			{
-				Boolean isOnline = users.get(u) ; 
-				if(!isOnline)
-				{
-					users.put(u,Boolean.valueOf(true)) ;
-					lastModificationDate.setTime(new Date().getTime()); 
-				}
-			}
-			else
-			{
-				users.put(u,Boolean.valueOf(true)) ; 
-				System.out.println("User added : " + u) ; 
+				users.add(u) ; 
+				LoggerUtility.getInstance().info("User added : " + u) ; 
 				lastModificationDate.setTime(new Date().getTime()); 
-				
-				UserDAO dao = new UserDAOHSQLDB() ; 
-				
-				dao.addUser(u);
 			}
-			
-			
+				
 			doGet(request, response);
 		}
 		else if(type.equals("DC"))  // disconnection notify 
@@ -219,14 +176,11 @@ public class ManageUsersServlet extends HttpServlet {
 			}
 			
 			
-			if(users.containsKey(u))
+			if(users.contains(u))
 			{
-				Boolean isOnline = users.get(u) ; 
-				if(isOnline)
-				{
-					users.put(u,Boolean.valueOf(false)) ; 
-					lastModificationDate.setTime(new Date().getTime()); 
-				}
+
+				users.remove(u) ; 
+				lastModificationDate.setTime(new Date().getTime()); 
 			}
 		}
 		else if(type.equals("CU")) // checkusername request 
@@ -249,43 +203,12 @@ public class ManageUsersServlet extends HttpServlet {
 				return ; 
 			}
 			
-			boolean isAvailable = true ; 
-			User uToUpdate = null ; 
-			
-			for(User u : users.keySet())
+			if(users.contains(user))
 			{
-				if(u.getUsername().equals(user.getUsername()))
-				{
-					isAvailable = false ;
-				}
-				// keep reference of user to modify for later 
-				if(u.equals(user))
-				{
-					uToUpdate = u ; 
-				}
-
+				users.remove(user) ; 
+				users.add(user) ;
 			}
-			
-			if(!isAvailable)
-			{
-				response.setStatus(400);
-				
-				LoggerUtility.getInstance().info("Username Not Available");
-			}
-			else
-			{
-				// update user 
-				uToUpdate.setUsername(user.getUsername());
-				
-				//users.put(uToUpdate, Boolean.valueOf(true)) ; 
-				
-				UserDAO dao = new UserDAOSQLite() ; 
-				dao.updateUser(uToUpdate);
-				
-				lastModificationDate.setTime(new Date().getTime()); 
-				
-				LoggerUtility.getInstance().info("Username Updated");
-			}
+		
 		}
 		
 

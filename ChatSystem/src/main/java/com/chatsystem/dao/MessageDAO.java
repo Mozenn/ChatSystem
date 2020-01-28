@@ -8,7 +8,7 @@ import com.chatsystem.message.Message;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.user.UserId;
 
-public interface DAO {
+public interface MessageDAO {
 	
 	public void addMessage(UserMessage message) ; 
 	

@@ -1,4 +1,4 @@
-package com.presenceservice.dao;
+package com.chatsystem.dao;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,15 +13,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
-import com.presenceservice.model.User;
-import com.presenceservice.model.UserId;
-import com.presenceservice.utility.ConfigUtility;
+import com.chatsystem.user.User;
+import com.chatsystem.user.UserId;
+import com.chatsystem.utility.ConfigurationUtility;
 
-public class UserDAOSQLite implements UserDAO {
+
+public class UserDAOEmbedded implements UserDAO {
 	
 	private static String DB_URL;
+	
+	
 
-	public UserDAOSQLite() throws IOException 
+	protected UserDAOEmbedded() throws IOException 
 	{
 		setupDatabase() ; 
 	
@@ -33,16 +36,19 @@ public class UserDAOSQLite implements UserDAO {
 	 */
 	protected void setupDatabase() throws IOException
 	{
-		Properties configProps = ConfigUtility.getConfigProperties() ; 
+			 
+		Properties configProps = ConfigurationUtility.getAppProperties() ; 
 		
-		DB_URL = configProps.getProperty("dbStartURL") + ConfigUtility.getConfigPath() + configProps.getProperty("dbName") ; 
+		DB_URL = configProps.getProperty("dbEmbeddedStartURL") + ConfigurationUtility.getConfigPath() + configProps.getProperty("dbEmbeddedName") ; 
 		
 		try {
-			String driver = ConfigUtility.getConfigProperties().getProperty("driverClassName") ; 
+			String driver = ConfigurationUtility.getAppProperties().getProperty("driverEmbeddedClassName") ; 
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
-			throw new DAOConfigException("Driver not found", e) ; 
+			throw new DAOConfigurationException("Driver not found", e) ; 
 		} 
+		
+
 	}
 	
 	private void createUsersTable() 
@@ -258,6 +264,5 @@ public class UserDAOSQLite implements UserDAO {
 	}
 
 	}
-
-
+	
 }

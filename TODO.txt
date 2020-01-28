@@ -1,3 +1,8 @@
+
+login : tpservlet_14 password : EoBoo0zi
+URI: mysql://srv-bdens.insa-toulouse.fr
+Port: 3306
+jdbc:mysql://srv-bdens.insa-toulouse.fr:3306/chatsystem
 ### Ongoing 
 
 - Test Home 

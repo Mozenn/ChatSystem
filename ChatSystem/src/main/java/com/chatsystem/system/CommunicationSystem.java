@@ -27,6 +27,9 @@ import java.util.Random;
 
 import javax.swing.event.EventListenerList;
 
+import com.chatsystem.dao.UserDAO;
+import com.chatsystem.dao.UserDAOEmbedded;
+import com.chatsystem.dao.UserDAOFactory;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SessionModel;
@@ -902,6 +905,18 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
+			
+			UserDAO dao ; 
+			
+			try {
+				UserDAOFactory factory = new UserDAOFactory() ;
+				dao = factory.getUserDAOInstance() ; 
+			} catch (IOException e) {
+				e.printStackTrace();
+				return Optional.ofNullable(user); 
+			} 
+			
+			dao.addUser(newUser);
 		}
 		
 		
@@ -989,12 +1004,24 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 			
 			
 			// multicast username change 
-			new NotifyChangeUsernameTask(this) ; 
+			new NotifyChangeUsernameLocalTask(this) ; 
 			
+			new NotifyChangeUsernameWebServiceTask(this, this.user) ; 
 			
 			// notify view 
 			fireUsernameChanged(this.user) ; 
 			
+			UserDAO dao ; 
+			
+			try {
+				UserDAOFactory factory = new UserDAOFactory() ;
+				dao = factory.getUserDAOInstance() ; 
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false ;
+			} 
+			
+			dao.updateUser(this.user);
 		}
 
 		
@@ -1011,46 +1038,18 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	{
 		boolean res = false ; 
 		
-		User newPotentialUser = getDummyLocalUser(); 
-		newPotentialUser.setUsername(username);
-		String userAsString;
-
-		userAsString = new String(SerializationUtility.serializeUser(newPotentialUser));
-
-		
-		HttpClient httpClient = HttpClient.newBuilder()
-	            .version(HttpClient.Version.HTTP_2)
-	            .build();
-		
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(userAsString))
-                .uri(URI.create(PRESENCESERVICE_URL))
-                .header("Content-Type", "application/json")
-                .setHeader("COMMUNICATION", "CU")
-                .timeout(Duration.ofSeconds(2))
-                .build();
-        
-
-			HttpResponse<String> response;
+		UserDAO dao;
+		try {
 			
-			try {
-				LoggerUtility.getInstance().info("CommunicationSystem NotifyWebService CU Sent");
-				response = httpClient.send(request, BodyHandlers.ofString());
-				
-				res = response.statusCode() == 200 ; 
-				
-				LoggerUtility.getInstance().info("CommunicationSystem NotifyWebService CU Received");
-			} catch (HttpTimeoutException e) {
-				return true; 
-			} catch (ConnectException e){
-				res = true ; 
-			}
-			catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-				
-			}
-			
-		return res ;
+			UserDAOFactory factory = new UserDAOFactory() ;
+			dao = factory.getUserDAOInstance() ; 
+		} catch (IOException e) {
+			e.printStackTrace();
+			return true ; 
+		} 
+		
+		return dao.isUsernameAvailable(username) ; 
+		
 	}
 	
 	/*

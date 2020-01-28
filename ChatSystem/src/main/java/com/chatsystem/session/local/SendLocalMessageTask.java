@@ -33,7 +33,7 @@ public class SendLocalMessageTask implements Runnable{
 		DatagramPacket packet ; 
 
 		buffer = SerializationUtility.serializeMessage(messageToSend); 
-		InetAddress ipAdd = parentSession.getReceiver().getIpAddress() ;  // TODO check if that is correct 
+		InetAddress ipAdd = parentSession.getReceiver().getIpAddress() ;  
 		packet = new DatagramPacket(buffer, buffer.length, ipAdd ,parentSession.getReceiverPort());
 			
 

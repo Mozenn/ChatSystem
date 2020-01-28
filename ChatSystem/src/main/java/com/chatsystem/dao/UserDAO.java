@@ -1,10 +1,10 @@
-package com.presenceservice.dao;
+package com.chatsystem.dao;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.presenceservice.model.User;
-import com.presenceservice.model.UserId;
+import com.chatsystem.user.User;
+import com.chatsystem.user.UserId;
 
 public interface UserDAO {
 	

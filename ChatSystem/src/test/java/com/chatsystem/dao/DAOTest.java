@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.chatsystem.dao.DAO;
+import com.chatsystem.dao.MessageDAO;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.user.UserId;
 import com.chatsystem.utility.ConfigurationUtility;
@@ -21,7 +21,7 @@ public class DAOTest {
 		UserMessage m1 = new UserMessage("data",new UserId("u1".getBytes()), new UserId("u2".getBytes())) ; 
 		UserMessage m2 = new UserMessage("data",new UserId("u2".getBytes()), new UserId("u1".getBytes())) ; 
 		
-		DAO dao = new DAOSQLite() ; 
+		MessageDAO dao = new MessageDAOSQLite() ; 
 		
 		dao.clearHistory(); 
 		

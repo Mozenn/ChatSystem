@@ -8,8 +8,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.chatsystem.dao.DAO;
-import com.chatsystem.dao.DAOSQLite;
+import com.chatsystem.dao.MessageDAO;
+import com.chatsystem.dao.MessageDAOSQLite;
 import com.chatsystem.message.SystemMessage;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
@@ -66,9 +66,9 @@ public class DistantSession extends Session {
 			e1.printStackTrace();
 		}
 		
-		DAO dao;
+		MessageDAO dao;
 		try {
-			dao = new DAOSQLite();
+			dao = new MessageDAOSQLite();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ; 

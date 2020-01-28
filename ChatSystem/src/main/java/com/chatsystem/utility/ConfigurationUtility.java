@@ -2,7 +2,6 @@ package com.chatsystem.utility;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -22,6 +22,7 @@ import com.chatsystem.system.CommunicationSystem;
 public final class ConfigurationUtility {
 	
 	private static Boolean bTest ; 
+	private static Boolean bEmbedded ; 
 	
 	private ConfigurationUtility() {}
 	
@@ -60,7 +61,16 @@ public final class ConfigurationUtility {
 		
 		if(isJUnitTest())
 		{
-			path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + ".chatsystem" + System.getProperty("file.separator") ; 
+		    int leftLimit = 97; // letter 'a'
+		    int rightLimit = 122; // letter 'z'
+		    Random random = new Random();
+		 
+		    String fileName = random.ints(leftLimit, rightLimit + 1)
+		      .limit(5)
+		      .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+		      .toString();
+			
+			path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + fileName + System.getProperty("file.separator") ; 
 		}
 		else
 		{
@@ -114,11 +124,35 @@ public final class ConfigurationUtility {
 		return bTest.booleanValue() ; 
 	}
 	
+	public static boolean isUsingEmbeddedDB()
+	{
+		
+		if(bEmbedded == null)
+		{
+			Properties prop = new Properties() ;
+			
+			try {
+				prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("app.properties")) ;
+				
+				bEmbedded = prop.getProperty("embeddedDB").equals("true") ? Boolean.valueOf(true) : Boolean.valueOf(false) ; 
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				bEmbedded = Boolean.valueOf(false) ; 
+			} 
+		}
+		
+		return bEmbedded.booleanValue() ; 
+	}
+	
 	/*
 	 * Initialize application folder and files in the config path if not exist 
 	 */
 	public static void initializeApplicationFolder() throws IOException
 	{
+		if(isJUnitTest())
+			clearApplicationFolder();
+		
 		Path path = Path.of(getConfigPath()) ; 
 		
 		if(!Files.exists(path))
@@ -140,7 +174,7 @@ public final class ConfigurationUtility {
 			
 			// Create data.db 
 			
-			File database = new File(getConfigPath() + prop.getProperty("dbName")) ; 
+			File database = new File(getConfigPath() + prop.getProperty("dbEmbeddedName")) ; 
 			
 			database.createNewFile() ; 
 		}

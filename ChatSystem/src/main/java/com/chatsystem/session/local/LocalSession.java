@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 
-import com.chatsystem.dao.DAO;
-import com.chatsystem.dao.DAOSQLite;
+import com.chatsystem.dao.MessageDAO;
+import com.chatsystem.dao.MessageDAOSQLite;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
 import com.chatsystem.model.SystemContract;
@@ -57,9 +57,9 @@ final public class LocalSession extends Session{
 		
 		listener = new LocalSessionListener(this, socket);
 		
-		DAO dao;
+		MessageDAO dao;
 		try {
-			dao = new DAOSQLite();
+			dao = new MessageDAOSQLite();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return ; 

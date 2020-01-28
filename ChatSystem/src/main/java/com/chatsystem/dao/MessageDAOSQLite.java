@@ -20,17 +20,17 @@ import com.chatsystem.utility.ConfigurationUtility;
 /*
  * DAO implementation for embedded SQLite database
  */
-public class DAOSQLite implements DAO {
+public class MessageDAOSQLite implements MessageDAO {
 	
 	private static String DB_URL ;
 	
-	public DAOSQLite() throws IOException 
+	public MessageDAOSQLite() throws IOException 
 	{
 		Properties appProps = ConfigurationUtility.getAppProperties() ; 
 		
-		DB_URL = appProps.getProperty("dbStartURL") + ConfigurationUtility.getConfigPath() + appProps.getProperty("dbName") ; 
+		DB_URL = appProps.getProperty("dbEmbeddedStartURL") + ConfigurationUtility.getConfigPath() + appProps.getProperty("dbEmbeddedName") ; 
 		
-		String driver = appProps.getProperty("driverClassName") ; 
+		String driver = appProps.getProperty("driverEmbeddedClassName") ; 
 		
 		try {
 			Class.forName(driver);

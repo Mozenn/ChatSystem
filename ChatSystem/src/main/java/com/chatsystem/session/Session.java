@@ -10,8 +10,8 @@ import java.util.Optional;
 
 import javax.swing.event.EventListenerList;
 
-import com.chatsystem.dao.DAO;
-import com.chatsystem.dao.DAOSQLite;
+import com.chatsystem.dao.MessageDAO;
+import com.chatsystem.dao.MessageDAOSQLite;
 import com.chatsystem.message.Message;
 import com.chatsystem.message.UserMessage;
 import com.chatsystem.model.FileWrapper;
@@ -124,9 +124,9 @@ public abstract class Session implements SessionModel{
 				messages.add(m);
 			}
 
-			DAO dao;
+			MessageDAO dao;
 			try {
-				dao = new DAOSQLite();
+				dao = new MessageDAOSQLite();
 			} catch (IOException e) {
 				e.printStackTrace();
 				return ; 

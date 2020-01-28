@@ -10,7 +10,7 @@ import com.chatsystem.message.SystemMessage;
 import com.chatsystem.system.NotifyLocalUsersTask.LocalNotifyType;
 import com.chatsystem.utility.SerializationUtility;
 
-final class NotifyChangeUsernameTask implements Runnable{
+final class NotifyChangeUsernameLocalTask implements Runnable{
 	
 	private CommunicationSystem localSystem ; 
 	private Thread thread; 
@@ -21,7 +21,7 @@ final class NotifyChangeUsernameTask implements Runnable{
 	}
 ;
 	
-	public NotifyChangeUsernameTask(CommunicationSystem localSystem) 
+	public NotifyChangeUsernameLocalTask(CommunicationSystem localSystem) 
 	{
 		this.localSystem = localSystem ; 
 	
