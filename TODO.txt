@@ -1,8 +1,15 @@
 
-login : tpservlet_14 password : EoBoo0zi
+#Notes
+login : tpservlet_14 password : 
 URI: mysql://srv-bdens.insa-toulouse.fr
 Port: 3306
-jdbc:mysql://srv-bdens.insa-toulouse.fr:3306/chatsystem
+jdbc:mysql://srv-bdens.insa-toulouse.fr:3306/tpservlet_14;
+mysql -h srv-bdens.insa-toulouse.fr -u tpservlet_14 -p EoBoo0zi 
+jdbc:mysql://localhost:3306/chatsystem?serverTimezone=UTC
+
+http://localhost:8080/presenceservice/users
+
+https://srv-gei-tomcat.insa-toulouse.fr/presenceservice/users
 ### Ongoing 
 
 - Test Home 

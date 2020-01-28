@@ -23,6 +23,7 @@ public final class ConfigurationUtility {
 	
 	private static Boolean bTest ; 
 	private static Boolean bEmbedded ; 
+	private static String path ; 
 	
 	private ConfigurationUtility() {}
 	
@@ -57,29 +58,30 @@ public final class ConfigurationUtility {
 	 */
 	public static String getConfigPath() 
 	{
-		String path ; 
-		
-		if(isJUnitTest())
+		if(path == null)
 		{
-		    int leftLimit = 97; // letter 'a'
-		    int rightLimit = 122; // letter 'z'
-		    Random random = new Random();
-		 
-		    String fileName = random.ints(leftLimit, rightLimit + 1)
-		      .limit(5)
-		      .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-		      .toString();
-			
-			path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + fileName + System.getProperty("file.separator") ; 
-		}
-		else
-		{
-			if(isTesting())
-				path = System.getProperty("user.home") + System.getProperty("file.separator") + ".chatsystemtest" + System.getProperty("file.separator") ;  
+			if(isJUnitTest())
+			{
+			    int leftLimit = 97; // letter 'a'
+			    int rightLimit = 122; // letter 'z'
+			    Random random = new Random();
+			 
+			    String fileName = random.ints(leftLimit, rightLimit + 1)
+			      .limit(5)
+			      .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+			      .toString();
+				
+				path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + fileName + System.getProperty("file.separator") ; 
+			}
 			else
-				path = System.getProperty("user.home") + System.getProperty("file.separator") + ".chatsystem" + System.getProperty("file.separator") ;  
+			{
+				if(isTesting())
+					path = System.getProperty("user.home") + System.getProperty("file.separator") + ".chatsystemtest" + System.getProperty("file.separator") ;  
+				else
+					path = System.getProperty("user.home") + System.getProperty("file.separator") + ".chatsystem" + System.getProperty("file.separator") ;  
+			}
 		}
-		
+
 		return path ; 
 	}
 	
@@ -163,6 +165,7 @@ public final class ConfigurationUtility {
 			// Create app.properties
 			
 			File appFile = new File(getConfigPath() + "app.properties") ; 
+			System.out.println(getConfigPath() + "app.properties") ; 
 			
 			appFile.createNewFile() ; 
 			
