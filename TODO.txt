@@ -18,23 +18,14 @@ https://srv-gei-tomcat.insa-toulouse.fr/presenceservice/users
 		- make bash script launching x testing client at same time 
 - Test INSA
 	- Step 
-		- Set up two computer 
-		- pull project 
-		- Deploy .war on INSA server 
-		- generate testing .jar and default .jar  
 	- Local Session 
 	- Distant Session 
-	- changeUsername implementation + UI 
+	- Local + distant 
 	- Presence Server 
-		- Local 
 		- Deploy on INSA server 
 
 - Fixe 
 	- Chnage username message 
-	- Message serialization
-- Redesign 
-	- mysql database for production 
-	- sqlite for test 
 - Documentation (from system package) 
 	- see effective java & resources
 	- Use @throw tag 

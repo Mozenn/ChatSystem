@@ -57,7 +57,7 @@ public class SettingsWindow extends JFrame implements ActionEmitter, ActionListe
 
 	public SettingsWindow(String username, String currentDownloadPath) {
 		
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 700, 300);
 		setMinimumSize(new Dimension(400,350));
 		setResizable(false);
 		contentPane = new JPanel();
