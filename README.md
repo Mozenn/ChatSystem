@@ -1,7 +1,15 @@
 # Client
 
-## Compile & Deploy
+## Deploy
+
+### Requirement
+
+### Steps
 
 # Presence Service
 
-## Compile & Deploy
+## Deploy
+
+### Requirement
+
+### Steps

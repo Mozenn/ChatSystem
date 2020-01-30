@@ -44,7 +44,7 @@ public class DistantUsersFetcher extends Thread{
 	{
 		while(run.get()) 
 		{		
-			
+			LoggerUtility.getInstance().info("DistantUsersFetcher Sent");
 			HttpClient client = HttpClient.newBuilder()
 		            .version(HttpClient.Version.HTTP_2) // default
 		            .followRedirects(HttpClient.Redirect.NORMAL) // Always redirect, except from HTTPS URLs to HTTP URLs.
