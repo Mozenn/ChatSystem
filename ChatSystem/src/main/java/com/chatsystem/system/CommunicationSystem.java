@@ -152,9 +152,12 @@ public class CommunicationSystem implements AutoCloseable , SystemContract{
 	{
 		bRunning = false  ; 
 		
-		for(Session s : sessions.values())
+		synchronized(sessions)
 		{
-			closeSessionNotified(s.getReceiver());
+			for(Session s : sessions.values())
+			{
+				closeSessionNotified(s.getReceiver());
+			}
 		}
 		
 		var t = new NotifyLocalUsersTask(this, LocalNotifyType.DISCONNECTION); 

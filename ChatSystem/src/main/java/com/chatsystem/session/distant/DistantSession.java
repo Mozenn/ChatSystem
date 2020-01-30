@@ -88,7 +88,7 @@ public class DistantSession extends Session {
 	public void notifyStartSession() {
 		
 
-		try (ServerSocket servSocket = new ServerSocket(0))
+		try (ServerSocket servSocket = new ServerSocket(0,1,getEmitter().getIpAddress()))
 		{
 			try 
 			{
@@ -116,6 +116,7 @@ public class DistantSession extends Session {
 				dOut.write(msgAsBytes);
 				dOut.flush();
 				
+				LoggerUtility.getInstance().info("NotifyStartDistantSession Port " + servSocket.getLocalPort());
 				LoggerUtility.getInstance().info("NotifyStartDistantSession Sent");
 				
 			} catch (IOException e) {
