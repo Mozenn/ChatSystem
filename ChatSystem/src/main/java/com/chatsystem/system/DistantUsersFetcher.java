@@ -79,7 +79,7 @@ public class DistantUsersFetcher extends Thread{
 			lastTimestamp.setTime(new Date().getTime());
 			
 			try {
-				sleep(5000) ; // TODO make this smaller for production 
+				sleep(2000) ; // TODO make this smaller for production 
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 

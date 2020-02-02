@@ -10,6 +10,7 @@ jdbc:mysql://localhost:3306/chatsystem?serverTimezone=UTC
 http://localhost:8080/presenceservice/users
 
 https://srv-gei-tomcat.insa-toulouse.fr/presenceservice/users
+
 ### Ongoing 
 
 - Test Home 
@@ -33,8 +34,6 @@ https://srv-gei-tomcat.insa-toulouse.fr/presenceservice/users
 	- indicate side effect 
 	- use assert 
 - Redo UML 
-- ReadMe in github 
-- Manuscrit 
 
 - Authentification 
 	- Research 
@@ -43,11 +42,7 @@ https://srv-gei-tomcat.insa-toulouse.fr/presenceservice/users
 
 # Deploy
 
-- Client 
-	- test .jar 
-- PresenceService 
-	- test at home and at INSA 
-- Make exe for windows with launch4J
+
 
 # Implementation 
 
